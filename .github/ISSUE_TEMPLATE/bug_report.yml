@@ -1,0 +1,64 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly in FlinT Desktop
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Include reproduction steps and relevant USB logs. Questions belong in
+        [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
+  - type: input
+    id: app_version
+    attributes:
+      label: FlinT Desktop version / commit
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system and version
+      placeholder: Ubuntu 24.04, Windows 11, macOS version…
+    validations:
+      required: true
+  - type: input
+    id: qt_version
+    attributes:
+      label: Qt version / build kit
+      placeholder: Qt 6.10.2, GCC / MSVC / Clang
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device model and FlinT OS version
+      placeholder: Spark, firmware version or commit; N/A for host-only problems
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant USB / application logs
+      description: Remove private identifiers and file paths from public logs.
+      render: shell
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
+      description: Screenshots, related PRs, captures, locale, etc.

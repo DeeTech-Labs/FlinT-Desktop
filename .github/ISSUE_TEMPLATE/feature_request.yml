@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose a new capability or improvement for FlinT Desktop
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem first, then the idea. For open-ended brainstorming prefer
+        [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What is hard or missing today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should FlinT Desktop do? Keep scope concrete when possible.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Primary area
+      options:
+        - UI / QML
+        - USB / device connection
+        - Time synchronization
+        - Data collection / JSON export
+        - Device capabilities / new models
+        - Build / tooling
+        - Docs
+        - Other
+      default: 7
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
