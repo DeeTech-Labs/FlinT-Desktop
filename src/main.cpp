@@ -7,9 +7,12 @@
 #include <QTimer>
 #include <cstdio>
 #include "device/DeviceSession.h"
+#include "localization/Localization.h"
+#include <QQuickStyle>
 
 int main(int argc, char* argv[])
 {
+    QQuickStyle::setStyle(QStringLiteral("Basic"));
     QGuiApplication app(argc, argv);
     QCoreApplication::setOrganizationName(QStringLiteral("DeeTech Labs"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("deetech.labs"));
@@ -40,6 +43,7 @@ int main(int argc, char* argv[])
     bool countValid = false;
     const int sampleTarget = parser.value(samplesOption).toInt(&countValid);
     if (!countValid || sampleTarget < 1 || sampleTarget > 600) parser.showHelp(2);
+    Localization localization;
     DeviceSession device;
     if (parser.isSet(probeOption)) {
         bool requestedSync = false;
@@ -77,7 +81,11 @@ int main(int argc, char* argv[])
         return app.exec();
     }
 
+    device.setAutoConnect(true);
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty(QStringLiteral("localization"), &localization);
+    QObject::connect(&localization, &Localization::languageChanged, &engine, &QQmlEngine::retranslate);
+    QObject::connect(&localization, &Localization::languageChanged, &device, &DeviceSession::stateChanged);
     engine.rootContext()->setContextProperty(QStringLiteral("device"), &device);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
                      &app, [] { QCoreApplication::exit(1); }, Qt::QueuedConnection);

@@ -1,0 +1,19 @@
+{
+  "contexts": {
+    "DeviceHero": {
+      "YOUR RHYTHM. YOUR TIME.": "YOUR RHYTHM. YOUR TIME.",
+      "CONNECTED VIA USB": "CONNECTED VIA USB",
+      "Connect your clock to sync the time and view its status.": "Connect your clock to sync the time and view its status.",
+      "Clock status and accurate time in one place.": "Clock status and accurate time in one place."
+    },
+    "ConnectionCard": {
+      "No USB devices found": "No USB devices found",
+      "Select the clock's USB port. Close other serial monitors and sync assistants.": "Select the clock's USB port. Close other serial monitors and sync assistants.",
+      "Refresh": "Refresh",
+      "Disconnect": "Disconnect",
+      "Connection": "Connection",
+      "Connect": "Connect",
+      "USB port": "USB port"
+    }
+  }
+}

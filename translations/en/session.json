@@ -1,0 +1,25 @@
+{
+  "contexts": {
+    "DeviceSession": {
+      "FlinT OS: %1. Data collection requires firmware with INFO/STATUS support.": "FlinT OS: %1. Data collection requires firmware with INFO/STATUS support.",
+      "Time synchronized with the PC.": "Time synchronized with the PC.",
+      "Select the device's USB port.": "Select the device's USB port.",
+      "Data saved: %1": "Data saved: %1",
+      "Could not send the command.": "Could not send the command.",
+      "Could not save data: %1": "Could not save data: %1",
+      "Invalid time acknowledgement.": "Invalid time acknowledgement.",
+      "Unknown time zone": "Unknown time zone",
+      "Unsupported USB protocol version.": "Unsupported USB protocol version.",
+      "Unsupported device description.": "Unsupported device description.",
+      "Incomplete or invalid device status.": "Incomplete or invalid device status.",
+      "Disconnected": "Disconnected",
+      "Error: %1": "Error: %1",
+      "Connecting: %1": "Connecting: %1",
+      "Connected": "Connected",
+      "Checking device…": "Checking device…",
+      "The device did not respond. Check the connection and FlinT OS version.": "The device did not respond. Check the connection and FlinT OS version.",
+      "The device returned invalid JSON.": "The device returned invalid JSON.",
+      "Searching for device…": "Searching for device…"
+    }
+  }
+}

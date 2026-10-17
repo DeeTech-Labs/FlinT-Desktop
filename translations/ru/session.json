@@ -1,0 +1,25 @@
+{
+  "contexts": {
+    "DeviceSession": {
+      "FlinT OS: %1. Data collection requires firmware with INFO/STATUS support.": "FlinT OS: %1. Для сбора данных нужна прошивка с INFO/STATUS.",
+      "Time synchronized with the PC.": "Время синхронизировано с ПК.",
+      "Select the device's USB port.": "Выберите USB-порт устройства.",
+      "Data saved: %1": "Данные сохранены: %1",
+      "Could not send the command.": "Не удалось отправить команду.",
+      "Could not save data: %1": "Не удалось сохранить данные: %1",
+      "Invalid time acknowledgement.": "Неверное подтверждение времени.",
+      "Unknown time zone": "Неизвестный часовой пояс",
+      "Unsupported USB protocol version.": "Неподдерживаемая версия USB-протокола.",
+      "Unsupported device description.": "Неподдерживаемое описание устройства.",
+      "Incomplete or invalid device status.": "Неполное или некорректное состояние устройства.",
+      "Disconnected": "Отключено",
+      "Error: %1": "Ошибка: %1",
+      "Connecting: %1": "Подключение: %1",
+      "Connected": "Подключено",
+      "Checking device…": "Проверка устройства…",
+      "The device did not respond. Check the connection and FlinT OS version.": "Устройство не ответило. Проверьте подключение и версию FlinT OS.",
+      "The device returned invalid JSON.": "Устройство прислало некорректный JSON.",
+      "Searching for device…": "Поиск устройства…"
+    }
+  }
+}

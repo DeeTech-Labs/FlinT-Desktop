@@ -1,0 +1,10 @@
+{
+  "contexts": {
+    "UsbLogCard": {
+      "USB log": "USB log",
+      "USB events will appear here…": "USB events will appear here…",
+      "Clear": "Clear",
+      "Connection events and data exchanged with the clock.": "Connection events and data exchanged with the clock."
+    }
+  }
+}

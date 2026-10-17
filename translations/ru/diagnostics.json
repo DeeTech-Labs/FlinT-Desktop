@@ -1,0 +1,10 @@
+{
+  "contexts": {
+    "UsbLogCard": {
+      "USB log": "Журнал USB",
+      "USB events will appear here…": "Здесь появятся события USB…",
+      "Clear": "Очистить",
+      "Connection events and data exchanged with the clock.": "События подключения и обмена данными с часами."
+    }
+  }
+}

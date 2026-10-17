@@ -1,0 +1,19 @@
+{
+  "contexts": {
+    "DeviceHero": {
+      "YOUR RHYTHM. YOUR TIME.": "ВАШ РИТМ. ВАШЕ ВРЕМЯ.",
+      "CONNECTED VIA USB": "ПОДКЛЮЧЕНО ПО USB",
+      "Connect your clock to sync the time and view its status.": "Подключите часы, чтобы настроить время и узнать их состояние.",
+      "Clock status and accurate time in one place.": "Состояние часов и точное время — в одном месте."
+    },
+    "ConnectionCard": {
+      "No USB devices found": "USB-устройства не найдены",
+      "Select the clock's USB port. Close other serial monitors and sync assistants.": "Выберите USB-порт часов. Закройте другие мониторы порта и помощник синхронизации.",
+      "Refresh": "Обновить",
+      "Disconnect": "Отключить",
+      "Connection": "Подключение",
+      "Connect": "Подключить",
+      "USB port": "USB-порт"
+    }
+  }
+}

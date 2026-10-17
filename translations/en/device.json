@@ -1,0 +1,50 @@
+{
+  "contexts": {
+    "DevicePresentation": {
+      "%1 h %2 min %3 s": "%1 h %2 min %3 s",
+      "Time is not set": "Time is not set",
+      "Other": "Other",
+      "status collection": "status collection",
+      "device information": "device information",
+      "time synchronization": "time synchronization"
+    },
+    "StatusCard": {
+      "%1 KiB": "%1 KiB",
+      "Uptime": "Uptime",
+      "Device time": "Device time",
+      "Completed": "Completed",
+      "No data received yet": "No data received yet",
+      "Refresh now": "Refresh now",
+      "Data will appear here after you connect your clock.": "Data will appear here after you connect your clock.",
+      "Awaiting synchronization": "Awaiting synchronization",
+      "Showing the last received data.": "Showing the last received data.",
+      "Free memory": "Free memory",
+      "PC synchronization": "PC synchronization",
+      "Sync time": "Sync time",
+      "Snapshots: ": "Snapshots: ",
+      "Clock status": "Clock status",
+      "Save JSON…": "Save JSON…",
+      "Watch face": "Watch face",
+      "Display time zone": "Display time zone",
+      "○  Offline": "○  Offline",
+      "●  Every 2 seconds": "●  Every 2 seconds"
+    },
+    "DeviceInfoCard": {
+      "12 hours": "12 hours",
+      "24 hours": "24 hours",
+      "Automatic": "Automatic",
+      "On": "On",
+      "Capabilities: ": "Capabilities: ",
+      "Off": "Off",
+      "About the device": "About the device",
+      "Show seconds": "Show seconds",
+      "Russian": "Russian",
+      "Time format": "Time format",
+      "Clock language": "Clock language"
+    },
+    "ConnectionCard": {
+      "Connect automatically": "Connect automatically",
+      "Spark connects automatically over USB. For other adapters, select a port manually. Close other serial monitors and sync assistants.": "Spark connects automatically over USB. For other adapters, select a port manually. Close other serial monitors and sync assistants."
+    }
+  }
+}

@@ -17,3 +17,11 @@ Application versions in `CMakeLists.txt` aim to follow
 - Serial-emulator integration tests for real Qt client behavior and error handling.
 - Shared FlinT branding, contributor documentation, issue forms and CODEOWNERS.
 - Linux Qt build and test workflow for pull requests and `main`.
+- Dark dashboard with reusable QML controls, responsive pages and a shared theme.
+- English and Russian JSON language packs split by page, with runtime switching.
+- UI, catalog and timezone tests, plus Linux/macOS/Windows build checks.
+
+### Fixed
+
+- Keep the interface stable during background status polling.
+- Apply the device timezone when displaying its clock time.

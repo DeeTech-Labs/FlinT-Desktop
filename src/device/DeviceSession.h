@@ -7,13 +7,17 @@
 #include <QTimer>
 #include <QUrl>
 #include <QVariantList>
+#include <QHash>
+#include <functional>
 
 class DeviceSession : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QVariantList ports READ ports NOTIFY portsChanged)
+    Q_PROPERTY(bool autoConnect READ autoConnect WRITE setAutoConnect NOTIFY stateChanged)
     Q_PROPERTY(bool connected READ connected NOTIFY stateChanged)
     Q_PROPERTY(bool busy READ busy NOTIFY stateChanged)
+    Q_PROPERTY(bool polling READ polling NOTIFY stateChanged)
     Q_PROPERTY(QString connectionState READ connectionState NOTIFY stateChanged)
     Q_PROPERTY(QString error READ error NOTIFY stateChanged)
     Q_PROPERTY(QString notification READ notification NOTIFY stateChanged)
@@ -24,10 +28,14 @@ class DeviceSession : public QObject
     Q_PROPERTY(QString log READ log NOTIFY logChanged)
 
 public:
-    explicit DeviceSession(QObject* parent = nullptr);
+    using PortProvider = std::function<QVariantList()>;
+    explicit DeviceSession(QObject* parent = nullptr, PortProvider portProvider = {});
+    bool autoConnect() const { return m_autoConnect; }
+    void setAutoConnect(bool enabled);
     QVariantList ports() const { return m_ports; }
     bool connected() const { return m_ready; }
     bool busy() const { return m_pending != Command::None; }
+    bool polling() const { return m_pending == Command::Status; }
     QString connectionState() const;
     QString error() const { return m_error; }
     QString notification() const { return m_notification; }
@@ -38,6 +46,7 @@ public:
     QString log() const { return m_log.join('\n'); }
     QJsonObject capture() const;
 
+    Q_INVOKABLE QString formatTime(qint64 epoch, const QString& timezone, const QString& format) const;
     Q_INVOKABLE void refreshPorts();
     Q_INVOKABLE void connectPort(const QString& path);
     Q_INVOKABLE void disconnectDevice();
@@ -56,6 +65,9 @@ signals:
 
 private:
     enum class Command { None, Hello, Info, Status, Time };
+    void scanDevices();
+    void closePort();
+    void openPort(const QString& path);
     void send(Command command, const QByteArray& frame);
     void readAvailable();
     void handleLine(const QByteArray& line);
@@ -65,6 +77,11 @@ private:
     QSerialPort m_port;
     QTimer m_timeout;
     QTimer m_poll;
+    QTimer m_discovery;
+    PortProvider m_portProvider;
+    QHash<QString, qint64> m_retryAfter;
+    QString m_activePath;
+    bool m_autoConnect = false;
     QVariantList m_ports;
     QJsonObject m_info;
     QJsonObject m_status;
