@@ -11,3 +11,7 @@
 .DS_Store
 Thumbs.db
 *~
+
+# Python integration tests
+__pycache__/
+*.pyc
