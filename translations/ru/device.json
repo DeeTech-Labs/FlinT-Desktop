@@ -1,0 +1,50 @@
+{
+  "contexts": {
+    "DevicePresentation": {
+      "%1 h %2 min %3 s": "%1 ч %2 мин %3 с",
+      "Time is not set": "Время не установлено",
+      "Other": "Другой",
+      "status collection": "сбор состояния",
+      "device information": "сведения об устройстве",
+      "time synchronization": "синхронизация времени"
+    },
+    "StatusCard": {
+      "%1 KiB": "%1 КиБ",
+      "Uptime": "Время работы",
+      "Device time": "Время устройства",
+      "Completed": "Выполнена",
+      "No data received yet": "Данные ещё не получены",
+      "Refresh now": "Запросить сейчас",
+      "Data will appear here after you connect your clock.": "Здесь появятся данные после подключения часов.",
+      "Awaiting synchronization": "Ожидает синхронизации",
+      "Showing the last received data.": "Показаны последние полученные данные.",
+      "Free memory": "Свободная память",
+      "PC synchronization": "Синхронизация с ПК",
+      "Sync time": "Синхронизировать время",
+      "Snapshots: ": "Снимков: ",
+      "Clock status": "Состояние часов",
+      "Save JSON…": "Сохранить JSON…",
+      "Watch face": "Циферблат",
+      "Display time zone": "Часовой пояс экрана",
+      "○  Offline": "○  Не в сети",
+      "●  Every 2 seconds": "●  Каждые 2 секунды"
+    },
+    "DeviceInfoCard": {
+      "12 hours": "12 часов",
+      "24 hours": "24 часа",
+      "Automatic": "Автоматически",
+      "On": "Включён",
+      "Capabilities: ": "Возможности: ",
+      "Off": "Выключен",
+      "About the device": "Об устройстве",
+      "Show seconds": "Показ секунд",
+      "Russian": "Русский",
+      "Time format": "Формат времени",
+      "Clock language": "Язык часов"
+    },
+    "ConnectionCard": {
+      "Connect automatically": "Подключаться автоматически",
+      "Spark connects automatically over USB. For other adapters, select a port manually. Close other serial monitors and sync assistants.": "Spark подключается автоматически по USB. Для других адаптеров выберите порт вручную. Закройте другие мониторы порта и помощники синхронизации."
+    }
+  }
+}

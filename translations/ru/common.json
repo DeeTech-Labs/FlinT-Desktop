@@ -1,0 +1,20 @@
+{
+  "contexts": {
+    "AppWindow": {
+      "Everything in sync": "Всё под контролем",
+      "JSON data (*.json)": "Данные JSON (*.json)",
+      "Data is saved to a file only when you request it.": "Данные сохраняются в файл только по вашему запросу.",
+      "Clock data": "Данные часов",
+      "USB log": "Журнал USB",
+      "Save captured data": "Сохранить собранные данные",
+      "Interface language": "Язык интерфейса"
+    },
+    "AppNavigation": {
+      "Clock data": "Данные часов",
+      "USB log": "Журнал USB",
+      "Not connected": "Нет подключения",
+      "Overview": "Обзор",
+      "Clock connected": "Часы на связи"
+    }
+  }
+}

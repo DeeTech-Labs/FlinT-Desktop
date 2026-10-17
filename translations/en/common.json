@@ -1,0 +1,20 @@
+{
+  "contexts": {
+    "AppWindow": {
+      "Everything in sync": "Everything in sync",
+      "JSON data (*.json)": "JSON data (*.json)",
+      "Data is saved to a file only when you request it.": "Data is saved to a file only when you request it.",
+      "Clock data": "Clock data",
+      "USB log": "USB log",
+      "Save captured data": "Save captured data",
+      "Interface language": "Interface language"
+    },
+    "AppNavigation": {
+      "Clock data": "Clock data",
+      "USB log": "USB log",
+      "Not connected": "Not connected",
+      "Overview": "Overview",
+      "Clock connected": "Clock connected"
+    }
+  }
+}

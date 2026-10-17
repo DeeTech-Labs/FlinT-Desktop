@@ -24,8 +24,9 @@ python3 -m unittest discover -s tests -v
 ```
 
 Tests use virtual serial ports on POSIX and do not need physical hardware.
-The GitHub workflow builds with Qt 6.10.2 on Linux and runs these tests on PRs
-and pushes to `main`. Run hardware checks separately when changing USB behavior.
+The GitHub workflow builds with Qt 6.10.2 on Linux, macOS and Windows. It runs
+UI and catalog checks on all three platforms, and serial-emulator tests on
+Linux/macOS, for PRs and pushes to `main`. Run hardware checks separately when changing USB behavior.
 
 ## Code organization
 

@@ -16,6 +16,8 @@ if os.name == "posix":
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = Path(os.environ.get("FLINT_DESKTOP_BIN", ROOT / "build/flint_desktop"))
+if not APP.exists() and (ROOT / "build/flint_desktop.app").exists():
+    APP = ROOT / "build/flint_desktop.app/Contents/MacOS/flint_desktop"
 
 
 class ClockEmulator:

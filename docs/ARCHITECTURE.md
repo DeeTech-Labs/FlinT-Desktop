@@ -12,8 +12,27 @@ Qt Quick / QML interface
 ```
 
 `src/main.cpp` selects the graphical application or command-line probe.
-`qml/Main.qml` presents ports, connection state, device information, telemetry,
-time synchronization, file export and diagnostics. It does not parse serial frames.
+`qml/Main.qml` only instantiates the application window. The UI is split into:
+
+- `qml/Theme.qml`: singleton with color roles, fonts, breakpoints and shared tokens.
+- `qml/shell/`: window, responsive navigation, language selector and export dialog.
+- `qml/components/`: reusable controls, cards, page scrolling and metrics. These
+  components do not depend on a global USB device or application window.
+- `qml/features/device/`: overview, connection, telemetry and device details.
+- `qml/features/diagnostics/`: diagnostic page and log card.
+- `qml/models/DevicePresentation.qml`: formatting device data for display.
+
+Feature components receive `session` and presentation objects explicitly;
+export requests travel through signals to the shell. No QML component parses
+serial frames. Grid columns follow the available card width; narrow windows
+use top navigation and stacked connection controls. Pages scroll independently.
+All Controls use Qt's Basic style for consistent custom styling on Linux,
+macOS and Windows; fonts follow the platform, and Qt handles display scaling.
+
+`src/localization/Localization.*` installs a JSON-backed QTranslator. Catalogs
+are split by page under `translations/ru/` and `translations/en/`, following
+PixelStudio's contexts and Rebit's domain-pack layout. See [LOCALIZATION.md](LOCALIZATION.md).
+Custom translations use QStandardPaths and language choice uses QSettings.
 
 `src/device/DeviceSession.*` owns the port, protocol state, timers, reply
 validation, bounded logs, snapshots and atomic JSON export. The same service is
@@ -45,3 +64,18 @@ existing capture. Nothing is uploaded or saved automatically.
 Full command, field and capture definitions: [USB-DATA.md](USB-DATA.md).
 Tests: [BUILD.md](BUILD.md#tests). Firmware:
 [DeeTech-Labs/FlinT-OS](https://github.com/DeeTech-Labs/FlinT-OS).
+
+### Automatic USB connection
+
+The GUI enables discovery at startup; `--probe` only opens its explicit port.
+Every second the session refreshes USB ports. Spark candidates use Espressif
+native USB Serial/JTAG (VID `303a`, PID `1001`). A candidate must complete the
+existing HELLO/INFO protocol validation before it becomes connected; a USB ID
+alone does not identify a FlinT OS device. Other adapters can be selected manually.
+Failed or occupied ports have a 15-second retry delay, allowing other candidates
+to be checked. Unplugging removes that delay and the next scan detects reattachment,
+including a changed port name. The GUI never switches away from an active device.
+Disconnect also pauses automatic connection until the checkbox is enabled again.
+Discovery runs only while the application is open, without a background service.
+Failed handshakes preserve the previous capture; a verified new session starts a
+new capture. The discovery port provider is injectable for deterministic tests.
