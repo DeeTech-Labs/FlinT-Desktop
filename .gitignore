@@ -1,0 +1,13 @@
+# CMake and Qt Creator
+/build/
+/build-*/
+/CMakeUserPresets.json
+*.user
+*.user.*
+
+# Editors and OS
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+*~
