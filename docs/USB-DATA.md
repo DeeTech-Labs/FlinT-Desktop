@@ -1,16 +1,16 @@
-# Обмен с FlinT OS
+# USB protocol and data capture
 
-Транспорт — USB Serial/JTAG, последовательный порт 115200, 8N1, без flow control.
-Клиент работает асинхронно через Qt Serial Port. Открытие порта не должно
-переводить часы в загрузчик; RTS освобождается до DTR.
+Transport: USB Serial/JTAG, serial port 115200, 8N1, no flow control.
+The client uses asynchronous Qt Serial Port I/O. Port opening must not put the
+clock into the ROM downloader; release RTS before DTR.
 
-## Сессия
+## Session
 
-Команды ASCII начинаются с `@` и завершаются LF. Ответы начинаются с `FLINT `,
-завершаются LF/CRLF. Между ответами могут приходить диагностические строки,
-которые показываются в журнале и не считаются ответами на запрос.
+ASCII commands start with `@` and end with LF. Replies start with `FLINT ` and
+end with LF/CRLF. Diagnostic lines may appear between replies; they are logged
+but are not treated as command responses.
 
-Последовательность подключения:
+Connection sequence:
 
 ```text
 @HELLO
@@ -21,17 +21,17 @@ FLINT INFO {JSON}
 FLINT STATUS {JSON}
 ```
 
-Один запрос в полёте; таймаут — 4 секунды. После таймаута, ошибки устройства,
-ошибки JSON или потери порта сессия закрывается. Повторное подключение выполняет
-пользователь. Входящие строки ограничены 8192 байтами; слишком длинная строка
-отбрасывается целиком до LF. Журнал ограничен 150 строками.
+One request is in flight at a time, with a four-second timeout. A timeout,
+device error, malformed reply or port loss closes the session. Reconnection is
+user-controlled. Input lines are limited to 8192 bytes; oversized lines are
+discarded through LF. The log retains 150 bounded lines.
 
-Возможности расширяются добавлением полей и элементов `capabilities`, а не
-проверками названия модели в клиенте. Для текущего сбора нужны `info` и `status`;
-кнопка синхронизации доступна при наличии `time_sync`. Неизвестные возможности
-не мешают подключению. Старый `@TIME` остаётся совместим с Python-помощником.
+Extend support through new fields and `capabilities`, not model-name checks.
+Collection requires `info` and `status`; `time_sync` enables the sync action.
+Unknown additional capabilities do not block connection. The existing `@TIME`
+command stays compatible with the Python helper in FlinT OS.
 
-## Описание устройства — INFO
+## Device information — INFO
 
 ```json
 {
@@ -47,11 +47,11 @@ FLINT STATUS {JSON}
 }
 ```
 
-Это пример формата, не результат обнаружения. `id` — стабильный идентификатор
-на основе заводского MAC в eFuse; включать радио для его чтения не требуется.
-`screen` сообщает настроенный размер холста, а не результат определения дисплея.
+This is a format example, not a live discovery result. `id` is derived from the
+factory eFuse MAC; reading it does not enable the radio. `screen` describes the
+configured canvas, not detected physical display hardware.
 
-## Состояние — STATUS
+## Runtime state — STATUS
 
 ```json
 {
@@ -73,37 +73,37 @@ FLINT STATUS {JSON}
 }
 ```
 
-Значения выше иллюстрируют формат. Время и uptime передаются как целые числа;
-uptime — 64-битный, не обнуляется при переполнении 32-битного millis.
-`epoch` — секунды UTC, а при `time_valid=false` — `null`.
-`pc_synced` относится к текущему запуску; ручная настройка времени сбрасывает его.
-Коды настроек определены в исходниках FlinT OS. Телеметрия не меняет настройки
-и не пишет flash; сбор выполняется запросом раз в две секунды.
+These values illustrate the format. Epoch and uptime are integers; uptime is
+64-bit and does not reset when a 32-bit millis counter wraps. `epoch` is seconds
+since the Unix epoch in UTC, or `null` when `time_valid=false`. `pc_synced`
+refers to the current boot and is cleared by manual time editing. Settings
+codes are defined by FlinT OS.
 
-## Передача времени
+The firmware forms a snapshot when processing STATUS. Queries do not modify
+settings or write flash. The application polls every two seconds.
+
+## Time synchronization
 
 ```text
 @TIME 1792250000
 FLINT TIME OK 1792250000
 ```
 
-Клиент проверяет, что подтверждён именно отправленный epoch, затем повторно
-запрашивает STATUS. Допустимый диапазон: 1700000000..4102444799. Часовой пояс
-не изменяется. После успешной команды прошивка запускает три вспышки LED.
+The client checks that the acknowledged epoch matches the sent value, then
+requests STATUS again. Accepted range: 1700000000..4102444799. The device's
+timezone is unchanged. Firmware confirms successful sync with three LED flashes.
 
-## Экспорт
+## Export
 
-Файл — JSON-объект со схемой `flint.desktop.capture/1`:
+A JSON object with schema `flint.desktop.capture/1`:
 
-- `exported_at`: время экспорта на ПК, UTC ISO 8601.
-- `device`: ответ INFO.
-- `latest_status`: последний принятый STATUS.
-- `samples`: до 600 объектов с `received_at` (время приёма на ПК, UTC) и `status`.
+- `exported_at`: PC export time, UTC ISO 8601.
+- `device`: INFO reply.
+- `latest_status`: last accepted STATUS reply.
+- `samples`: up to 600 objects with `received_at` (PC reception time, UTC) and `status`.
 
-Время приёма не является временем измерения на устройстве. Устройство
-формирует снимок при обработке STATUS. Файл записывается через QSaveFile:
-ошибка записи не заменяет существующий файл частичными данными.
+Reception time is not device measurement time. QSaveFile handles output so a
+failed write does not replace an existing capture with a partial file.
 
-Данные доступны после отключения, чтобы пользователь мог их сохранить.
-Открытие новой сессии очищает старые снимки; постоянная запись без команды
-сохранения не выполняется.
+Disconnecting preserves the last session for export. A new connection clears
+old snapshots. Continuous disk recording is not enabled; saving is explicit.

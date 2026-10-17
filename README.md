@@ -1,29 +1,70 @@
-# FlinT Desktop
+<p align="center">
+  <img src="brand/FlinT_logo.png" alt="FlinT" width="220"/>
+</p>
 
-Десктопное приложение **DeeTech Labs** для работы с часами **Spark** и будущими
-моделями устройств на прошивке [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS).
+<h1 align="center">FlinT Desktop</h1>
 
-## Статус
+<p align="center">
+  <b>Desktop companion</b> for <b>FlinT</b> devices · Spark and future models · Qt6 / QML<br/>
+  by <a href="https://github.com/DeeTech-Labs">DeeTech Labs</a>
+</p>
 
-Приложение обнаруживает USB Serial-порты, подключается к устройству на FlinT OS,
-получает его описание и опрашивает состояние каждые две секунды. Поддерживаются
-синхронизация времени с ПК, журнал обмена и сохранение снимков состояния в JSON.
-Требуется прошивка FlinT OS с командами `INFO` и `STATUS`; ранняя прошивка,
-поддерживающая только синхронизацию времени, не подходит для сбора данных.
-Управление настройками, циферблатами и обновление прошивки пока не реализованы.
+<p align="center">
+  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/stargazers"><img src="https://img.shields.io/github/stars/DeeTech-Labs/FlinT-Desktop?style=flat-square&logo=github&color=ff6a00&labelColor=111111" alt="Stars"/></a>
+  <img src="https://img.shields.io/badge/status-alpha-ff6a00?style=flat-square&labelColor=111111" alt="Alpha"/>
+  <img src="https://img.shields.io/badge/Qt-6.5%2B-a8a59c?style=flat-square&labelColor=111111" alt="Qt 6.5+"/>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-e8e4dc?style=flat-square&labelColor=111111" alt="License"/></a>
+</p>
 
-## Стек
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#docs">Docs</a> ·
+  <a href="https://github.com/DeeTech-Labs/FlinT-OS">FlinT OS</a> ·
+  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/discussions">Discussions</a>
+</p>
 
-- C++17 и Qt 6.5 или новее.
-- Qt Quick / QML, Qt Quick Controls 2 и Qt Quick Dialogs — интерфейс.
-- Qt Serial Port — обмен с устройством.
-- CMake 3.21 или новее — сборка.
-- Целевые платформы: Linux, Windows и macOS.
+---
 
-## Сборка
+## What it is
 
-Установите Qt6 с модулями Quick, Quick Controls 2, Quick Dialogs и Serial Port,
-CMake и компилятор C++17.
+**FlinT Desktop** is the companion application for **FlinT** devices running
+[FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS), by **DeeTech Labs**.
+The first supported device is **FlinT Spark**. Device identity and advertised
+capabilities drive the connection, so the client can support future models.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Built-in</h3>
+      <ul>
+        <li>USB device discovery and connection</li>
+        <li>Device identity, settings and runtime status</li>
+        <li>PC time synchronization</li>
+        <li>Session capture · JSON export · USB log</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Stack</h3>
+      <ul>
+        <li>C++17 · Qt 6.5+</li>
+        <li>Qt Quick / QML · Quick Controls · Quick Dialogs</li>
+        <li>Qt Serial Port · asynchronous USB I/O</li>
+        <li>CMake · Linux / Windows / macOS targets</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+Settings editing, face management and firmware updates are planned; the current
+application reads device state and synchronizes time. Linux builds and the USB
+client are covered by CI; Windows/macOS are target platforms, not validated packages.
+
+---
+
+## Quick start
+
+**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs and Serial Port;
+CMake 3.21+; a C++17 compiler. Python 3 is needed only for integration tests.
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -31,38 +72,28 @@ cmake --build build --parallel
 ./build/flint_desktop
 ```
 
-Если Qt установлен вне системного пути, передайте
-`-DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64` при конфигурации. Для Qt Creator
-откройте `CMakeLists.txt` и выберите комплект Qt6.
+For a non-system Qt installation, pass `-DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64`.
+In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific notes:
+[docs/BUILD.md](docs/BUILD.md).
 
-При использовании многоконфигурационного генератора (например, Visual Studio)
-собирайте с `--config Debug`. Путь к приложению зависит от платформы:
-`build/Debug/flint_desktop.exe` в Windows или `build/flint_desktop.app` в macOS.
-Команда запуска выше предназначена для Linux.
+<details>
+<summary><b>Connect a device</b></summary>
 
-## Подключение и сбор данных
+1. Connect Spark over USB. Firmware must support `HELLO`, `INFO` and `STATUS`.
+2. Close any serial monitor or `sync_time.py --watch` using the same port.
+3. Refresh the port list, select the device and connect.
+4. The app polls status every two seconds. Use the time-sync button to set UTC
+   from the PC, or save the session with the JSON export button.
 
-1. Подключите часы по USB. Закройте IDF monitor, `sync_time.py --watch` и другие
-   программы, использующие этот порт.
-2. Нажмите «Обновить», выберите порт и нажмите «Подключить».
-3. Приложение проверит протокол, загрузит карточку устройства и начнёт опрос.
-4. «Синхронизировать время» передаёт текущее UTC-время ПК; часовой пояс часов
-   сохраняется. Часы подтверждают синхронизацию тремя вспышками LED.
-5. «Сохранить JSON…» сохраняет карточку устройства и собранные снимки через
-   диалог выбора файла.
+The in-memory session retains the newest 600 snapshots (about 20 minutes at the
+normal polling rate). Disconnecting preserves the last data for export; a new
+connection clears the session. Files are written only when requested. No startup
+service or background network upload is installed.
 
-Данные хранятся в памяти текущей сессии: до 600 снимков (около 20 минут при
-обычном опросе). При подключении другой сессии история очищается. После
-отключения последние данные доступны для просмотра и сохранения, но не
-помечаются как актуальные. Автозапуска, фоновой службы и отправки данных в сеть нет.
+</details>
 
-Снимок содержит UTC-время, признак синхронизации, часовой пояс, настройки,
-активный циферблат, время работы и свободную память. Приложение использует
-возможности, объявленные устройством; имя модели и платы не зафиксировано в клиенте.
-
-## Командная строка
-
-Однократно получить данные без открытия главного окна:
+<details>
+<summary><b>Command-line capture</b></summary>
 
 ```bash
 ./build/flint_desktop --probe /dev/ttyACM0
@@ -70,37 +101,66 @@ cmake --build build --parallel
 ./build/flint_desktop --probe /dev/ttyACM0 --samples 10 --output series.json
 ```
 
-`--samples` задаёт минимальное число снимков (1–600). При `--sync-time`
-сохраняются состояния до и после синхронизации, даже если задан один снимок.
-Результат выводится в stdout как JSON; код 0 означает успех, 2 — ошибку обмена
-или сохранения. Для работы без графической сессии добавьте
-`QT_QPA_PLATFORM=offscreen` перед командой (Linux).
+`--samples` accepts 1–600 snapshots. Time sync retains the states before and after
+sync, even when one sample is requested. JSON goes to stdout; exit code 0 means
+success, 2 means an exchange/export error. On a headless Linux host, set
+`QT_QPA_PLATFORM=offscreen` before launching the command.
 
-## Проверки
+</details>
 
-После сборки, на Linux/macOS:
-
-```bash
-python3 -m unittest discover -s tests -v
-```
-
-Тесты запускают реальный Qt-клиент через виртуальный последовательный порт:
-проверяют фрагментацию ответов, диагностические сообщения, неизвестную модель,
-плохой JSON, старую прошивку, таймаут, подтверждение времени и экспорт файла.
-Путь к другому бинарнику задаётся через `FLINT_DESKTOP_BIN`.
-
-## Структура
+<details>
+<summary><b>Project layout</b></summary>
 
 ```text
-src/device/     USB-сессия: порт, протокол, опрос, сбор и экспорт
-src/main.cpp    Запуск интерфейса и режим --probe
-qml/            Интерфейс Qt Quick
-tests/          Интеграционные тесты с эмулятором устройства
+flint_desktop/
+├── src/                 # C++ entry point and services
+│   └── device/          # USB protocol, session, polling and export
+├── qml/                 # Qt Quick interface
+├── tests/               # Real Qt client + serial emulator
+├── docs/                # Build, architecture and USB protocol
+├── brand/               # Shared FlinT logo
+└── .github/             # CI, issue forms and code owners
 ```
 
-Формат обмена и снимка описан в [docs/USB-DATA.md](docs/USB-DATA.md).
-Прошивка развивается в отдельном репозитории FlinT OS.
+</details>
 
-## Лицензия
+---
 
-Copyright 2026 DeeTech Labs. [Apache License 2.0](LICENSE).
+## Docs
+
+- [Build and run](docs/BUILD.md) — Qt kits, platform paths and checks.
+- [Architecture](docs/ARCHITECTURE.md) — UI, USB session and device capabilities.
+- [USB protocol and capture format](docs/USB-DATA.md) — commands, fields and JSON files.
+- [Changelog](CHANGELOG.md) — development history.
+- [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS) — device firmware.
+
+---
+
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md) · [SUPPORT.md](SUPPORT.md) ·
+[SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) ·
+[Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions)
+
+---
+
+## License
+
+Copyright 2026 DeeTech Labs · [Apache License 2.0](LICENSE) ·
+keep attribution in [NOTICE](NOTICE).
+
+---
+
+## Contributors
+
+Thanks to everyone who has contributed to FlinT Desktop:
+
+<p align="center">
+  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=DeeTech-Labs/FlinT-Desktop" alt="Contributors"/>
+  </a>
+</p>
+
+<p align="center">
+  <sub>FlinT Desktop · DeeTech Labs · Apache 2.0 · Qt6</sub>
+</p>
