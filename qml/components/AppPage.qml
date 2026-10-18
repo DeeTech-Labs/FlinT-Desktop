@@ -5,6 +5,8 @@ import Flint.Desktop
 
 ScrollView {
     id: page
+    Layout.minimumWidth: 0
+    Layout.maximumWidth: parent ? parent.width : Infinity
     default property alias pageContent: body.data
     contentWidth: availableWidth
     clip: true

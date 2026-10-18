@@ -1,7 +1,7 @@
 # Build and run — FlinT Desktop
 
 Requirements: C++17, CMake 3.21+, Qt 6.5+ with Qt Quick, Quick Controls,
-Quick Dialogs and Serial Port. Qt Test is required when `BUILD_TESTING=ON` (the default). Python 3 is required
+Quick Dialogs, Serial Port, Bluetooth and Widgets. Qt Test is required when `BUILD_TESTING=ON` (the default). Python 3 is required
 for protocol and catalog tests. Disable tests for production-only builds with
 `-DBUILD_TESTING=OFF`.
 
@@ -64,3 +64,30 @@ Use a firmware build with INFO/STATUS support. Read-only probe:
 Add `--sync-time` to explicitly set the device's UTC clock from the PC.
 On a headless Linux machine, prefix the command with `QT_QPA_PLATFORM=offscreen`.
 For the interactive workflow and retention limits, see [README](../README.md).
+
+BLE builds also require Qt Bluetooth (`qtconnectivity` in the Qt installer). Linux needs a running BlueZ service and an enabled adapter. macOS bundles include a Bluetooth usage description. Windows/macOS BLE packaging and permissions still need device validation.
+
+Bluetooth discovery is initialized on the first BLE scan, so USB-only startup
+and the simulator do not initialize BlueZ. On Linux, Qt may print
+`Missing CAP_NET_ADMIN permission` during BLE discovery: its privileged API for
+detecting public/random addresses is unavailable. This diagnostic alone does not
+mean the application has crashed; validate actual discovery and connection.
+`QML debugging is enabled` is expected for a Qt Creator configuration with QML
+debugging enabled. Use a build with QML debugging disabled for distribution.
+
+Linux also links Qt DBus. BLE scanning owns a BlueZ discovery session, so it
+works when another application is already scanning with a different transport
+filter. Only the application's own discovery reference is released on stop.
+
+### Optional Linux hardware check
+
+With the selected Spark nearby and the main application disconnected, run:
+
+```sh
+FLINT_HARDWARE_BLE_ADDR=1C:DB:D4:C6:49:16 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ./build/Desktop-Debug/flint_ui_tests hardwareBleRoundTrip
+```
+
+Replace the address with your device's BLE address. This explicit opt-in check
+reads settings, synchronizes the real clock, verifies that private Companion
+requests are rejected over BLE, and disconnects/reconnects twice. It does not
+flash firmware. Normal test runs skip hardware access.

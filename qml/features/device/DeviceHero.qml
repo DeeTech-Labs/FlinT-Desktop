@@ -7,7 +7,14 @@ Rectangle {
     required property var session
     required property var presentation
 
-    implicitHeight: Math.max(222, heroContent.implicitHeight + 56)
+    id: hero
+    property double previewEpoch: 0
+    function updatePreview() { previewEpoch = session.status.epoch || 0 }
+    Component.onCompleted: updatePreview()
+    onSessionChanged: updatePreview()
+    Connections { target: hero.session; function onDataChanged() { hero.updatePreview() } }
+    Timer { interval: 1000; running: hero.session.connected && hero.session.status.time_valid === true; repeat: true; onTriggered: hero.previewEpoch += 1 }
+    implicitHeight: Math.max(300, heroContent.implicitHeight + 56)
     radius: 22
     clip: true
     gradient: Gradient {
@@ -32,10 +39,10 @@ Rectangle {
     }
     Rectangle {
         visible: parent.width >= 470
-        width: 138
-        height: 154
+        width: 170
+        height: 190
         radius: 32
-        rotation: 10
+        rotation: 0
         anchors.right: parent.right
         anchors.rightMargin: 42
         anchors.verticalCenter: parent.verticalCenter
@@ -51,13 +58,13 @@ Rectangle {
                 anchors.centerIn: parent
                 spacing: 2
                 Label {
-                    text: session.sampleCount > 0 && session.status.time_valid ? session.formatTime(session.status.epoch, session.status.timezone, "HH:mm") : "--:--"
-                    font.pixelSize: 34
+                    text: session.sampleCount > 0 && session.status.time_valid ? session.formatTime(hero.previewEpoch, session.status.timezone, session.status.settings && session.status.settings.hour_format === 1 ? "hh:mm AP" : "HH:mm") : "--:--"
+                    font.pixelSize: text.length > 5 ? 25 : 40
                     font.bold: true
-                    color: Theme.accent
+                    color: Theme.watchTime
                 }
                 Label {
-                    text: "F L I N T   O S"
+                    text: qsTr("Preview")
                     color: Theme.watchCaption
                     font.pixelSize: 9
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -74,7 +81,7 @@ Rectangle {
         width: parent.width - (parent.width < 470 ? 56 : 240)
         spacing: 10
         Caption {
-            text: session.connected ? qsTr("CONNECTED VIA USB") : qsTr("YOUR RHYTHM. YOUR TIME.")
+            text: session.transport === "SIMULATOR" ? qsTr("SIMULATED DEVICE") : session.connected ? (session.transport === "BLE" ? qsTr("CONNECTED VIA BLE") : qsTr("CONNECTED VIA USB")) : qsTr("YOUR RHYTHM. YOUR TIME.")
             color: Theme.heroCaption
             font.pixelSize: 10
             font.letterSpacing: 1.5
@@ -82,7 +89,7 @@ Rectangle {
         Label {
             text: session.info.model === undefined ? "FlinT Clock" : String(session.info.model)
             textFormat: Text.PlainText
-            font.pixelSize: 34
+            font.pixelSize: 40
             font.bold: true
             Layout.fillWidth: true
             elide: Text.ElideRight

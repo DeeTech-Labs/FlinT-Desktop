@@ -1,5 +1,6 @@
 #include <QCoreApplication>
-#include <QGuiApplication>
+#include <QApplication>
+#include <QWindow>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QCommandLineParser>
@@ -7,13 +8,17 @@
 #include <QTimer>
 #include <cstdio>
 #include "device/DeviceSession.h"
+#include "services/WatchSettings.h"
+#include "services/FaceStudio.h"
+#include "services/CompanionTools.h"
+#include "services/BackgroundAgent.h"
 #include "localization/Localization.h"
 #include <QQuickStyle>
 
 int main(int argc, char* argv[])
 {
     QQuickStyle::setStyle(QStringLiteral("Basic"));
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     QCoreApplication::setOrganizationName(QStringLiteral("DeeTech Labs"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("deetech.labs"));
     QCoreApplication::setApplicationName(QStringLiteral("FlinT Desktop"));
@@ -81,15 +86,26 @@ int main(int argc, char* argv[])
         return app.exec();
     }
 
+    WatchSettings watchSettings(&device);
+    FaceStudio faceStudio(&device);
+    CompanionTools companionTools(&device);
+    BackgroundAgent backgroundAgent;
     device.setAutoConnect(true);
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("localization"), &localization);
     QObject::connect(&localization, &Localization::languageChanged, &engine, &QQmlEngine::retranslate);
     QObject::connect(&localization, &Localization::languageChanged, &device, &DeviceSession::stateChanged);
     engine.rootContext()->setContextProperty(QStringLiteral("device"), &device);
+    engine.rootContext()->setContextProperty(QStringLiteral("watchSettings"), &watchSettings);
+    engine.rootContext()->setContextProperty(QStringLiteral("faceStudio"), &faceStudio);
+    engine.rootContext()->setContextProperty(QStringLiteral("companionTools"), &companionTools);
+    engine.rootContext()->setContextProperty(QStringLiteral("backgroundAgent"), &backgroundAgent);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
                      &app, [] { QCoreApplication::exit(1); }, Qt::QueuedConnection);
     engine.loadFromModule("Flint.Desktop", "Main");
+    QObject::connect(&backgroundAgent,&BackgroundAgent::showWindow,&engine,[&engine] {
+        if (!engine.rootObjects().isEmpty()) if (auto* window = qobject_cast<QWindow*>(engine.rootObjects().first())) { window->show(); window->raise(); window->requestActivate(); }
+    });
 
     return app.exec();
 }

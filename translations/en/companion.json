@@ -1,0 +1,181 @@
+{
+  "contexts": {
+    "AppWindow": {
+      "My watch": "My watch",
+      "Watch faces": "Watch faces",
+      "Diagnostics": "Diagnostics",
+      "Settings": "Settings",
+      "System theme": "System theme",
+      "Light theme": "Light theme",
+      "Dark theme": "Dark theme",
+      "Color theme": "Color theme",
+      "Data stays on this computer and your watch.": "Data stays on this computer and your watch."
+    },
+    "AppNavigation": {
+      "My watch": "My watch",
+      "Watch faces": "Watch faces",
+      "Diagnostics": "Diagnostics",
+      "Settings": "Settings"
+    },
+    "UsbLogCard": {
+      "Connection log": "Connection log",
+      "Protocol operation, for example SETTINGS": "Protocol operation, for example SETTINGS",
+      "Send protocol request": "Send protocol request"
+    },
+    "DeviceHero": {
+      "Preview": "Preview",
+      "SIMULATED DEVICE": "SIMULATED DEVICE",
+      "CONNECTED VIA BLE": "CONNECTED VIA BLE"
+    },
+    "OverviewPage": {
+      "Clock difference: %1 s · Last synchronization: %2": "Clock difference: %1 s · Last synchronization: %2",
+      "Not yet": "Not yet",
+      "Connect your watch to check time synchronization.": "Connect your watch to check time synchronization.",
+      "Sync time": "Sync time",
+      "Save report…": "Save report…"
+    },
+    "ConnectionCard": {
+      "Simulator": "Simulator",
+      "USB connection": "USB connection",
+      "Bluetooth LE": "Bluetooth LE",
+      "Bluetooth device": "Bluetooth device",
+      "Scan for nearby Spark devices": "Scan for nearby Spark devices",
+      "Scanning…": "Scanning…",
+      "Enable Bluetooth on your computer, scan and select Spark. Accept the system pairing request if prompted.": "Enable Bluetooth on your computer, scan and select Spark. Accept the system pairing request if prompted."
+    },
+    "CompanionPage": {
+      "Connect a device with companion support.": "Connect a device with companion support.",
+      "Send computer CPU and RAM to watch": "Send computer CPU and RAM to watch",
+      "CPU: %1% · RAM: %2%": "CPU: %1% · RAM: %2%",
+      "System metrics are currently available on Linux.": "System metrics are currently available on Linux.",
+      "Find watch": "Find watch",
+      "Find watch flashes the board indicator for five seconds.": "Find watch flashes the board indicator for five seconds.",
+      "Focus session": "Focus session",
+      "Focus minutes": "Focus minutes",
+      "Start focus": "Start focus",
+      "Stop focus": "Stop focus",
+      "The watch timer keeps running when the computer disconnects.": "The watch timer keeps running when the computer disconnects.",
+      "Quick note": "Quick note",
+      "Short text for your watch": "Short text for your watch",
+      "Send note": "Send note",
+      "Send clipboard text": "Send clipboard text",
+      "Notes are stored on the watch. Maximum size is 96 UTF-8 bytes.": "Notes are stored on the watch. Maximum size is 96 UTF-8 bytes.",
+      "Device timeline": "Device timeline",
+      "Export timeline…": "Export timeline…"
+    },
+    "FaceStudioEditor": {
+      "Create a clock layout with a 16 × 16 pixel icon. Left button draws, right button erases. Preview uses sample time.": "Create a clock layout with a 16 × 16 pixel icon. Left button draws, right button erases. Preview uses sample time.",
+      "Design name": "Design name",
+      "17 October": "17 October",
+      "Background": "Background",
+      "Foreground": "Foreground",
+      "Favorite": "Favorite",
+      "Time position": "Time position",
+      "Date position": "Date position",
+      "Show date": "Show date",
+      "Live reload imported file": "Live reload imported file",
+      "Save design": "Save design",
+      "Import…": "Import…",
+      "Export…": "Export…",
+      "Install on watch": "Install on watch"
+    },
+    "FaceGalleryPage": {
+      "Watch faces": "Watch faces",
+      "Faces reported by your firmware. Selecting a face requires device confirmation.": "Faces reported by your firmware. Selecting a face requires device confirmation.",
+      "Refresh faces": "Refresh faces",
+      "Selected": "Selected",
+      "Use on watch": "Use on watch"
+    },
+    "WatchSettingsPage": {
+      "My watch": "My watch",
+      "Connect a device with settings support, or start the simulator.": "Connect a device with settings support, or start the simulator.",
+      "Watch language": "Watch language",
+      "Time format": "Time format",
+      "24 hours": "24 hours",
+      "12 hours": "12 hours",
+      "Seconds": "Seconds",
+      "Automatic": "Automatic",
+      "Show": "Show",
+      "Hide": "Hide",
+      "Time zone": "Time zone",
+      "Date format": "Date format",
+      "Month name": "Month name",
+      "Date separator": "Date separator",
+      "Apply changes": "Apply changes",
+      "Discard": "Discard",
+      "Reload": "Reload",
+      "Backup…": "Backup…",
+      "Restore…": "Restore…",
+      "Display brightness requires controllable backlight hardware and is not advertised by this board.": "Display brightness requires controllable backlight hardware and is not advertised by this board.",
+      "Device profiles": "Device profiles",
+      "New profile name": "New profile name",
+      "Load profile": "Load profile",
+      "Save profile": "Save profile",
+      "Delete profile": "Delete profile",
+      "Loading a profile prepares changes. Apply them to write to the watch.": "Loading a profile prepares changes. Apply them to write to the watch."
+    },
+    "DesktopSettingsPage": {
+      "Desktop settings": "Desktop settings",
+      "Keep running in the system tray": "Keep running in the system tray",
+      "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.": "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.",
+      "Synchronize time automatically on connection": "Synchronize time automatically on connection",
+      "Developer mode": "Developer mode",
+      "Interface animations": "Interface animations",
+      "Try the interface without hardware. Simulator data stays separate from real device captures.": "Try the interface without hardware. Simulator data stays separate from real device captures.",
+      "Start simulator": "Start simulator"
+    },
+    "DeviceSession": {
+      "Device disconnected.": "Device disconnected.",
+      "Unsupported companion protocol version.": "Unsupported companion protocol version.",
+      "Device connected via %1.": "Device connected via %1."
+    },
+    "BleTransport": {
+      "Bluetooth connection timed out.": "Bluetooth connection timed out.",
+      "Bluetooth device disconnected.": "Bluetooth device disconnected.",
+      "Bluetooth pairing failed. Accept the system pairing request and try again.": "Bluetooth pairing failed. Accept the system pairing request and try again.",
+      "Scan again and select a FlinT Bluetooth device.": "Scan again and select a FlinT Bluetooth device.",
+      "FlinT Bluetooth service is missing.": "FlinT Bluetooth service is missing.",
+      "Bluetooth service exchange failed.": "Bluetooth service exchange failed.",
+      "Incompatible FlinT Bluetooth characteristics.": "Incompatible FlinT Bluetooth characteristics."
+    },
+    "CompanionTools": {
+      "Device error: %1": "Device error: %1",
+      "Confirmed by watch": "Confirmed by watch",
+      "Waiting for watch…": "Waiting for watch…",
+      "The note must fit in 96 UTF-8 bytes.": "The note must fit in 96 UTF-8 bytes."
+    },
+    "FaceStudio": {
+      "Device error: %1": "Device error: %1",
+      "Selecting installed face…": "Selecting installed face…",
+      "Face installed. Select Studio in the gallery.": "Face installed. Select Studio in the gallery.",
+      "Installed and selected": "Installed and selected",
+      "Unsaved design": "Unsaved design",
+      "Design saved": "Design saved",
+      "Invalid face package": "Invalid face package",
+      "Design imported": "Design imported",
+      "Design exported": "Design exported",
+      "Could not export design": "Could not export design",
+      "Installing design…": "Installing design…",
+      "Import a face file before enabling live reload.": "Import a face file before enabling live reload."
+    },
+    "WatchSettings": {
+      "Work": "Work",
+      "Night": "Night",
+      "Minimal": "Minimal",
+      "Disconnected": "Disconnected",
+      "Device error: %1": "Device error: %1",
+      "Applied": "Applied",
+      "Waiting for device confirmation…": "Waiting for device confirmation…",
+      "Pending changes": "Pending changes",
+      "Invalid settings": "Invalid settings",
+      "Backup saved": "Backup saved",
+      "Could not save backup": "Could not save backup",
+      "Invalid backup": "Invalid backup",
+      "Backup loaded. Review and apply changes.": "Backup loaded. Review and apply changes."
+    },
+    "BackgroundAgent": {
+      "Open FlinT Desktop": "Open FlinT Desktop",
+      "Quit": "Quit"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Flint.Desktop
 
 Pane {
+    Layout.minimumWidth: 0
     padding: 24
     background: Rectangle {
         color: Theme.surface

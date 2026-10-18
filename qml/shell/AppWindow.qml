@@ -16,6 +16,11 @@ ApplicationWindow {
     font.family: Theme.fontFamily
     font.pixelSize: 14
     property var session: device
+    property var settingsService: watchSettings
+    property var studioService: faceStudio
+    property var toolsService: companionTools
+    property var backgroundService: typeof backgroundAgent === "undefined" ? null : backgroundAgent
+    onClosing: close => { if (backgroundService && backgroundService.enabled) { close.accepted = false; hide() } }
     property int section: 0
     readonly property bool compact: width < Theme.compactWidth
     palette.window: Theme.surface
@@ -64,7 +69,7 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: [qsTr("Everything in sync"), qsTr("Clock data"), qsTr("USB log")][app.section]
+                    text: [qsTr("Everything in sync"), qsTr("My watch"), qsTr("Watch faces"), "PC Companion", qsTr("Diagnostics"), qsTr("Settings")][app.section]
                     font.pixelSize: app.compact ? 24 : 32
                     font.bold: true
                     wrapMode: Text.WordWrap
@@ -74,6 +79,14 @@ ApplicationWindow {
                     running: app.session.busy && !app.session.polling
                     implicitWidth: 26
                     implicitHeight: 26
+                }
+                AppComboBox {
+                    objectName: "themeSelector"
+                    Layout.preferredWidth: 135
+                    model: [qsTr("System theme"), qsTr("Light theme"), qsTr("Dark theme")]
+                    currentIndex: Theme.mode
+                    Accessible.name: qsTr("Color theme")
+                    onActivated: Theme.mode = currentIndex
                 }
                 AppComboBox {
                     id: languageSelector
@@ -91,19 +104,6 @@ ApplicationWindow {
                 text: app.session.connectionState
                 Layout.fillWidth: true
             }
-            AppCard {
-                visible: app.session.error.length > 0 || app.session.notification.length > 0
-                Layout.fillWidth: true
-                implicitHeight: message.implicitHeight + topPadding + bottomPadding
-                Label {
-                    id: message
-                    width: parent.width
-                    text: app.session.error.length > 0 ? app.session.error : app.session.notification
-                    color: app.session.error.length > 0 ? Theme.error : Theme.accent
-                    textFormat: Text.PlainText
-                    wrapMode: Text.WordWrap
-                }
-            }
             StackLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -113,20 +113,50 @@ ApplicationWindow {
                     presentation: devicePresentation
                     onExportRequested: exportDialog.open()
                 }
-                DevicePage {
-                    session: app.session
-                    presentation: devicePresentation
-                    onExportRequested: exportDialog.open()
+                WatchSettingsPage { service: app.settingsService }
+                FaceGalleryPage { service: app.settingsService; studioService: app.studioService }
+                CompanionPage { service: app.toolsService }
+                AppPage {
+                    StatusCard { session: app.session; presentation: devicePresentation; onExportRequested: exportDialog.open() }
+                    DeviceInfoCard { session: app.session; presentation: devicePresentation }
+                    UsbLogCard { visible: Theme.developerMode; session: app.session }
                 }
-                DiagnosticsPage {
-                    session: app.session
-                }
+                DesktopSettingsPage { session: app.session; backgroundService: app.backgroundService }
             }
             Caption {
-                text: qsTr("Data is saved to a file only when you request it.")
+                text: qsTr("Data stays on this computer and your watch.")
                 font.pixelSize: 10
                 Layout.fillWidth: true
             }
+        }
+    }
+
+    Popup {
+        id: toast
+        parent: Overlay.overlay
+        x: Math.max(12, (app.width - width) / 2)
+        y: app.height - height - 24
+        width: Math.min(app.width - 32, 620)
+        padding: 18
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        background: Rectangle { color: Theme.surface; radius: 14; border.color: Theme.inputBorder }
+        contentItem: Label {
+            text: app.session.error.length ? app.session.error : app.session.notification
+            color: app.session.error.length ? Theme.error : Theme.text
+            textFormat: Text.PlainText
+            wrapMode: Text.WordWrap
+        }
+        enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.animationDuration } }
+        exit: Transition { NumberAnimation { property: "opacity"; from: 1; to: 0; duration: Theme.animationDuration } }
+        Timer { id: toastTimer; interval: 6500; onTriggered: toast.close() }
+    }
+    Connections {
+        target: app.session
+        property string previousMessage: ""
+        function onStateChanged() {
+            const message = app.session.error || app.session.notification
+            if (message && message !== previousMessage) { toast.open(); toastTimer.restart() }
+            previousMessage = message
         }
     }
 }

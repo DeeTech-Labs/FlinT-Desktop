@@ -9,6 +9,13 @@ Application versions in `CMakeLists.txt` aim to follow
 ## [Unreleased]
 
 ### Added
+- Protocol v1 request IDs, atomic device settings, local profiles and settings backup/restore.
+- Protocol simulator and Face Studio with pixel icon editing, library, favorites and device installation.
+- BLE discovery, GATT connection, shared INFO/STATUS/TIME commands and session reconnect.
+- System/light/dark themes, larger clock preview and overlay notifications.
+- Companion protocol documentation and Bluetooth build dependencies.
+- USB Companion notes, clipboard send, focus timer, Linux CPU/RAM metrics and find-watch indicator.
+- Local event timeline with JSON export, file live reload and optional system tray mode.
 
 - Qt6 / C++17 / QML application with CMake and Qt Creator support.
 - USB device discovery, protocol handshake and capability-based device information.
@@ -22,6 +29,10 @@ Application versions in `CMakeLists.txt` aim to follow
 - UI, catalog and timezone tests, plus Linux/macOS/Windows build checks.
 
 ### Fixed
+
+- Handle delayed BLE service UUIDs, use a longer scan and select the public Spark address on Linux without CAP_NET_ADMIN.
+- Own a Linux BlueZ discovery reference when another Bluetooth client is already scanning.
+- Request Linux pairing explicitly before encrypted GATT access.
 
 - Keep the interface stable during background status polling.
 - Apply the device timezone when displaying its clock time.

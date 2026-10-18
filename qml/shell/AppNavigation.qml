@@ -11,11 +11,11 @@ Rectangle {
     signal selected(int index)
     color: Theme.sidebar
     implicitWidth: 218
-    implicitHeight: compact ? 64 : 400
+    implicitHeight: compact ? 166 : 400
     GridLayout {
         anchors.fill: parent
         anchors.margins: navigation.compact ? 8 : 20
-        columns: navigation.compact ? 4 : 1
+        columns: navigation.compact ? 3 : 1
         rowSpacing: 10
         Label {
             text: "flinT."
@@ -25,7 +25,7 @@ Rectangle {
             Layout.bottomMargin: navigation.compact ? 0 : 32
         }
         Repeater {
-            model: [qsTr("Overview"), qsTr("Clock data"), qsTr("USB log")]
+            model: [qsTr("Overview"), qsTr("My watch"), qsTr("Watch faces"), "PC Companion", qsTr("Diagnostics"), qsTr("Settings")]
             delegate: NavigationButton {
                 required property string modelData
                 required property int index

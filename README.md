@@ -37,7 +37,7 @@ capabilities drive the connection, so the client can support future models.
     <td width="50%" valign="top">
       <h3>Built-in</h3>
       <ul>
-        <li>USB device discovery and connection</li>
+        <li>USB and Bluetooth LE device discovery and connection</li>
         <li>Device identity, settings and runtime status</li>
         <li>PC time synchronization</li>
         <li>Session capture · JSON export · USB log</li>
@@ -48,22 +48,23 @@ capabilities drive the connection, so the client can support future models.
       <ul>
         <li>C++17 · Qt 6.5+</li>
         <li>Qt Quick / QML · Quick Controls · Quick Dialogs</li>
-        <li>Qt Serial Port · asynchronous USB I/O</li>
+        <li>Qt Serial Port + Qt Bluetooth · asynchronous I/O</li>
         <li>CMake · Linux / Windows / macOS targets</li>
       </ul>
     </td>
   </tr>
 </table>
 
-Settings editing, face management and firmware updates are planned; the current
-application reads device state and synchronizes time. Linux builds and the USB
+Settings editing, profiles, backup/restore, built-in face selection and Face Studio
+are available with compatible protocol v1 firmware. Firmware updates, Actions and
+Android remain in development; see [implementation ledger](docs/IMPLEMENTATION.md). Linux builds and the USB
 client are covered by CI; Windows/macOS are target platforms, not validated packages.
 
 ---
 
 ## Quick start
 
-**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs and Serial Port;
+**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth and Widgets;
 CMake 3.21+; a C++17 compiler. Python 3 is needed only for integration tests.
 
 ```bash
@@ -79,7 +80,7 @@ In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific not
 <details>
 <summary><b>Connect a device</b></summary>
 
-1. Connect Spark over USB. Firmware must support `HELLO`, `INFO` and `STATUS`.
+1. Select USB or Bluetooth LE on the overview. For BLE, scan and select Spark, then connect; accept system pairing if requested. Enable NimBLE in the firmware build. For USB, connect Spark. Firmware must support `HELLO`, `INFO` and `STATUS`.
 2. Close any serial monitor or `sync_time.py --watch` using the same port.
 3. Refresh the port list, select the device and connect.
 4. The app polls status every two seconds. Use the time-sync button to set UTC
@@ -87,8 +88,9 @@ In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific not
 
 The in-memory session retains the newest 600 snapshots (about 20 minutes at the
 normal polling rate). Disconnecting preserves the last data for export; a new
-connection clears the session. Files are written only when requested. No startup
-service or background network upload is installed.
+connection clears the session. Capture exports are written only when requested. Preferences, profiles, face templates
+and a bounded local timeline are saved automatically. No startup service or
+background network upload is installed.
 
 </details>
 
@@ -127,6 +129,8 @@ flint_desktop/
 ---
 
 ## Docs
+
+- [USB/BLE companion protocol](docs/COMPANION-PROTOCOL.md) — implemented MVP, pairing limits and protocol v1 extensions.
 
 - [Build and run](docs/BUILD.md) — Qt kits, platform paths and checks.
 - [Architecture](docs/ARCHITECTURE.md) — UI, USB session and device capabilities.
