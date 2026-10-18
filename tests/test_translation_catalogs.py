@@ -30,7 +30,7 @@ class TranslationCatalogTests(unittest.TestCase):
                         entries[key] = translation
             catalogs[language] = entries
         self.assertEqual(catalogs["ru"].keys(), catalogs["en"].keys())
-        sources = [*(ROOT / "qml").rglob("*.qml"), ROOT / "src/device/DeviceSession.cpp"]
+        sources = [*(ROOT / "qml").rglob("*.qml"), *(ROOT / "src").rglob("*.cpp")]
         for path in sources:
             for source in re.findall(r'(?:qsTr|\btr)\("([^"\\]*)"\)', path.read_text(encoding="utf-8")):
                 self.assertIn((path.stem, source), catalogs["en"], f"Missing translation: {path}")

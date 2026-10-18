@@ -6,10 +6,21 @@
 #include <QTimeZone>
 #include <QSerialPortInfo>
 #include <QSet>
+#include <QSettings>
+#include <QRegularExpression>
 
 DeviceSession::DeviceSession(QObject* parent, PortProvider portProvider)
     : QObject(parent), m_portProvider(std::move(portProvider))
 {
+    m_autoSyncTime = QSettings().value("connection/autoSyncTime",false).toBool();
+    connect(&m_ble, &BleTransport::devicesChanged, this, &DeviceSession::portsChanged);
+    connect(&m_ble, &BleTransport::received, this, &DeviceSession::acceptBytes);
+    connect(&m_ble, &BleTransport::error, this, [this](const QString& error) {
+        if (!m_closing) fail(error);
+    });
+    connect(&m_ble, &BleTransport::readyChanged, this, [this] {
+        if (m_usingBle && m_ble.ready()) send(Command::Hello, "@HELLO\n");
+    });
     m_port.setReadBufferSize(16384);
     m_timeout.setSingleShot(true);
     m_timeout.setInterval(4000);
@@ -39,7 +50,7 @@ QString DeviceSession::formatTime(qint64 epoch, const QString& timezone, const Q
 QString DeviceSession::connectionState() const
 {
     if (m_ready) return tr("Connected");
-    if (m_port.isOpen()) return tr("Checking device…");
+    if (m_simulating || m_port.isOpen() || m_ble.active()) return tr("Checking device…");
     if (m_autoConnect) return tr("Searching for device…");
     return tr("Disconnected");
 }
@@ -65,9 +76,16 @@ void DeviceSession::refreshPorts()
     }
 }
 
+void DeviceSession::setAutoSyncTime(bool enabled)
+{
+    m_autoSyncTime = enabled;
+    QSettings().setValue("connection/autoSyncTime",enabled);
+    emit stateChanged();
+}
+
 void DeviceSession::setAutoConnect(bool enabled)
 {
-    if (m_autoConnect == enabled) return;
+    if ((enabled && m_simulating) || m_autoConnect == enabled) return;
     m_autoConnect = enabled;
     if (enabled) {
         m_retryAfter.clear();
@@ -82,6 +100,16 @@ void DeviceSession::setAutoConnect(bool enabled)
 void DeviceSession::scanDevices()
 {
     if (!m_autoConnect) return;
+    if (m_usingBle) {
+        if (!m_ble.active() && !m_lastBleId.isEmpty()
+            && QDateTime::currentMSecsSinceEpoch() >= m_bleRetryAfter) {
+            m_bleRetryAfter = QDateTime::currentMSecsSinceEpoch() + 15000;
+            m_error.clear();
+            m_ble.open(m_lastBleId);
+            emit stateChanged();
+        }
+        return;
+    }
     refreshPorts();
     QSet<QString> present;
     for (const auto& entry : m_ports) present.insert(entry.toMap().value("path").toString());
@@ -111,9 +139,50 @@ void DeviceSession::connectPort(const QString& path)
     openPort(path);
 }
 
+int DeviceSession::request(const QString& operation, const QString& arguments)
+{
+    if (!m_ready || busy() || !m_info.value("capabilities").toArray().contains("control")) return 0;
+    if (!QRegularExpression("^[A-Z]{1,23}$").match(operation).hasMatch()
+        || arguments.size() > 287 || !QRegularExpression("^[ -?A-~]*$").match(arguments).hasMatch()) return 0;
+    m_requestId = m_nextRequest++;
+    if (m_nextRequest > 999999999) m_nextRequest = 1;
+    const auto frame = "@REQ " + QByteArray::number(m_requestId) + ' ' + operation.toLatin1()
+        + (arguments.isEmpty() ? QByteArray{} : ' ' + arguments.toLatin1()) + '\n';
+    const int id = m_requestId;
+    send(Command::Request, frame);
+    return m_pending == Command::Request ? id : 0;
+}
+
+void DeviceSession::startSimulator()
+{
+    setAutoConnect(false);
+    closePort();
+    m_simulating = true;
+    m_usingBle = false;
+    m_error.clear(); m_notification.clear();
+    send(Command::Hello, "@HELLO\n");
+}
+
+void DeviceSession::connectBle(const QString& id)
+{
+    setAutoConnect(false);
+    closePort();
+    m_simulating = false;
+    m_usingBle = true;
+    m_lastBleId = id;
+    m_bleRetryAfter = QDateTime::currentMSecsSinceEpoch() + 15000;
+    m_error.clear();
+    m_notification.clear();
+    setAutoConnect(true);
+    m_ble.open(id);
+    emit stateChanged();
+}
+
 void DeviceSession::openPort(const QString& path)
 {
     closePort();
+    m_simulating = false;
+    m_usingBle = false;
     m_activePath = path;
     m_error.clear();
     m_notification.clear();
@@ -136,6 +205,7 @@ void DeviceSession::openPort(const QString& path)
 void DeviceSession::disconnectDevice()
 {
     setAutoConnect(false);
+    m_notification = tr("Device disconnected.");
     closePort();
 }
 
@@ -145,7 +215,9 @@ void DeviceSession::closePort()
     m_poll.stop();
     m_pending = Command::None;
     m_ready = false;
+    m_simulating = false;
     m_closing = true;
+    m_ble.close();
     m_port.close();
     m_closing = false;
     m_rx.clear();
@@ -155,8 +227,10 @@ void DeviceSession::closePort()
 
 void DeviceSession::fail(const QString& message)
 {
+    const int failedRequest = m_pending == Command::Request ? m_requestId : 0;
     m_error = message;
     closePort();
+    if (failedRequest) emit requestFinished(failedRequest, false, {}, message);
     appendLog(tr("Error: %1").arg(message));
     emit failed(message);
 }
@@ -176,12 +250,18 @@ void DeviceSession::clearLog()
 
 void DeviceSession::send(Command command, const QByteArray& frame)
 {
-    if (!m_port.isOpen() || busy()) return;
+    if ((!m_simulating && (m_usingBle ? !m_ble.ready() : !m_port.isOpen())) || busy()) return;
     m_pending = command;
-    m_timeout.start();
+    m_timeout.start(m_usingBle ? (command == Command::Hello ? 30000 : 8000) : 4000);
     emit stateChanged();
     appendLog(QStringLiteral("> ") + QString::fromLatin1(frame).trimmed());
-    if (m_port.write(frame) != frame.size()) fail(tr("Could not send the command."));
+    if (m_simulating) {
+        const auto reply = m_simulator.exchange(frame);
+        QTimer::singleShot(20, this, [this, reply] { if (m_simulating) acceptBytes(reply); });
+        return;
+    }
+    if (m_usingBle ? !m_ble.write(frame) : m_port.write(frame) != frame.size())
+        fail(tr("Could not send the command."));
 }
 
 void DeviceSession::finishCommand()
@@ -206,7 +286,11 @@ void DeviceSession::syncTime()
 
 void DeviceSession::readAvailable()
 {
-    const auto bytes = m_port.readAll();
+    acceptBytes(m_port.readAll());
+}
+
+void DeviceSession::acceptBytes(const QByteArray& bytes)
+{
     for (char c : bytes) {
         if (c == '\n') {
             if (!m_discardLine) handleLine(m_rx.trimmed());
@@ -224,6 +308,24 @@ void DeviceSession::handleLine(const QByteArray& line)
     if (line.isEmpty()) return;
     appendLog(QString::fromUtf8(line));
     if (m_pending == Command::None) return;
+    if (m_pending == Command::Request && line.startsWith("FLINT RESULT ")) {
+        QJsonParseError parseError;
+        const auto document = QJsonDocument::fromJson(line.mid(13), &parseError);
+        const auto response = document.object();
+        if (parseError.error != QJsonParseError::NoError || !document.isObject()
+            || !response.value("ok").isBool() || !response.value("id").isDouble()) {
+            fail(tr("The device returned invalid JSON.")); return;
+        }
+        if (response.value("id").toInt() != m_requestId) return;
+        const bool okay = response.value("ok").toBool();
+        if (okay ? !response.contains("result") : !response.value("error").isString()) {
+            fail(tr("The device returned invalid JSON.")); return;
+        }
+        const int id = m_requestId;
+        finishCommand();
+        emit requestFinished(id, okay, response.value("result").toVariant(), response.value("error").toString());
+        return;
+    }
     if (line.startsWith("FLINT ERROR ")) {
         fail(tr("FlinT OS: %1. Data collection requires firmware with INFO/STATUS support.")
                  .arg(QString::fromUtf8(line.mid(12))));
@@ -231,7 +333,7 @@ void DeviceSession::handleLine(const QByteArray& line)
     }
     if (m_pending == Command::Hello && line.startsWith("FLINT HELLO ")) {
         if (!line.startsWith("FLINT HELLO 1 ")) {
-            fail(tr("Unsupported USB protocol version."));
+            fail(tr("Unsupported companion protocol version."));
             return;
         }
         finishCommand();
@@ -242,6 +344,8 @@ void DeviceSession::handleLine(const QByteArray& line)
         bool valid = false;
         const auto epoch = line.mid(14).toLongLong(&valid);
         if (!valid || epoch != m_sentEpoch) { fail(tr("Invalid time acknowledgement.")); return; }
+        m_lastSync = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+        emit dataChanged();
         m_notification = tr("Time synchronized with the PC.");
         finishCommand();
         refreshStatus();
@@ -270,7 +374,10 @@ void DeviceSession::handleLine(const QByteArray& line)
         m_samples = {};
         m_lastUpdated.clear();
         m_info = data;
+        m_lastSync.clear();
+        m_syncOnConnect = m_autoSyncTime;
         m_ready = true;
+        m_notification = tr("Device connected via %1.").arg(transport());
         finishCommand();
         emit dataChanged();
         m_poll.start();
@@ -290,12 +397,14 @@ void DeviceSession::handleLine(const QByteArray& line)
             return;
         }
         m_status = data;
+        m_clockDifference = validTime ? data.value("epoch").toInteger() - QDateTime::currentSecsSinceEpoch() : 0;
         m_lastUpdated = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs);
         m_samples.append(QJsonObject{{"received_at", m_lastUpdated}, {"status", data}});
         while (m_samples.size() > 600) m_samples.removeAt(0);
         finishCommand();
         emit dataChanged();
         emit sampleReceived();
+        if (m_syncOnConnect && !busy()) { m_syncOnConnect = false; syncTime(); }
     }
 }
 

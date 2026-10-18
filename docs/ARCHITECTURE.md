@@ -79,3 +79,35 @@ Disconnect also pauses automatic connection until the checkbox is enabled again.
 Discovery runs only while the application is open, without a background service.
 Failed handshakes preserve the previous capture; a verified new session starts a
 new capture. The discovery port provider is injectable for deterministic tests.
+
+## Companion transport and appearance (0.2)
+
+`BleTransport` owns discovery, controller/service lifecycle, indication subscription
+and ATT writes. `DeviceSession` feeds USB bytes and BLE fragments into the same
+bounded line parser, handshake, capability validation and capture model. Connection
+attempts are cancellable before HELLO; selecting BLE retains that endpoint for
+session reconnect. Explicit disconnect disables automatic retries. `transport`
+reports the selected channel, while STATUS `usb_connected` remains a device field.
+
+`Theme` stores the system/light/dark preference in application settings. The overview
+contains the clock preview, connection controls and quick actions. Technical metrics
+remain on Clock data. Notifications use an overlay popup, outside page layout.
+The preview is a local digital representation extrapolated between status samples,
+not a framebuffer mirror or a renderer for arbitrary watch faces.
+
+## Device services
+
+`WatchSettings` owns the settings draft, device acknowledgements, profiles and
+settings backup files. Invalid patches are rejected before firmware mutation;
+failed persistence is an error, and restore prepares a draft for review.
+`FaceStudio` validates local templates and maintains their library/favorites;
+installation and selection each require a correlated device response.
+`SimulatedDevice` is a local protocol peer behind the same session parser. It is
+explicitly labelled and cannot be selected by automatic USB discovery.
+
+The request extension is part of **protocol v1**. All version/schema identifiers
+remain 1. Capabilities gate settings and Studio features on older firmware.
+
+`CompanionTools` serializes notes, focus and metrics with other device requests,
+and keeps a bounded local event timeline. `BackgroundAgent` provides optional
+system-tray lifetime management; it does not install system autostart.

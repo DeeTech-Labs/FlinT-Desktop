@@ -1,0 +1,181 @@
+{
+  "contexts": {
+    "AppWindow": {
+      "My watch": "Мои часы",
+      "Watch faces": "Циферблаты",
+      "Diagnostics": "Диагностика",
+      "Settings": "Настройки",
+      "System theme": "Как в системе",
+      "Light theme": "Светлая тема",
+      "Dark theme": "Тёмная тема",
+      "Color theme": "Тема оформления",
+      "Data stays on this computer and your watch.": "Данные остаются на этом компьютере и ваших часах."
+    },
+    "AppNavigation": {
+      "My watch": "Мои часы",
+      "Watch faces": "Циферблаты",
+      "Diagnostics": "Диагностика",
+      "Settings": "Настройки"
+    },
+    "UsbLogCard": {
+      "Connection log": "Журнал подключения",
+      "Protocol operation, for example SETTINGS": "Команда протокола, например SETTINGS",
+      "Send protocol request": "Отправить запрос"
+    },
+    "DeviceHero": {
+      "Preview": "Предпросмотр",
+      "SIMULATED DEVICE": "СИМУЛЯТОР УСТРОЙСТВА",
+      "CONNECTED VIA BLE": "ПОДКЛЮЧЕНО ПО BLE"
+    },
+    "OverviewPage": {
+      "Clock difference: %1 s · Last synchronization: %2": "Разница времени: %1 с · Последняя синхронизация: %2",
+      "Not yet": "Ещё не выполнялась",
+      "Connect your watch to check time synchronization.": "Подключите часы для проверки синхронизации.",
+      "Sync time": "Синхронизировать",
+      "Save report…": "Сохранить отчёт…"
+    },
+    "ConnectionCard": {
+      "Simulator": "Симулятор",
+      "USB connection": "Подключение USB",
+      "Bluetooth LE": "Bluetooth LE",
+      "Bluetooth device": "Устройство Bluetooth",
+      "Scan for nearby Spark devices": "Найдите часы Spark поблизости",
+      "Scanning…": "Поиск…",
+      "Enable Bluetooth on your computer, scan and select Spark. Accept the system pairing request if prompted.": "Включите Bluetooth на компьютере, запустите поиск и выберите Spark. При необходимости подтвердите сопряжение в системе."
+    },
+    "CompanionPage": {
+      "Connect a device with companion support.": "Подключите устройство с поддержкой Companion.",
+      "Send computer CPU and RAM to watch": "Передавать загрузку CPU и RAM на часы",
+      "CPU: %1% · RAM: %2%": "CPU: %1% · RAM: %2%",
+      "System metrics are currently available on Linux.": "Системные метрики пока доступны в Linux.",
+      "Find watch": "Найти часы",
+      "Find watch flashes the board indicator for five seconds.": "Поиск включает мигание индикатора на плате на пять секунд.",
+      "Focus session": "Фокус-сессия",
+      "Focus minutes": "Длительность в минутах",
+      "Start focus": "Начать сессию",
+      "Stop focus": "Остановить сессию",
+      "The watch timer keeps running when the computer disconnects.": "Таймер на часах продолжит работу после отключения компьютера.",
+      "Quick note": "Быстрая заметка",
+      "Short text for your watch": "Короткий текст для часов",
+      "Send note": "Отправить заметку",
+      "Send clipboard text": "Отправить текст из буфера",
+      "Notes are stored on the watch. Maximum size is 96 UTF-8 bytes.": "Заметки хранятся на часах. Максимум — 96 байт UTF-8.",
+      "Device timeline": "История устройства",
+      "Export timeline…": "Экспорт истории…"
+    },
+    "FaceStudioEditor": {
+      "Create a clock layout with a 16 × 16 pixel icon. Left button draws, right button erases. Preview uses sample time.": "Создайте циферблат с иконкой 16 × 16 пикселей. Левая кнопка рисует, правая стирает. В предпросмотре показано примерное время.",
+      "Design name": "Название оформления",
+      "17 October": "17 октября",
+      "Background": "Фон",
+      "Foreground": "Основной цвет",
+      "Favorite": "Избранное",
+      "Time position": "Положение времени",
+      "Date position": "Положение даты",
+      "Show date": "Показывать дату",
+      "Live reload imported file": "Обновлять импортированный файл при сохранении",
+      "Save design": "Сохранить оформление",
+      "Import…": "Импорт…",
+      "Export…": "Экспорт…",
+      "Install on watch": "Установить на часы"
+    },
+    "FaceGalleryPage": {
+      "Watch faces": "Циферблаты",
+      "Faces reported by your firmware. Selecting a face requires device confirmation.": "Циферблаты, доступные в прошивке. Выбор применяется после подтверждения часами.",
+      "Refresh faces": "Обновить список",
+      "Selected": "Выбран",
+      "Use on watch": "Установить на часы"
+    },
+    "WatchSettingsPage": {
+      "My watch": "Мои часы",
+      "Connect a device with settings support, or start the simulator.": "Подключите устройство с поддержкой настроек или запустите симулятор.",
+      "Watch language": "Язык часов",
+      "Time format": "Формат времени",
+      "24 hours": "24 часа",
+      "12 hours": "12 часов",
+      "Seconds": "Секунды",
+      "Automatic": "Автоматически",
+      "Show": "Показывать",
+      "Hide": "Скрывать",
+      "Time zone": "Часовой пояс",
+      "Date format": "Формат даты",
+      "Month name": "Название месяца",
+      "Date separator": "Разделитель даты",
+      "Apply changes": "Применить изменения",
+      "Discard": "Отменить",
+      "Reload": "Обновить",
+      "Backup…": "Резервная копия…",
+      "Restore…": "Восстановить…",
+      "Display brightness requires controllable backlight hardware and is not advertised by this board.": "Для регулировки яркости нужна управляемая подсветка; текущая плата её не поддерживает.",
+      "Device profiles": "Профили устройства",
+      "New profile name": "Название нового профиля",
+      "Load profile": "Загрузить профиль",
+      "Save profile": "Сохранить профиль",
+      "Delete profile": "Удалить профиль",
+      "Loading a profile prepares changes. Apply them to write to the watch.": "После загрузки профиля нажмите «Применить изменения», чтобы записать его на часы."
+    },
+    "DesktopSettingsPage": {
+      "Desktop settings": "Настройки приложения",
+      "Keep running in the system tray": "Продолжать работу в системном трее",
+      "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.": "В режиме трея закрытие окна сохраняет подключение и работу Companion. Для завершения выберите «Выйти» в трее.",
+      "Synchronize time automatically on connection": "Синхронизировать время при подключении",
+      "Developer mode": "Режим разработчика",
+      "Interface animations": "Анимации интерфейса",
+      "Try the interface without hardware. Simulator data stays separate from real device captures.": "Попробуйте интерфейс без устройства. Данные симулятора не смешиваются с данными часов.",
+      "Start simulator": "Запустить симулятор"
+    },
+    "DeviceSession": {
+      "Device disconnected.": "Устройство отключено.",
+      "Unsupported companion protocol version.": "Неподдерживаемая версия протокола FlinT.",
+      "Device connected via %1.": "Устройство подключено по %1."
+    },
+    "BleTransport": {
+      "Bluetooth connection timed out.": "Время подключения Bluetooth истекло.",
+      "Bluetooth device disconnected.": "Устройство Bluetooth отключено.",
+      "Bluetooth pairing failed. Accept the system pairing request and try again.": "Не удалось выполнить сопряжение Bluetooth. Подтвердите системный запрос и повторите попытку.",
+      "Scan again and select a FlinT Bluetooth device.": "Повторите поиск и выберите устройство FlinT Bluetooth.",
+      "FlinT Bluetooth service is missing.": "Сервис FlinT Bluetooth не найден.",
+      "Bluetooth service exchange failed.": "Ошибка обмена через Bluetooth.",
+      "Incompatible FlinT Bluetooth characteristics.": "Характеристики FlinT Bluetooth несовместимы."
+    },
+    "CompanionTools": {
+      "Device error: %1": "Ошибка устройства: %1",
+      "Confirmed by watch": "Подтверждено часами",
+      "Waiting for watch…": "Ожидание часов…",
+      "The note must fit in 96 UTF-8 bytes.": "Заметка должна помещаться в 96 байт UTF-8."
+    },
+    "FaceStudio": {
+      "Device error: %1": "Ошибка устройства: %1",
+      "Selecting installed face…": "Выбор установленного циферблата…",
+      "Face installed. Select Studio in the gallery.": "Оформление установлено. Выберите Studio в галерее.",
+      "Installed and selected": "Установлено и выбрано",
+      "Unsaved design": "Есть несохранённые изменения",
+      "Design saved": "Оформление сохранено",
+      "Invalid face package": "Некорректный файл циферблата",
+      "Design imported": "Оформление импортировано",
+      "Design exported": "Оформление экспортировано",
+      "Could not export design": "Не удалось экспортировать оформление",
+      "Installing design…": "Установка оформления…",
+      "Import a face file before enabling live reload.": "Сначала импортируйте файл циферблата, чтобы включить Live Reload."
+    },
+    "WatchSettings": {
+      "Work": "Работа",
+      "Night": "Ночь",
+      "Minimal": "Минимализм",
+      "Disconnected": "Отключено",
+      "Device error: %1": "Ошибка устройства: %1",
+      "Applied": "Применено",
+      "Waiting for device confirmation…": "Ожидание подтверждения от часов…",
+      "Pending changes": "Есть неприменённые изменения",
+      "Invalid settings": "Некорректные настройки",
+      "Backup saved": "Резервная копия сохранена",
+      "Could not save backup": "Не удалось сохранить резервную копию",
+      "Invalid backup": "Некорректная резервная копия",
+      "Backup loaded. Review and apply changes.": "Резервная копия загружена. Проверьте и примените изменения."
+    },
+    "BackgroundAgent": {
+      "Open FlinT Desktop": "Открыть FlinT Desktop",
+      "Quit": "Выйти"
+    }
+  }
+}
