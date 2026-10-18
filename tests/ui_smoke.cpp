@@ -389,23 +389,28 @@ private slots:
                         QTest::qWait(80);
                         QCOMPARE(window->property("compact").toBool(), size.width() < 900);
                         QVERIFY2(warnings.isEmpty(), qPrintable(warnings.join('\n')));
-                        const auto check = [&](auto&& self, QQuickItem* item) -> void {
+                        const auto overflow = [&](auto&& self, QQuickItem* item) -> QString {
                             if (!item->isVisible())
-                                return;
+                                return {};
                             // Ignore vertically scrollable content; horizontal overflow is never intended.
                             if (item->metaObject()->indexOfProperty("text") >= 0 && item->width() > 0) {
                                 const auto position = item->mapToItem(window->contentItem(), QPointF());
-                                QVERIFY2(position.x() >= -1 && position.x() + item->width() <= window->width() + 1,
-                                    qPrintable(QString("Overflow: %1 at %2, width %3, viewport %4")
+                                if (position.x() < -1 || position.x() + item->width() > window->width() + 1)
+                                    return QString("Overflow: %1 at %2, width %3, viewport %4")
                                             .arg(item->property("text").toString())
-                                            .arg(position.x())
-                                            .arg(item->width())
-                                            .arg(window->width())));
+                                            .arg(position.x()).arg(item->width()).arg(window->width());
                             }
-                            for (auto* child : item->childItems())
-                                self(self, child);
+                            for (auto* child : item->childItems()) {
+                                const auto result = self(self, child);
+                                if (!result.isEmpty()) return result;
+                            }
+                            return {};
                         };
-                        check(check, window->contentItem());
+                        // Font discovery and layout polish can finish after the first frame,
+                        // especially on macOS. Check the settled geometry at every breakpoint.
+                        QString overflowMessage;
+                        QTRY_VERIFY2_WITH_TIMEOUT((overflowMessage = overflow(overflow, window->contentItem())).isEmpty(),
+                                                  qPrintable(overflowMessage), 2000);
                         const auto output = qEnvironmentVariable("FLINT_SCREENSHOT_DIR");
                         if (!output.isEmpty())
                             window->grabWindow().save(QString("%1/%2-%3-%4-%5-theme%6.png").arg(output, language).arg(size.width()).arg(page).arg(hasData ? "connected" : "empty").arg(theme));
