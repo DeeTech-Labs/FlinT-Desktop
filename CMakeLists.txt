@@ -131,7 +131,7 @@ if(BUILD_TESTING)
     qt_add_resources(flint_ui_tests test_translations
         PREFIX "/" FILES ${FLINT_TRANSLATION_FILES}
     )
-    add_test(NAME ui_smoke COMMAND flint_ui_tests)
+    add_test(NAME ui_smoke COMMAND flint_ui_tests -o -,txt -o ui-smoke.txt,txt)
     set_tests_properties(ui_smoke PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
 endif()
 
