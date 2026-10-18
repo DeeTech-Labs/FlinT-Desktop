@@ -15,7 +15,7 @@ AppPage {
             id: content; anchors.fill: parent; spacing: 14
             Label { text: "PC Companion"; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
             Caption { text: page.service.supported ? page.service.state : qsTr("Connect a device with companion support."); Layout.fillWidth: true }
-            CheckBox { text: qsTr("Send computer CPU and RAM to watch"); enabled: page.service.metricsAvailable; checked: page.service.metricsEnabled; onToggled: page.service.metricsEnabled = checked }
+            CheckBox { Layout.fillWidth: true; Layout.minimumWidth: 0; Component.onCompleted: contentItem.wrapMode = Text.WordWrap; text: qsTr("Send computer CPU and RAM to watch"); enabled: page.service.metricsAvailable; checked: page.service.metricsEnabled; onToggled: page.service.metricsEnabled = checked }
             Caption { text: page.service.metricsAvailable ? qsTr("CPU: %1% · RAM: %2%").arg(page.service.cpu < 0 ? "—" : page.service.cpu).arg(page.service.memory < 0 ? "—" : page.service.memory) : qsTr("System metrics are currently available on Linux."); Layout.fillWidth: true }
             AppButton { text: qsTr("Find watch"); available: page.service.supported; onClicked: page.service.findWatch() }
             Caption { text: qsTr("Find watch flashes the board indicator for five seconds."); Layout.fillWidth: true }

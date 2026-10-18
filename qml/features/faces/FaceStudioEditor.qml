@@ -78,8 +78,8 @@ AppCard {
         Slider { from: 80; to: 150; stepSize: 1; value: editor.service.design.timeY; Layout.fillWidth: true; onMoved: editor.service.edit("timeY",Math.round(value)) }
         Caption { text: qsTr("Date position"); Layout.fillWidth: true }
         Slider { from: 170; to: 220; stepSize: 1; value: editor.service.design.dateY; Layout.fillWidth: true; onMoved: editor.service.edit("dateY",Math.round(value)) }
-        CheckBox { text: qsTr("Show date"); checked: editor.service.design.showDate; onToggled: editor.service.edit("showDate",checked) }
-        CheckBox { text: qsTr("Live reload imported file"); checked: editor.service.liveReload; onToggled: editor.service.liveReload = checked }
+        CheckBox { Layout.fillWidth: true; Layout.minimumWidth: 0; Component.onCompleted: contentItem.wrapMode = Text.WordWrap; text: qsTr("Show date"); checked: editor.service.design.showDate; onToggled: editor.service.edit("showDate",checked) }
+        CheckBox { Layout.fillWidth: true; Layout.minimumWidth: 0; Component.onCompleted: contentItem.wrapMode = Text.WordWrap; text: qsTr("Live reload imported file"); checked: editor.service.liveReload; onToggled: editor.service.liveReload = checked }
         Caption { text: editor.service.state; Layout.fillWidth: true }
         Flow {
             Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 10
