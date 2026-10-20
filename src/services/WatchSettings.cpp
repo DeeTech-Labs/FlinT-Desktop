@@ -17,6 +17,9 @@ WatchSettings::WatchSettings(DeviceSession* session, QObject* parent) : QObject(
                       QVariantMap{{"name",tr("Minimal")},{"settings",QVariantMap{{"show_seconds",0},{"hour_format",1}}}}};
     }
     connect(session, &DeviceSession::stateChanged, this, [this] {
+        const bool nowSupported = supported();
+        if (m_wasSupported == nowSupported) return;
+        m_wasSupported = nowSupported;
         if (!m_session->connected()) { m_loaded = false; m_queue.clear(); m_request = 0; m_state = tr("Disconnected"); }
         emit changed();
     });
@@ -27,7 +30,7 @@ WatchSettings::WatchSettings(DeviceSession* session, QObject* parent) : QObject(
             auto values = status.value("settings").toMap();
             values["timezone"] = status.value("timezone");
             values["active_face"] = status.value("active_face");
-            if (!values.isEmpty()) { m_values = values; m_draft = values; emit changed(); }
+            if (!values.isEmpty() && values != m_values) { m_values = values; m_draft = values; emit changed(); }
         }
         sendNext();
     });
@@ -36,10 +39,17 @@ WatchSettings::WatchSettings(DeviceSession* session, QObject* parent) : QObject(
         m_request = 0;
         if (!okay) { m_state = tr("Device error: %1").arg(error); m_queue.clear(); emit changed(); return; }
         if (m_operation == "SETTINGS" || m_operation == "SET" || m_operation == "FACE") {
-            m_values = value.toMap(); m_draft = m_values;
-        } else if (m_operation == "FACES") m_faces = value.toList();
-        else if (m_operation == "TIMEZONES") m_timezones = value.toStringList();
-        m_state = tr("Applied");
+            const auto deviceId=m_session->info().value("id").toString();
+            const bool sameDevice=deviceId==m_deviceId;
+            const auto baseline=m_operation=="SET" ? m_submittedDraft : m_values;
+            QVariantMap edits;
+            if (sameDevice) for(auto it=m_draft.begin();it!=m_draft.end();++it)
+                if (baseline.value(it.key())!=it.value()) edits.insert(it.key(),it.value());
+            m_values=value.toMap(); m_draft=m_values; m_deviceId=deviceId;
+            for(auto it=edits.begin();it!=edits.end();++it) if(m_draft.contains(it.key())) m_draft[it.key()]=it.value();
+        } else if (m_operation == "FACES" && m_faces != value.toList()) { m_faces = value.toList(); emit facesChanged(); }
+        else if (m_operation == "TIMEZONES" && m_timezones != value.toStringList()) { m_timezones = value.toStringList(); emit timezonesChanged(); }
+        m_state = dirty() ? tr("Pending changes") : tr("Applied");
         emit changed();
         sendNext();
     });
@@ -56,6 +66,7 @@ void WatchSettings::sendNext() {
     const auto next = m_queue.head();
     const int id = m_session->request(next.first,next.second);
     if (!id) return;
+    if(next.first=="SET") m_submittedDraft=m_draft;
     m_queue.dequeue(); m_request = id; m_operation = next.first;
     m_state = tr("Waiting for device confirmation…"); emit changed();
 }
@@ -102,6 +113,7 @@ void WatchSettings::apply() {
 }
 void WatchSettings::discard() { m_draft = m_values; m_state = tr("Applied"); emit changed(); }
 void WatchSettings::persistProfiles() {
+    emit profilesChanged();
     QSettings().setValue("watch/profiles",QJsonDocument(QJsonArray::fromVariantList(m_profiles)).toJson(QJsonDocument::Compact));
 }
 void WatchSettings::saveProfile(const QString& name) {

@@ -5,6 +5,13 @@ import Flint.Desktop
 
 QtObject {
     required property var session
+    readonly property string state: session.viewState || "Disconnected"
+    readonly property string stateLabel: {
+        const labels = {Disconnected: qsTr("Disconnected"), Connecting: qsTr("Connecting…"),
+                        Connected: qsTr("Connected"), Simulated: qsTr("Simulator"),
+                        StaleData: qsTr("Offline · saved data"), Error: qsTr("Connection error")};
+        return labels[state] || labels.Disconnected;
+    }
     function value(object, key) {
         return object[key] === undefined ? "—" : String(object[key]);
     }

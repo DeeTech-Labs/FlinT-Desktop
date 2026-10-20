@@ -9,9 +9,9 @@ class WatchSettings : public QObject {
     Q_PROPERTY(QString state READ state NOTIFY changed)
     Q_PROPERTY(bool supported READ supported NOTIFY changed)
     Q_PROPERTY(bool dirty READ dirty NOTIFY changed)
-    Q_PROPERTY(QVariantList profiles READ profiles NOTIFY changed)
-    Q_PROPERTY(QVariantList faces READ faces NOTIFY changed)
-    Q_PROPERTY(QStringList timezones READ timezones NOTIFY changed)
+    Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
+    Q_PROPERTY(QVariantList faces READ faces NOTIFY facesChanged)
+    Q_PROPERTY(QStringList timezones READ timezones NOTIFY timezonesChanged)
 public:
     explicit WatchSettings(DeviceSession* session, QObject* parent = nullptr);
     QVariantMap values() const { return m_values; }
@@ -34,6 +34,9 @@ public:
     Q_INVOKABLE void selectFace(const QString& id);
 signals:
     void changed();
+    void profilesChanged();
+    void facesChanged();
+    void timezonesChanged();
 private:
     void sendNext();
     void enqueue(const QString& operation, const QString& args = {});
@@ -46,6 +49,7 @@ private:
     QString m_state;
     QQueue<QPair<QString, QString>> m_queue;
     int m_request = 0;
-    QString m_operation;
-    bool m_loaded = false;
+    QString m_operation, m_deviceId;
+    QVariantMap m_submittedDraft;
+    bool m_loaded = false, m_wasSupported = false;
 };

@@ -1,41 +1,31 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import QtQuick.Layouts
 import Flint.Desktop
 
 ComboBox {
+    property bool blockPageGestures: true
     id: control
     implicitHeight: Theme.controlHeight
-    leftPadding: 12
-    rightPadding: 36
-    background: Rectangle {
-        radius: 10
-        color: Theme.input
-        border.color: control.activeFocus ? Theme.accent : Theme.inputBorder
+    leftPadding: 13
+    rightPadding: 34
+    font.pixelSize: 13
+    background: Rectangle { radius: 9; color: Theme.input; border.color: control.activeFocus ? Theme.accent : Theme.inputBorder }
+    indicator: AppIcon { name: "down"; width: 14; height: 14; tint: Theme.muted; x: control.width - width - 12; y: (control.height - height) / 2 }
+    contentItem: Text { text: control.displayText; font: control.font; color: control.enabled ? Theme.text : Theme.muted; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight; textFormat: Text.PlainText }
+    delegate: ItemDelegate {
+        required property int index
+        width: control.width - 12
+        height: 39
+        highlighted: control.highlightedIndex === index
+        contentItem: Text { text: control.textAt(index); textFormat: Text.PlainText; color: Theme.text; font.pixelSize: 13; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight }
+        background: Rectangle { radius: 7; color: parent.highlighted ? Theme.navSelected : "transparent" }
     }
-    indicator: Canvas {
-        width: 16
-        height: 16
-        x: control.width - width - 12
-        y: (control.height - height) / 2
-        onPaint: {
-            const context = getContext("2d");
-            context.reset();
-            context.strokeStyle = Theme.muted;
-            context.lineWidth = 1.5;
-            context.beginPath();
-            context.moveTo(3, 5);
-            context.lineTo(8, 10);
-            context.lineTo(13, 5);
-            context.stroke();
-        }
-    }
-    contentItem: Text {
-        text: control.displayText
-        font: control.font
-        color: Theme.text
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-        textFormat: Text.PlainText
+    popup: Popup {
+        y: control.height + 5
+        width: control.width
+        padding: 6
+        implicitHeight: Math.min(300,contentItem.implicitHeight + 12)
+        background: Rectangle { radius: 11; color: Theme.surface; border.color: Theme.inputBorder }
+        contentItem: ListView { clip: true; implicitHeight: contentHeight; model: control.popup.visible ? control.delegateModel : null; currentIndex: control.highlightedIndex; ScrollIndicator.vertical: ScrollIndicator {} }
     }
 }

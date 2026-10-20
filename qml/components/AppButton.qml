@@ -6,34 +6,34 @@ import Flint.Desktop
 Button {
     id: action
     property bool primary: false
-    // Preserve appearance during short background requests while blocking duplicate commands.
+    property string iconName: ""
     property bool available: true
     property bool busy: false
     enabled: available && !busy
     implicitHeight: Theme.controlHeight
-    leftPadding: 18
-    rightPadding: 18
+    implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
+    leftPadding: 16
+    rightPadding: 16
     hoverEnabled: true
-    contentItem: Text {
-        text: action.text
-        textFormat: Text.PlainText
-        font.pixelSize: 13
-        font.weight: Font.DemiBold
-        color: action.primary ? Theme.primaryText : Theme.buttonText
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        opacity: action.available ? 1 : 0.35
+    contentItem: Row {
+        spacing: action.iconName ? 9 : 0
+        opacity: action.available ? 1 : 0.45
+        AppIcon { visible: action.iconName !== ""; name: action.iconName; width: visible ? 18 : 0; height: 18; anchors.verticalCenter: parent.verticalCenter; tint: action.primary ? Theme.primaryText : Theme.buttonText }
+        Text {
+            text: action.text
+            textFormat: Text.PlainText
+            font.pixelSize: 13
+            font.weight: Font.DemiBold
+            color: action.primary ? Theme.primaryText : Theme.buttonText
+            height: parent.height
+            verticalAlignment: Text.AlignVCenter
+        }
     }
     background: Rectangle {
-        border.width: action.visualFocus ? 2 : 0
-        border.color: Theme.text
-        radius: 21
-        color: action.primary ? (action.down ? Theme.primaryPressed : action.hovered ? Theme.primaryHover : Theme.accent) : (action.hovered ? Theme.buttonHover : Theme.button)
-        opacity: action.available ? 1 : 0.45
-        Behavior on color {
-            ColorAnimation {
-                duration: Theme.animationDuration
-            }
-        }
+        radius: 10
+        border.width: 1
+        border.color: action.visualFocus ? Theme.accent : action.primary ? "#568dff" : Theme.divider
+        color: action.primary ? (action.down ? Theme.primaryPressed : action.hovered ? Theme.primaryHover : Theme.accent) : (action.down ? Theme.navSelected : action.hovered ? Theme.buttonHover : Theme.button)
+        opacity: action.available ? 1 : 0.6
     }
 }

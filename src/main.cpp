@@ -12,6 +12,7 @@
 #include "services/FaceStudio.h"
 #include "services/CompanionTools.h"
 #include "services/BackgroundAgent.h"
+#include "watch_render/WatchScreen.h"
 #include "localization/Localization.h"
 #include <QQuickStyle>
 
@@ -90,8 +91,13 @@ int main(int argc, char* argv[])
     FaceStudio faceStudio(&device);
     CompanionTools companionTools(&device);
     BackgroundAgent backgroundAgent;
+    WatchScreen watchScreen(&device);
     device.setAutoConnect(true);
     QQmlApplicationEngine engine;
+    engine.addImageProvider("watchscreen",new WatchImageProvider(watchScreen.store()));
+        engine.addImageProvider("designpreview",new FacePreviewProvider(&faceStudio));
+        engine.rootContext()->setContextProperty("designPreviewAvailable",true);
+    engine.rootContext()->setContextProperty("watchScreen",&watchScreen);
     engine.rootContext()->setContextProperty(QStringLiteral("localization"), &localization);
     QObject::connect(&localization, &Localization::languageChanged, &engine, &QQmlEngine::retranslate);
     QObject::connect(&localization, &Localization::languageChanged, &device, &DeviceSession::stateChanged);

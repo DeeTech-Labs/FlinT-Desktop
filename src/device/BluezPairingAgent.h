@@ -4,6 +4,8 @@
 #ifdef FLINT_BLUEZ_DBUS
 #include <QDBusContext>
 #include <QDBusObjectPath>
+#include <QDBusMessage>
+#include <QTimer>
 class BluezPairingAgent : public QObject, protected QDBusContext {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.bluez.Agent1")
@@ -12,12 +14,16 @@ public:
     ~BluezPairingAgent() override { stop(); }
     bool start(const QBluetoothAddress& address);
     void stop();
+    QString confirmation() const { return m_confirmation; }
+    void confirm(bool accepted);
+signals:
+    void confirmationChanged();
 public slots:
     Q_SCRIPTABLE void Release() { m_registered = false; }
-    Q_SCRIPTABLE void Cancel() { m_peerSuffix.clear(); }
+    Q_SCRIPTABLE void Cancel() { confirm(false); m_peerSuffix.clear(); }
     Q_SCRIPTABLE QString RequestPinCode(const QDBusObjectPath&) { reject(); return {}; }
     Q_SCRIPTABLE uint RequestPasskey(const QDBusObjectPath&) { reject(); return 0; }
-    Q_SCRIPTABLE void RequestConfirmation(const QDBusObjectPath&,uint) { reject(); }
+    Q_SCRIPTABLE void RequestConfirmation(const QDBusObjectPath& device,uint passkey);
     Q_SCRIPTABLE void DisplayPinCode(const QDBusObjectPath&,const QString&) { reject(); }
     Q_SCRIPTABLE void DisplayPasskey(const QDBusObjectPath&,uint,ushort) { reject(); }
     Q_SCRIPTABLE void RequestAuthorization(const QDBusObjectPath& device);
@@ -25,7 +31,9 @@ public slots:
 private:
     void reject();
     bool matches(const QDBusObjectPath& device) const;
-    QString m_path, m_peerSuffix;
+    QString m_path, m_peerSuffix, m_confirmation;
+    QDBusMessage m_pending;
+    QTimer m_confirmationTimeout;
     bool m_registered = false;
 };
 #else
@@ -34,5 +42,7 @@ public:
     explicit BluezPairingAgent(QObject* = nullptr) {}
     bool start(const QBluetoothAddress&) { return true; }
     void stop() {}
+    QString confirmation() const { return {}; }
+    void confirm(bool) {}
 };
 #endif

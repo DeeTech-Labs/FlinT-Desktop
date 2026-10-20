@@ -19,11 +19,14 @@ public:
     bool scanning() const { return m_discovery && m_discovery->isActive(); }
     bool active() const { return m_controller != nullptr; }
     bool ready() const { return m_ready; }
+    QString pairingCode() const { return m_pairingAgent.confirmation(); }
+    void confirmPairing(bool accepted) { m_pairingAgent.confirm(accepted); }
     void scan();
     void open(const QString& id);
     void close();
     bool write(const QByteArray& frame);
 signals:
+    void pairingCodeChanged();
     void devicesChanged();
     void readyChanged();
     void received(const QByteArray& bytes);
