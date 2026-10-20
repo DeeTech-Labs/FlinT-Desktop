@@ -10,6 +10,10 @@ QString key(const QBluetoothDeviceInfo& device) {
 }
 }
 BleTransport::BleTransport(QObject* parent) : QObject(parent) {
+#ifdef FLINT_BLUEZ_DBUS
+    connect(&m_pairingAgent, &BluezPairingAgent::confirmationChanged, this, &BleTransport::pairingCodeChanged);
+#endif
+
     m_timeout.setSingleShot(true);
     m_timeout.setInterval(30000);
     connect(&m_timeout, &QTimer::timeout, this, [this] { emit error(tr("Bluetooth connection timed out.")); });

@@ -3,7 +3,33 @@
 All application protocol/schema versions remain **1** during active development.
 This ledger distinguishes implemented code from the broader requested product.
 
-## Implemented; hardware checks still required
+## Current Desktop / firmware development (2026-10-20)
+
+- Blue interface based on the supplied reference: sidebar icons, overview actions,
+  segmented task pages, separated gallery/editor and settings inspector.
+- Thirty standalone SVG icons in `assets/icons`, packaged as Qt resources.
+- Touch swipes, horizontal wheel navigation, mouse Back/Forward and keyboard history.
+- Dedicated UI-model signals prevent resets during background status/event polling.
+- Explicit device presentation states and a confirmed watch-screen preview, using
+  the identical C++ scene rasterizer and font masks on firmware/Desktop.
+- Small committed scene snapshots over USB/authenticated BLE, visible-page polling,
+  stale-frame labels and strict renderer identity checks; no continuous image stream.
+- USB-only actual-pixel PNG capture with byte-for-byte comparison and a 30-second
+  pin watchdog. All six real-device face/menu checks passed before the final UI pass.
+- Blue boot reveal with a small Lato brand subset, light sweep and first-face fade.
+- Blue firmware Digital/Companion/menu layouts, dirty-region transfers and matching
+  Studio draft rendering in the editor.
+- Persistent settings tabs, per-tab scroll positions, draft preservation across
+  refresh/apply/reconnect, a global apply/discard summary and USB watch keyboard input.
+- Authenticated BLE numeric comparison with USB serial emulating missing buttons,
+  persistent bonds, a bounded pairing window and serial-only peer revocation.
+- Companion operations on authenticated/bonded BLE; serial-only input emulation.
+- Session-armed Actions: Linux MPRIS media, watch focus and X11 presentation keys.
+- Studio icon/time/date layers, six stacking orders, icon placement/scale/visibility
+  and two-frame 500 ms animation. Original face packages remain supported.
+- Mobile is explicitly out of current scope; a future implementation is planned in Qt.
+
+## Previously implemented foundation
 
 - USB and BLE discovery, HELLO/INFO/STATUS/TIME, shared command dispatcher.
 - GATT indications, request fragmentation, bounded buffers and reconnect.
@@ -20,20 +46,18 @@ This ledger distinguishes implemented code from the broader requested product.
 
 ## Remaining requested work
 
-- Authenticated BLE pairing with physical confirmation, bonding, peer revocation.
-- Button input hardware/event routing and FlinT Actions (media, microphone,
-  applications, IDE/OBS integrations, local commands, presentations).
+- Physical button board support; Windows/macOS Actions; microphone, application,
+  IDE/OBS integrations and user-defined commands.
 - PC Companion notifications, music, temperature, Windows/macOS metrics and autostart.
 - Smart profiles and application/context triggers.
 - Rich notes, focus history, device-to-PC clipboard and find phone.
 - Custom boot image/name and brand illustrations/glyphs/onboarding.
-- Pixel Lab layers, color pixel art, animation, widgets and framebuffer mirror.
+- Arbitrary additional Studio layers, color pixel art and arbitrary widgets.
 - File transfer, backup of device assets, integrity/recovery, local/public gallery.
 - Firmware updates, signed verification, USB/BLE OTA, recovery and rollback.
 - Developer console, performance profiling, widget playground, developer SDK,
   Desktop plugin API (firmware already has a native face SDK).
-- Android companion, foreground BLE connection, notifications/actions, media,
-  permissions, face management and firmware updates.
+- Android companion is deferred by explicit user request (future Qt client).
 - Multi-device Hub, simultaneous mobile/desktop connections and ownership policy.
 - Real ESP32-S3 board profile/hardware validation; Windows/macOS device tests.
 - Full accessibility audit, installers, migrations and release validation. Reduced motion is implemented.
@@ -46,7 +70,7 @@ The connected Spark (ESP32-C3) was updated on 2026-10-18 with an application-onl
 after backing up its previous application and checking the partition table.
 No public release or remote publishing has been performed.
 
-## Local validation
+## Earlier validation (2026-10-18)
 
 - Qt 6.10.2 Linux application build and offscreen startup.
 - UI suite: 11 checks passed (the optional hardware check is skipped by default),
@@ -65,3 +89,22 @@ The opt-in `hardwareBleRoundTrip` test passed on the real board, including two
 connections and explicit disconnect. BlueZ reported `Connected: no` afterward.
 Long-running reconnect, independent power, display rendering, power use and tray
 behavior still need dedicated checks. Android SDK is not installed locally.
+
+## Current validation (2026-10-20)
+
+- Qt 6.10.2 Linux Desktop build passes.
+- UI suite: 13 passed, no failures; opt-in hardware and visual-review tests are run
+  separately. Both languages, three themes, four sizes, seven main pages pass.
+- Regression checks cover stable models during background polling, Actions arming,
+  no replay, Studio extended packages, settings/profiles and reconnect.
+- Visual review passes on the real USB watch; screenshots verify selected settings.
+  Keyboard shortcuts, mouse Back/Forward and synthesized touch swipes pass.
+- Desktop Python suite: 7 passed. Firmware host suite: all 11 executables pass.
+- ESP-IDF 6.0.2 ESP32-C3 build passes. Updated application-only after verifying the
+  existing partition table and saving a complete 4 MB flash backup locally.
+- Real Spark: numeric codes matched across USB and Desktop, private Companion read,
+  time sync and two BLE connections pass. Bond survives application update/reset.
+  USB revocation removes the bond; fresh authenticated pairing/reconnect passes.
+- Physical display appearance, long-duration power tests, Windows/macOS hardware,
+  additional boards and arbitrary third-party integrations are not certified by
+  these checks. No mobile application or public release was produced.

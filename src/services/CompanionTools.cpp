@@ -9,8 +9,27 @@
 #include <QGuiApplication>
 #include <QRegularExpression>
 #include <algorithm>
+#include <QProcess>
+#include <QStandardPaths>
+#ifdef FLINT_BLUEZ_DBUS
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#endif
 
 CompanionTools::CompanionTools(DeviceSession* session,QObject* parent) : QObject(parent),m_session(session) {
+    m_actionMappings = QSettings().value("actions/mappings", QVariantMap{{"primary","none"},{"secondary","none"},{"long","none"}}).toMap();
+    m_actionsTimer.setInterval(750);
+    connect(&m_actionsTimer, &QTimer::timeout, this, [this] {
+        if (!actionsAvailable()) return;
+        for (const auto& entry : m_queue) if (entry.first == "EVENTS") return;
+        if (m_request && m_active.first == "EVENTS") return;
+        enqueue("EVENTS", m_cursorInitialized ? QString::number(m_actionCursor) : QString());
+    });
+    m_actionsTimer.start();
     m_timeline = QJsonDocument::fromJson(QSettings().value("companion/timeline").toByteArray()).array().toVariantList();
     while (m_timeline.size() > 200) m_timeline.removeFirst();
     m_focusTimer.setInterval(1000);
@@ -21,7 +40,7 @@ CompanionTools::CompanionTools(DeviceSession* session,QObject* parent) : QObject
         const auto connection = m_session->connectionState();
         const auto key = m_session->transport() + (m_session->connected() ? "connected" : m_session->connecting() ? "connecting" : m_session->autoConnect() ? "searching" : "disconnected");
         if (key != m_previousConnection) { m_previousConnection = key; record(connection); }
-        if (!m_session->connected()) { m_loaded = false; m_queue.clear(); m_request = 0; }
+        if (!m_session->connected()) { m_actionsArmed = false; m_cursorInitialized = false; m_actionCursor = 0; m_loaded = false; m_queue.clear(); m_request = 0; }
         emit changed();
     });
     connect(session,&DeviceSession::sampleReceived,this,[this] { if (supported() && !m_loaded) { m_loaded = true; enqueue("APPS"); } else sendNext(); });
@@ -29,6 +48,22 @@ CompanionTools::CompanionTools(DeviceSession* session,QObject* parent) : QObject
         if (id != m_request) return;
         m_request = 0;
         if (!okay) { m_state = tr("Device error: %1").arg(error); m_queue.clear(); emit changed(); return; }
+        if (m_active.first == "EVENTS") {
+            const auto data = result.toMap();
+            const auto sequence = data.value("sequence").toUInt();
+            if (m_cursorInitialized && sequence >= m_actionCursor && !data.value("lost").toBool()) {
+                for (const auto& event : data.value("events").toList()) {
+                    const auto entry = event.toMap();
+                    const auto id = entry.value("id").toUInt();
+                    if (id > m_actionCursor && id <= sequence) {
+                        m_actionCursor = id;
+                        if (m_actionsArmed) dispatchAction(entry.value("button").toString());
+                    }
+                }
+            } else if (data.value("lost").toBool()) record(tr("Input events lost; skipped for safety"));
+            m_actionCursor = sequence; m_cursorInitialized = true;
+            emit changed(); sendNext(); return;
+        }
         if (m_active.first == "APPS") {
             const auto data = result.toMap(); m_note = data.value("note").toString();
             m_focusDeadline = QDateTime::currentMSecsSinceEpoch()+data.value("focus_remaining").toInt()*1000LL;
@@ -41,6 +76,68 @@ CompanionTools::CompanionTools(DeviceSession* session,QObject* parent) : QObject
     });
 }
 bool CompanionTools::supported() const { return m_session->connected() && m_session->info().value("capabilities").toList().contains("companion"); }
+bool CompanionTools::actionsAvailable() const {
+    return supported() && m_session->info().value("capabilities").toList().contains("actions");
+}
+void CompanionTools::setActionsArmed(bool enabled) {
+    m_actionsArmed = enabled && actionsAvailable();
+    m_cursorInitialized = false; // Discard events received before explicit arming.
+    record(m_actionsArmed ? tr("Actions enabled for this session") : tr("Actions disabled"));
+    emit changed();
+}
+void CompanionTools::setAction(const QString& button, const QString& action) {
+    if (!QStringList{"primary","secondary","long"}.contains(button)
+        || !QStringList{"none","play_pause","next","previous","focus","focus_stop","presentation_next","presentation_previous"}.contains(action)) return;
+    m_actionMappings.insert(button, action);
+    QSettings().setValue("actions/mappings", m_actionMappings);
+    emit actionMappingsChanged();
+    emit changed();
+}
+void CompanionTools::emulateButton(const QString& button) {
+    if (!actionsAvailable() || m_session->transport() == "BLE") return;
+    if (QStringList{"primary","secondary","long"}.contains(button)) enqueue("BUTTON", button);
+}
+void CompanionTools::dispatchAction(const QString& button) {
+    const auto action = m_actionMappings.value(button, "none").toString();
+    if (action == "none") return;
+    if (action == "focus") startFocus(25);
+    else if (action == "focus_stop") stopFocus();
+    else if (action.startsWith("presentation_")) {
+        const auto tool = QStandardPaths::findExecutable("xdotool");
+        if (qEnvironmentVariable("XDG_SESSION_TYPE") != "x11" || tool.isEmpty()) {
+            record(tr("Presentation keys require X11 and xdotool")); return;
+        }
+        if (!QProcess::startDetached(tool, {"key", "--clearmodifiers", action == "presentation_next" ? "Right" : "Left"})) {
+            record(tr("Action failed")); return;
+        }
+    } else {
+#ifdef FLINT_BLUEZ_DBUS
+        const auto bus = QDBusConnection::sessionBus();
+        const auto names = bus.interface()->registeredServiceNames();
+        QStringList players;
+        if (names.isValid()) for (const auto& name : names.value()) if (name.startsWith("org.mpris.MediaPlayer2.")) players.append(name);
+        players.sort();
+        if (players.isEmpty()) { record(tr("No media player available")); return; }
+        QString selected = players.first();
+        for (const auto& player : players) {
+            QDBusInterface candidate(player, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", bus);
+            if (candidate.property("PlaybackStatus").toString() == "Playing") { selected = player; break; }
+        }
+        QDBusInterface player(selected, "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", bus);
+        const auto method = action == "play_pause" ? "PlayPause" : action == "next" ? "Next" : "Previous";
+        auto* watcher = new QDBusPendingCallWatcher(player.asyncCall(method), this);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher, action] {
+            QDBusPendingReply<> reply = *watcher;
+            record(reply.isError() ? tr("Action failed") : action);
+            watcher->deleteLater();
+        });
+        return;
+#else
+        record(tr("Media actions are currently available on Linux")); return;
+#endif
+    }
+    record(action);
+}
 int CompanionTools::focusRemaining() const { return std::max<qint64>(0,(m_focusDeadline-QDateTime::currentMSecsSinceEpoch()+999)/1000); }
 bool CompanionTools::metricsAvailable() const {
 #ifdef Q_OS_LINUX
@@ -53,6 +150,7 @@ void CompanionTools::record(const QString& event) {
     m_timeline.append(QVariantMap{{"at",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)},{"event",event}});
     while (m_timeline.size() > 200) m_timeline.removeFirst();
     QSettings().setValue("companion/timeline",QJsonDocument(QJsonArray::fromVariantList(m_timeline)).toJson(QJsonDocument::Compact));
+    emit timelineChanged();
     emit changed();
 }
 void CompanionTools::enqueue(const QString& operation,const QString& arguments) {

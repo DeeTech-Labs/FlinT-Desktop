@@ -24,11 +24,19 @@ qt_add_executable(flint_desktop
     src/services/FaceStudio.cpp src/services/FaceStudio.h
     src/services/WatchSettings.cpp src/services/WatchSettings.h
     src/services/BackgroundAgent.cpp src/services/BackgroundAgent.h
+    src/watch_render/WatchScreen.cpp src/watch_render/WatchScreen.h
+    src/watch_render/shared/fonts.cpp
     src/main.cpp
     src/device/DeviceSession.cpp
     src/localization/Localization.cpp
     src/localization/Localization.h
     src/device/DeviceSession.h
+)
+
+file(GLOB FLINT_ICON_FILES CONFIGURE_DEPENDS "assets/icons/*.svg")
+qt_add_resources(flint_desktop icons
+    PREFIX "/icons" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons"
+    FILES ${FLINT_ICON_FILES}
 )
 
 set(FLINT_QML_FILES
@@ -40,6 +48,11 @@ set(FLINT_QML_FILES
         qml/features/companion/CompanionPage.qml
         qml/Main.qml
         qml/Theme.qml
+        qml/components/SectionTabs.qml
+        qml/components/AppTextField.qml
+        qml/components/AppSwitch.qml
+        qml/components/AppIcon.qml
+        qml/components/QuickAction.qml
         qml/components/AppButton.qml
         qml/components/AppCard.qml
         qml/components/AppPage.qml
@@ -49,6 +62,7 @@ set(FLINT_QML_FILES
         qml/components/NavigationButton.qml
         qml/components/AppComboBox.qml
         qml/features/device/ConnectionCard.qml
+        qml/features/device/WatchPreview.qml
         qml/features/device/DeviceHero.qml
         qml/features/device/DeviceInfoCard.qml
         qml/features/device/DevicePage.qml
@@ -116,6 +130,8 @@ if(BUILD_TESTING)
         src/services/CompanionTools.cpp src/services/CompanionTools.h
         src/services/FaceStudio.cpp src/services/FaceStudio.h
         src/services/WatchSettings.cpp src/services/WatchSettings.h
+        src/watch_render/WatchScreen.cpp src/watch_render/WatchScreen.h
+        src/watch_render/shared/fonts.cpp
         tests/ui_smoke.cpp
         src/device/DeviceSession.cpp src/device/DeviceSession.h
         src/localization/Localization.cpp src/localization/Localization.h
@@ -127,6 +143,10 @@ if(BUILD_TESTING)
     qt_add_resources(flint_ui_tests test_ui
         PREFIX "/qt/qml/Flint/Desktop"
         FILES ${FLINT_QML_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Flint/Desktop/qmldir
+    )
+    qt_add_resources(flint_ui_tests test_icons
+        PREFIX "/icons" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons"
+        FILES ${FLINT_ICON_FILES}
     )
     qt_add_resources(flint_ui_tests test_translations
         PREFIX "/" FILES ${FLINT_TRANSLATION_FILES}

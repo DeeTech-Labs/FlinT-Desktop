@@ -15,6 +15,8 @@
 class DeviceSession : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString pairingCode READ pairingCode NOTIFY pairingCodeChanged)
+    Q_PROPERTY(QString viewState READ viewState NOTIFY viewStateChanged)
     Q_PROPERTY(QVariantList bleDevices READ bleDevices NOTIFY portsChanged)
     Q_PROPERTY(bool bleScanning READ bleScanning NOTIFY portsChanged)
     Q_PROPERTY(QString transport READ transport NOTIFY stateChanged)
@@ -58,6 +60,9 @@ public:
     bool busy() const { return m_pending != Command::None; }
     bool polling() const { return m_pending == Command::Status; }
     QString connectionState() const;
+    QString viewState() const;
+    QString pairingCode() const { return m_ble.pairingCode(); }
+    Q_INVOKABLE void confirmPairing(bool accepted) { m_ble.confirmPairing(accepted); }
     QString error() const { return m_error; }
     QString notification() const { return m_notification; }
     QVariantMap info() const { return m_info.toVariantMap(); }
@@ -77,6 +82,8 @@ public:
     Q_INVOKABLE void clearLog();
 
 signals:
+    void viewStateChanged();
+    void pairingCodeChanged();
     void requestFinished(int id, bool okay, const QVariant& result, const QString& error);
     void portsChanged();
     void stateChanged();

@@ -15,6 +15,11 @@ ApplicationWindow {
     color: Theme.background
     font.family: Theme.fontFamily
     font.pixelSize: 14
+    property var screenService: typeof watchScreen === "undefined" ? null : watchScreen
+    readonly property bool wantsScreen: visible && visibility !== Window.Minimized && (section === 0 || section === 1)
+    onWantsScreenChanged: if (screenService) screenService.active = wantsScreen
+    onScreenServiceChanged: if (screenService) screenService.active = wantsScreen
+    Component.onCompleted: if (screenService) screenService.active = wantsScreen
     property var session: device
     property var settingsService: watchSettings
     property var studioService: faceStudio
@@ -22,6 +27,76 @@ ApplicationWindow {
     property var backgroundService: typeof backgroundAgent === "undefined" ? null : backgroundAgent
     onClosing: close => { if (backgroundService && backgroundService.enabled) { close.accepted = false; hide() } }
     property int section: 0
+    property var navigationHistory: [0]
+    property int historyPosition: 0
+    property bool restoringHistory: false
+    onSectionChanged: {
+        if (!restoringHistory && navigationHistory[historyPosition] !== section) {
+            const next = navigationHistory.slice(0, historyPosition + 1);
+            next.push(section); navigationHistory = next; historyPosition = next.length - 1;
+        }
+    }
+    function pendingChanges() {
+        const names = {hour_format:qsTr("Time format"),show_seconds:qsTr("Seconds"),timezone:qsTr("Time zone"),date_format:qsTr("Date format"),date_separator:qsTr("Date separator"),language:qsTr("Watch language"),active_face:qsTr("Watch face")};
+        const labels = {hour_format:[qsTr("24 hours"),qsTr("12 hours")],show_seconds:{0:qsTr("Hide"),1:qsTr("Show"),255:qsTr("Automatic")},language:["Русский","English"],date_separator:[".","/","-"],date_format:["31.12.26","31.12.2026","12.31.26","12.31.2026","2026.12.31",qsTr("Month name")]};
+        const changes=[];
+        const draft=app.settingsService.draft, values=app.settingsService.values;
+        for (const key of Object.keys(draft)) if (draft[key] !== values[key]) {
+            const text = value => labels[key] && labels[key][value] !== undefined ? labels[key][value] : value;
+            changes.push((names[key] || key) + ": " + text(values[key]) + " → " + text(draft[key]));
+        }
+        return changes;
+    }
+    function goBack() {
+        if (historyPosition <= 0) return;
+        restoringHistory = true; historyPosition--; section = navigationHistory[historyPosition]; restoringHistory = false;
+    }
+    function goForward() {
+        if (historyPosition + 1 >= navigationHistory.length) return;
+        restoringHistory = true; historyPosition++; section = navigationHistory[historyPosition]; restoringHistory = false;
+    }
+    Shortcut { context: Qt.ApplicationShortcut; sequences: [StandardKey.Back]; onActivated: app.goBack() }
+    Shortcut { context: Qt.ApplicationShortcut; sequences: [StandardKey.Forward]; onActivated: app.goForward() }
+    Shortcut { context: Qt.ApplicationShortcut; sequence: "Alt+1"; onActivated: app.section = 0 }
+    Shortcut { context: Qt.ApplicationShortcut; sequence: "Alt+2"; onActivated: app.section = 1 }
+    Shortcut { context: Qt.ApplicationShortcut; sequence: "Alt+3"; onActivated: app.section = 2 }
+    Shortcut { context: Qt.ApplicationShortcut; sequence: "Alt+4"; onActivated: app.section = 3 }
+    TapHandler { acceptedButtons: Qt.BackButton; onTapped: app.goBack() }
+    TapHandler { acceptedButtons: Qt.ForwardButton; onTapped: app.goForward() }
+    property real horizontalGesture: 0
+    property double lastHorizontalNavigation: 0
+    Timer { id: gestureReset; interval: 200; onTriggered: app.horizontalGesture = 0 }
+    function navigationGestureAllowed(x,y) {
+        function blocks(item,depth) {
+            if (!item || depth>30 || !item.visible || item.opacity===0) return false;
+            if (item.inSwipeView && !item.currentSwipePage) return false;
+            const p=item.mapFromItem(app.contentItem,x,y);
+            const inside=p.x>=0 && p.y>=0 && p.x<item.width && p.y<item.height;
+            if (item.clip && !inside) return false;
+            if (inside && item.blockPageGestures===true) return true;
+            for (const child of item.children || []) if (blocks(child,depth+1)) return true;
+            return false;
+        }
+        return !blocks(app.contentItem,0);
+    }
+    WheelHandler {
+        target: null
+        orientation: Qt.Horizontal
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onWheel: event => {
+            if (!app.navigationGestureAllowed(event.x,event.y)) { event.accepted = false; return; }
+            const horizontal = event.pixelDelta.x || event.angleDelta.x;
+            const vertical = event.pixelDelta.y || event.angleDelta.y;
+            if (Math.abs(horizontal) <= Math.abs(vertical)) { event.accepted = false; return; }
+            app.horizontalGesture += horizontal;
+            gestureReset.restart();
+            if (Math.abs(app.horizontalGesture) >= 70 && Date.now() - app.lastHorizontalNavigation > 400) {
+                app.section = Math.max(0,Math.min(6,app.section + (app.horizontalGesture < 0 ? 1 : -1)));
+                app.lastHorizontalNavigation = Date.now(); app.horizontalGesture = 0;
+            }
+            event.accepted = true;
+        }
+    }
     readonly property bool compact: width < Theme.compactWidth
     palette.window: Theme.surface
     palette.mid: Theme.inputBorder
@@ -59,7 +134,7 @@ ApplicationWindow {
             onSelected: index => app.section = index
             Layout.fillWidth: app.compact
             Layout.fillHeight: !app.compact
-            Layout.preferredWidth: app.compact ? -1 : 218
+            Layout.preferredWidth: app.compact ? -1 : 224
         }
         ColumnLayout {
             Layout.fillWidth: true
@@ -68,69 +143,105 @@ ApplicationWindow {
             spacing: Theme.spacing
             RowLayout {
                 Layout.fillWidth: true
-                Label {
-                    text: [qsTr("Everything in sync"), qsTr("My watch"), qsTr("Watch faces"), "PC Companion", qsTr("Diagnostics"), qsTr("Settings")][app.section]
-                    font.pixelSize: app.compact ? 24 : 32
-                    font.bold: true
-                    wrapMode: Text.WordWrap
+                spacing: 10
+                AppButton { iconName: "left"; text: ""; available: app.historyPosition > 0; implicitWidth: 40; ToolTip.visible: hovered; ToolTip.text: qsTr("Back"); onClicked: app.goBack() }
+                ColumnLayout {
                     Layout.fillWidth: true
+                    spacing: 6
+                    Label {
+                        text: [qsTr("Overview"),qsTr("My watch"),qsTr("Watch faces"),"Companion",qsTr("Diagnostics"),qsTr("Desktop settings"),qsTr("Connect your watch")][app.section]
+                        font.pixelSize: app.compact ? 24 : 29
+                        font.weight: Font.Bold
+                        color: Theme.text
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                    }
+                    Caption {
+                        text: [qsTr("Your watch, at a glance"),qsTr("Make it yours"),qsTr("A new look for every day"),qsTr("A little closer to your computer"),qsTr("Connection details and troubleshooting"),qsTr("Personalize your desktop experience"),qsTr("One connection. Everything in sync.")][app.section]
+                        Layout.fillWidth: true
+                    }
                 }
-                BusyIndicator {
-                    running: app.session.busy && !app.session.polling
-                    implicitWidth: 26
-                    implicitHeight: 26
-                }
-                AppComboBox {
-                    objectName: "themeSelector"
-                    Layout.preferredWidth: 135
-                    model: [qsTr("System theme"), qsTr("Light theme"), qsTr("Dark theme")]
-                    currentIndex: Theme.mode
-                    Accessible.name: qsTr("Color theme")
-                    onActivated: Theme.mode = currentIndex
-                }
-                AppComboBox {
-                    id: languageSelector
-                    objectName: "languageSelector"
-                    Layout.preferredWidth: 120
-                    model: localization.languages
-                    textRole: "name"
-                    valueRole: "code"
-                    Accessible.name: qsTr("Interface language")
-                    currentIndex: indexOfValue(localization.language)
-                    onActivated: localization.language = currentValue
+                AppButton {
+                    iconName: app.session.connected && app.session.transport === "BLE" ? "bluetooth" : "connection"
+                    text: app.compact ? "" : app.session.connected ? app.session.transport : qsTr("Connect")
+                    implicitWidth: app.compact ? 44 : contentItem.implicitWidth + leftPadding + rightPadding
+                    onClicked: app.section = 6
                 }
             }
-            Caption {
-                text: app.session.connectionState
-                Layout.fillWidth: true
-            }
-            StackLayout {
+            SwipeView {
+                id: pages
+                Component.onCompleted: contentItem.highlightMoveDuration = 0
+                clip: true
+                onCurrentIndexChanged: if (app.section !== currentIndex) app.section = currentIndex
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 currentIndex: app.section
                 OverviewPage {
                     session: app.session
                     presentation: devicePresentation
+                    onConnectRequested: app.section = 6
+                    onWatchRequested: app.section = 1
+                    onFacesRequested: app.section = 2
+                    onCompanionRequested: tab => { companionPage.tab = tab; app.section = 3 }
                     onExportRequested: exportDialog.open()
                 }
-                WatchSettingsPage { service: app.settingsService }
+                WatchSettingsPage { service: app.settingsService; session: app.session; presentation: devicePresentation }
                 FaceGalleryPage { service: app.settingsService; studioService: app.studioService }
-                CompanionPage { service: app.toolsService }
+                CompanionPage { id: companionPage; service: app.toolsService }
                 AppPage {
                     StatusCard { session: app.session; presentation: devicePresentation; onExportRequested: exportDialog.open() }
-                    DeviceInfoCard { session: app.session; presentation: devicePresentation }
+                    Caption { text: app.session.connectionState + " · " + app.session.transport; Layout.fillWidth: true }
+                    Caption { text: app.session.error || qsTr("No connection errors"); Layout.fillWidth: true }
                     UsbLogCard { visible: Theme.developerMode; session: app.session }
                 }
                 DesktopSettingsPage { session: app.session; backgroundService: app.backgroundService }
+                AppPage { ConnectionCard { session: app.session; Layout.fillWidth: true } }
             }
-            Caption {
-                text: qsTr("Data stays on this computer and your watch.")
-                font.pixelSize: 10
+            Rectangle {
+                objectName: "pendingSettingsBar"
+                visible: app.settingsService.dirty
                 Layout.fillWidth: true
+                implicitHeight: pendingLayout.implicitHeight + 24
+                radius: 12; color: Theme.navSelected; border.color: Theme.accent
+                ColumnLayout {
+                    id: pendingLayout
+                    anchors.fill: parent; anchors.margins: 12; spacing: 8
+                    Label { text: qsTr("Unapplied changes · %1").arg(app.pendingChanges().length); font.bold: true; Layout.fillWidth: true }
+                    Caption { text: app.pendingChanges().join(" · "); Layout.fillWidth: true }
+                    Flow {
+                        Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 8
+                        AppButton { text: qsTr("Apply to watch"); iconName: "check"; primary: true; available: app.settingsService.supported && !app.session.busy; onClicked: app.settingsService.apply() }
+                        AppButton { text: qsTr("Discard"); iconName: "close"; onClicked: app.settingsService.discard() }
+                        Caption { text: app.settingsService.supported ? qsTr("Draft kept when switching pages") : qsTr("Reconnect this watch to apply"); width: 220 }
+                    }
+                }
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                AppIcon { name: "shield"; width: 12; height: 12; tint: Theme.muted }
+                Caption { text: qsTr("Data stays on this computer and your watch."); font.pixelSize: 10; Layout.fillWidth: true }
+                Caption { text: "FlinT Desktop"; font.pixelSize: 10 }
             }
         }
     }
 
+    Popup {
+        id: pairingPrompt
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(app.width - 32, 480)
+        modal: true
+        closePolicy: Popup.NoAutoClose
+        visible: !!app.session.pairingCode
+        background: Rectangle { color: Theme.surface; radius: 16; border.color: Theme.inputBorder }
+        contentItem: ColumnLayout {
+            Label { text: qsTr("Confirm pairing"); font.pixelSize: 22; font.bold: true }
+            Label { text: app.session.pairingCode || ""; font.pixelSize: 36; font.family: Theme.monoFamily }
+            Caption { text: qsTr("Compare this code with the watch serial monitor. Confirm on both devices only when the codes match."); Layout.fillWidth: true }
+            AppButton { text: qsTr("Codes match"); primary: true; onClicked: app.session.confirmPairing(true) }
+            AppButton { text: qsTr("Reject"); onClicked: app.session.confirmPairing(false) }
+        }
+    }
     Popup {
         id: toast
         parent: Overlay.overlay
@@ -153,6 +264,7 @@ ApplicationWindow {
     Connections {
         target: app.session
         property string previousMessage: ""
+        Component.onCompleted: previousMessage = app.session.notification
         function onStateChanged() {
             const message = app.session.error || app.session.notification
             if (message && message !== previousMessage) { toast.open(); toastTimer.restart() }

@@ -12,6 +12,9 @@
 DeviceSession::DeviceSession(QObject* parent, PortProvider portProvider)
     : QObject(parent), m_portProvider(std::move(portProvider))
 {
+    connect(this, &DeviceSession::stateChanged, this, &DeviceSession::viewStateChanged);
+    connect(this, &DeviceSession::dataChanged, this, &DeviceSession::viewStateChanged);
+    connect(&m_ble, &BleTransport::pairingCodeChanged, this, &DeviceSession::pairingCodeChanged);
     m_autoSyncTime = QSettings().value("connection/autoSyncTime",false).toBool();
     connect(&m_ble, &BleTransport::devicesChanged, this, &DeviceSession::portsChanged);
     connect(&m_ble, &BleTransport::received, this, &DeviceSession::acceptBytes);
@@ -53,6 +56,15 @@ QString DeviceSession::connectionState() const
     if (m_simulating || m_port.isOpen() || m_ble.active()) return tr("Checking device…");
     if (m_autoConnect) return tr("Searching for device…");
     return tr("Disconnected");
+}
+
+QString DeviceSession::viewState() const
+{
+    if (connecting()) return QStringLiteral("Connecting");
+    if (!m_error.isEmpty()) return QStringLiteral("Error");
+    if (m_ready) return m_simulating ? QStringLiteral("Simulated") : QStringLiteral("Connected");
+    if (!m_lastUpdated.isEmpty()) return QStringLiteral("StaleData");
+    return QStringLiteral("Disconnected");
 }
 
 void DeviceSession::refreshPorts()
@@ -200,6 +212,12 @@ void DeviceSession::openPort(const QString& path)
     m_port.clearError();
     appendLog(tr("Connecting: %1").arg(path));
     send(Command::Hello, "@HELLO\n");
+    // Native USB can drop the first transfer while the host opens its endpoint.
+    // Retry only the read-only handshake; never repeat settings or private writes.
+    QTimer::singleShot(300, this, [this, path] {
+        if (m_port.isOpen() && m_activePath == path && !m_usingBle && !m_simulating && m_pending == Command::Hello)
+            m_port.write("@HELLO\n");
+    });
 }
 
 void DeviceSession::disconnectDevice()
@@ -278,7 +296,8 @@ void DeviceSession::refreshStatus()
 
 void DeviceSession::syncTime()
 {
-    if (!m_ready || busy()) return;
+    if (!m_ready) return;
+    if (busy()) { m_syncOnConnect = true; return; }
     if (!m_info.value("capabilities").toArray().contains("time_sync")) return;
     m_sentEpoch = QDateTime::currentSecsSinceEpoch();
     send(Command::Time, "@TIME " + QByteArray::number(m_sentEpoch) + '\n');

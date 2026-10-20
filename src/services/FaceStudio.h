@@ -3,13 +3,21 @@
 #include <QFileSystemWatcher>
 class FaceStudio : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QVariantMap layers READ layers NOTIFY changed)
+    Q_PROPERTY(QString framePixels READ framePixels NOTIFY changed)
+    Q_PROPERTY(int frame READ frame NOTIFY changed)
     Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY changed)
     Q_PROPERTY(QVariantMap design READ design NOTIFY changed)
-    Q_PROPERTY(QVariantList library READ library NOTIFY changed)
+    Q_PROPERTY(QVariantList library READ library NOTIFY libraryChanged)
     Q_PROPERTY(QString state READ state NOTIFY changed)
     Q_PROPERTY(bool supported READ supported NOTIFY changed)
 public:
     explicit FaceStudio(DeviceSession* session, QObject* parent = nullptr);
+    QVariantMap layers() const;
+    QString framePixels() const;
+    int frame() const { return m_frame; }
+    Q_INVOKABLE void setFrame(int value) { if (value == 0 || value == 1) { m_frame = value; emit changed(); } }
+    Q_INVOKABLE void editLayer(const QString& key, const QVariant& value);
     bool liveReload() const { return m_liveReload; }
     void setLiveReload(bool enabled);
     QVariantMap design() const { return m_design; }
@@ -26,6 +34,7 @@ public:
     Q_INVOKABLE void install();
 signals:
     void changed();
+    void libraryChanged();
 private:
     static bool valid(const QVariantMap& design);
     void persist();
@@ -40,5 +49,7 @@ private:
     QVariantList m_library;
     QString m_state;
     int m_request = 0;
+    int m_frame = 0;
     bool m_selecting = false;
+    bool m_wasConnected = false;
 };

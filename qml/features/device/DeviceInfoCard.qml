@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Flint.Desktop
 
 AppCard {
+    id: card
     required property var session
     required property var presentation
     signal exportRequested
@@ -12,54 +13,28 @@ AppCard {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: 14
-        Label {
-            text: qsTr("About the device")
-            font.pixelSize: 20
-            font.bold: true
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-        }
-        Label {
-            text: "ID: " + presentation.value(session.info, "id") + "  ·  " + presentation.value(session.info, "board") + "  ·  " + presentation.value(session.info, "chip")
-            textFormat: Text.PlainText
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-        }
-        Caption {
-            text: qsTr("Capabilities: ") + (presentation.capabilities() || "—")
-            Layout.fillWidth: true
+        spacing: 20
+        RowLayout {
+            AppIcon { name: "info"; tint: "#83acff"; Layout.preferredWidth: 22; Layout.preferredHeight: 22 }
+            Label { text: qsTr("About the device"); font.pixelSize: 20; font.weight: Font.DemiBold; Layout.fillWidth: true }
         }
         GridLayout {
             Layout.fillWidth: true
-            columns: width < 440 ? 1 : width < 740 ? 2 : 3
-            columnSpacing: 10
-            rowSpacing: 10
-            MetricCard {
-                Layout.fillWidth: true
-                label: qsTr("Clock language")
-                detail: presentation.setting("language", {
-                    0: qsTr("Russian"),
-                    1: "English"
-                })
-            }
-            MetricCard {
-                Layout.fillWidth: true
-                label: qsTr("Time format")
-                detail: presentation.setting("hour_format", {
-                    0: qsTr("24 hours"),
-                    1: qsTr("12 hours")
-                })
-            }
-            MetricCard {
-                Layout.fillWidth: true
-                label: qsTr("Show seconds")
-                detail: presentation.setting("show_seconds", {
-                    0: qsTr("Off"),
-                    1: qsTr("On"),
-                    255: qsTr("Automatic")
-                })
-            }
+            columns: 2
+            columnSpacing: 16
+            rowSpacing: 18
+            Caption { text: qsTr("Model") }
+            Label { text: card.presentation.value(card.session.info,"model"); textFormat: Text.PlainText; font.pixelSize: 13; Layout.fillWidth: true; elide: Text.ElideRight }
+            Caption { text: qsTr("Firmware") }
+            Label { text: card.presentation.value(card.session.info,"firmware"); font.pixelSize: 13; Layout.fillWidth: true }
+            Caption { text: qsTr("Chip") }
+            Label { text: card.presentation.value(card.session.info,"chip"); font.pixelSize: 13; Layout.fillWidth: true }
+            Caption { text: qsTr("Device ID") }
+            Label { text: card.presentation.value(card.session.info,"id"); font.pixelSize: 12; font.family: Theme.monoFamily; Layout.fillWidth: true; elide: Text.ElideRight }
+            Caption { text: qsTr("Screen") }
+            Label { text: card.session.info.screen ? card.session.info.screen.width + " × " + card.session.info.screen.height : "—"; font.pixelSize: 13; Layout.fillWidth: true }
+            Caption { text: qsTr("Free memory") }
+            Label { text: card.session.status.free_heap_bytes !== undefined ? Math.round(card.session.status.free_heap_bytes / 1024) + " KB" : "—"; font.pixelSize: 13; Layout.fillWidth: true }
         }
     }
 }

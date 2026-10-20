@@ -28,7 +28,7 @@ AppCard {
             text: qsTr("Connection events and data exchanged with the clock.")
             Layout.fillWidth: true
         }
-        TextField {
+        AppTextField {
             id: command
             Layout.fillWidth: true
             placeholderText: qsTr("Protocol operation, for example SETTINGS")
