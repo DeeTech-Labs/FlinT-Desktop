@@ -38,13 +38,18 @@
       "Apply to watch": "Применить к часам",
       "Discard": "Отменить",
       "Draft kept when switching pages": "Черновик сохраняется при переходах",
-      "Reconnect this watch to apply": "Подключи эти часы для применения"
+      "Reconnect this watch to apply": "Подключи эти часы для применения",
+      "Time, display and saved profiles": "Время, экран и сохранённые профили",
+      "Choose, create and install watch faces": "Выбор, создание и установка циферблатов",
+      "Notes, focus and computer metrics": "Заметки, фокус и показатели компьютера",
+      "Telemetry, screen inspection and reports": "Телеметрия, просмотр экрана и отчёты"
     },
     "AppNavigation": {
       "Simulator": "Симулятор",
       "Connected via %1": "Подключено через %1",
       "Offline · saved data": "Нет связи · сохранённые данные",
-      "No device selected": "Устройство не выбрано"
+      "No device selected": "Устройство не выбрано",
+      "Connection": "Подключение"
     },
     "DeviceHero": {
       "NO LIVE CONNECTION": "НЕТ АКТИВНОГО ПОДКЛЮЧЕНИЯ",
@@ -61,7 +66,11 @@
       "Sync time": "Синхронизировать",
       "Open settings": "Открыть настройки",
       "Last reported time": "Последнее время устройства",
-      "Illustration · device data": "Иллюстрация · данные устройства"
+      "Illustration · device data": "Иллюстрация · данные устройства",
+      "Connect your watch": "Подключить часы",
+      "Your time.\nYour own rhythm.": "Твоё время.\nТвой ритм.",
+      "A little device. A space of your own.": "Небольшие часы. Пространство для себя.",
+      "Make it yours": "Настроить под себя"
     },
     "OverviewPage": {
       "My watch": "Мои часы",
@@ -75,7 +84,8 @@
       "Focus": "Фокус",
       "Make time for what matters": "Таймер для важных дел",
       "Manage USB and Bluetooth": "Устройства и соединение",
-      "Your watch data stays on this computer.": "Данные часов остаются на этом компьютере."
+      "Your watch data stays on this computer.": "Данные часов остаются на этом компьютере.",
+      "Make room for your day": "Место для твоего дня"
     },
     "WatchPreview": {
       "Device data": "Данные устройства",
@@ -124,7 +134,10 @@
       "Light theme": "Светлая тема",
       "Dark theme": "Тёмная тема",
       "Color theme": "Тема оформления",
-      "Interface language": "Язык интерфейса"
+      "Interface language": "Язык интерфейса",
+      "Appearance": "Внешний вид",
+      "Connection and background": "Подключение и фоновая работа",
+      "Developer tools": "Инструменты разработчика"
     },
     "DevicePresentation": {
       "Disconnected": "Отключено",
@@ -151,7 +164,11 @@
       "Notes": "Заметки",
       "Focus": "Фокус",
       "System": "Система",
-      "Integrations": "Интеграции"
+      "Integrations": "Интеграции",
+      "Timeline": "История",
+      "%1 min": "%1 мин",
+      "%1 / %2 bytes": "%1 / %2 байт",
+      "Your device activity will appear here.": "Здесь появится история действий с часами."
     },
     "CompanionTools": {
       "Input events lost; skipped for safety": "Часть событий ввода потеряна; выполнение пропущено",
@@ -208,7 +225,10 @@
       "Favorites only": "Только избранное",
       "Edit design": "Редактировать",
       "Favorite": "Избранное",
-      "Open Face Studio": "Открыть Face Studio"
+      "Open Face Studio": "Открыть Face Studio",
+      "No faces match your search.": "По вашему запросу ничего не найдено.",
+      "Create your first design in Face Studio.": "Создайте свой первый циферблат в Face Studio.",
+      "Draft preview · sample time": "Эскиз · пример времени"
     },
     "FaceStudio": {
       "This firmware does not support layers and animation.": "Эта прошивка не поддерживает слои и анимацию."
@@ -236,6 +256,19 @@
       "Pixel comparison passed. Screenshot saved.": "Пиксели совпадают. Снимок сохранён.",
       "Pixels match, but the screenshot could not be saved.": "Пиксели совпадают, но сохранить снимок не удалось.",
       "Pixel mismatch: preview has been disabled.": "Пиксели различаются: предпросмотр отключён."
+    },
+    "DiagnosticsPage": {
+      "Telemetry": "Телеметрия",
+      "Watch screen": "Экран часов",
+      "Connection log": "Журнал подключения",
+      "No connection errors": "Ошибок подключения нет",
+      "Watch controls": "Управление часами",
+      "Previous": "Назад по списку",
+      "Enter": "Ввод",
+      "Next": "Вперёд по списку",
+      "Back": "Вернуться",
+      "Settings": "Настройки",
+      "USB input replaces physical buttons on this board.": "На этой плате команды USB заменяют физические кнопки."
     }
   }
 }

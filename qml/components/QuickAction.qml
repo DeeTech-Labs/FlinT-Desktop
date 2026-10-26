@@ -7,15 +7,29 @@ Button {
     id: tile
     property string iconName: "grid"
     property string detail: ""
-    implicitHeight: 132
-    implicitWidth: 156
-    padding: 18
+    implicitHeight: Math.max(76, contentItem.implicitHeight + 24)
+    implicitWidth: 220
+    padding: 12
     hoverEnabled: true
-    contentItem: Column {
-        spacing: 9
-        AppIcon { name: tile.iconName; width: 25; height: 25; tint: tile.hovered ? Theme.accent : "#90b5ff" }
-        Text { text: tile.text; color: Theme.text; font.pixelSize: 13; font.weight: Font.DemiBold; width: parent.width; elide: Text.ElideRight }
-        Text { text: tile.detail; color: Theme.muted; font.pixelSize: 11; width: parent.width; wrapMode: Text.WordWrap }
+    contentItem: RowLayout {
+        spacing: 10
+        Rectangle {
+            Layout.preferredWidth: 32; Layout.preferredHeight: 36
+            radius: 9; color: Theme.metric
+            AppIcon { anchors.centerIn: parent; name: tile.iconName; width: 20; height: 20; tint: Theme.accent }
+        }
+        ColumnLayout {
+            Layout.fillWidth: true; Layout.minimumWidth: 0
+            spacing: 6
+            Text { font.family: Theme.fontFamily; text: tile.text; color: Theme.text; font.pixelSize: 13; font.weight: Font.DemiBold; Layout.fillWidth: true; elide: Text.ElideRight }
+            Text { font.family: Theme.fontFamily; text: tile.detail; color: Theme.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        }
+        AppIcon { name: "right"; tint: tile.hovered ? Theme.accent : Theme.muted; Layout.preferredWidth: 14; Layout.preferredHeight: 14 }
     }
-    background: Rectangle { radius: 13; color: tile.down ? Theme.navSelected : tile.hovered ? Theme.buttonHover : Theme.surface; border.color: tile.hovered ? "#3b6198" : Theme.divider }
+    background: Rectangle {
+        radius: 12
+        color: tile.down ? Theme.metric : tile.hovered ? Theme.buttonHover : Theme.surface
+        border.color: tile.visualFocus ? Theme.accent : "transparent"
+        Behavior on color { ColorAnimation { duration: Theme.animationDuration } }
+    }
 }

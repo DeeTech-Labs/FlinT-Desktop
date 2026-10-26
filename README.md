@@ -64,7 +64,7 @@ client are covered by CI; Windows/macOS are target platforms, not validated pack
 
 ## Quick start
 
-**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth and Widgets;
+**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth, Widgets and Shader Tools;
 CMake 3.21+; a C++17 compiler. Python 3 is needed only for integration tests.
 
 ```bash
@@ -80,7 +80,7 @@ In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific not
 <details>
 <summary><b>Connect a device</b></summary>
 
-1. Select USB or Bluetooth LE on the overview. For BLE, scan and select Spark, then connect; accept system pairing if requested. Enable NimBLE in the firmware build. For USB, connect Spark. Firmware must support `HELLO`, `INFO` and `STATUS`.
+1. Open Connection (the connection button in the header) and select USB or Bluetooth LE. For BLE, scan and select Spark, then connect; accept system pairing if requested. Enable NimBLE in the firmware build. For USB, connect Spark. Firmware must support `HELLO`, `INFO` and `STATUS`.
 2. Close any serial monitor or `sync_time.py --watch` using the same port.
 3. Refresh the port list, select the device and connect.
 4. The app polls status every two seconds. Use the time-sync button to set UTC

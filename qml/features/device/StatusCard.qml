@@ -12,7 +12,7 @@ AppCard {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: 18
+        spacing: 14
         RowLayout {
             Layout.fillWidth: true
             Label {
@@ -77,14 +77,7 @@ AppCard {
             Layout.preferredHeight: childrenRect.height
             spacing: 10
             AppButton {
-                busy: session.busy
-                text: qsTr("Sync time")
-                primary: true
-                available: session.connected && (session.info.capabilities || []).indexOf("time_sync") >= 0
-                onClicked: session.syncTime()
-            }
-            AppButton {
-                busy: session.busy
+                busy: session.interactionBusy
                 text: qsTr("Refresh now")
                 available: session.connected
                 onClicked: session.refreshStatus()

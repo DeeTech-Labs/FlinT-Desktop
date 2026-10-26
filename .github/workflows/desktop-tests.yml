@@ -28,7 +28,7 @@ jobs:
         uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
           version: '6.10.2'
-          modules: "qtserialport qtconnectivity"
+          modules: "qtserialport qtconnectivity qtshadertools"
           cache: true
       - name: Set up MSVC
         if: runner.os == 'Windows'

@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QVariantList>
 #include <QHash>
+#include <QQueue>
 #include <functional>
 
 class DeviceSession : public QObject
@@ -28,6 +29,7 @@ class DeviceSession : public QObject
     Q_PROPERTY(bool connecting READ connecting NOTIFY stateChanged)
     Q_PROPERTY(bool connected READ connected NOTIFY stateChanged)
     Q_PROPERTY(bool busy READ busy NOTIFY stateChanged)
+    Q_PROPERTY(bool interactionBusy READ interactionBusy NOTIFY stateChanged)
     Q_PROPERTY(bool polling READ polling NOTIFY stateChanged)
     Q_PROPERTY(QString connectionState READ connectionState NOTIFY stateChanged)
     Q_PROPERTY(QString error READ error NOTIFY stateChanged)
@@ -58,6 +60,12 @@ public:
     bool connecting() const { return !m_ready && (m_port.isOpen() || m_ble.active()); }
     bool connected() const { return m_ready; }
     bool busy() const { return m_pending != Command::None; }
+    bool interactionBusy() const {
+        return (busy() && !m_ready) || m_pending == Command::Time
+            || (m_pending == Command::Request && !QStringList{
+                    "SCREEN", "SCENE", "SHOT", "PIXELS", "PC", "APPS", "EVENTS", "SETTINGS", "TIMEZONES", "FACES"
+                }.contains(m_requestOperation));
+    }
     bool polling() const { return m_pending == Command::Status; }
     QString connectionState() const;
     QString viewState() const;
@@ -112,6 +120,11 @@ private:
     bool m_usingBle = false;
     QString m_lastBleId;
     qint64 m_bleRetryAfter = 0;
+    struct DeferredRequest { int id; QString operation; QString arguments; };
+    void startRequest(const DeferredRequest& request);
+    QQueue<DeferredRequest> m_deferredRequests;
+    QString m_requestOperation;
+    bool m_refreshQueued = false;
     QSerialPort m_port;
     QTimer m_timeout;
     QTimer m_poll;

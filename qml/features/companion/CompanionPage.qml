@@ -14,7 +14,7 @@ AppPage {
     SectionTabs {
         id: companionTabs
         Layout.fillWidth: true
-        labels: [qsTr("Notes"), qsTr("Focus"), qsTr("System"), qsTr("Integrations")]
+        labels: [qsTr("Notes"), qsTr("Focus"), qsTr("System"), qsTr("Integrations"), qsTr("Timeline")]
         currentIndex: page.tab
         onCurrentIndexChanged: page.tab = currentIndex
     }
@@ -26,7 +26,7 @@ AppPage {
             id: actionsContent
             anchors.fill: parent
             spacing: 12
-            Label { text: "FlinT Actions"; font.pixelSize: 24; font.bold: true }
+            Label { text: "FlinT Actions"; font.pixelSize: 24; font.weight: Font.DemiBold }
             Caption { text: qsTr("Buttons are emulated through the serial monitor on this board."); Layout.fillWidth: true }
             AppSwitch {
                 text: qsTr("Enable actions for this connection")
@@ -58,7 +58,7 @@ AppPage {
         implicitHeight: content.implicitHeight + topPadding + bottomPadding
         ColumnLayout {
             id: content; anchors.fill: parent; spacing: 14
-            Label { text: "PC Companion"; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
+            Label { text: "PC Companion"; font.pixelSize: 24; font.weight: Font.DemiBold; Layout.fillWidth: true }
             Caption { text: page.service.supported ? page.service.state : qsTr("Connect a device with companion support."); Layout.fillWidth: true }
             AppSwitch { Layout.fillWidth: true; Layout.minimumWidth: 0; Component.onCompleted: contentItem.wrapMode = Text.WordWrap; text: qsTr("Send computer CPU and RAM to watch"); enabled: page.service.metricsAvailable; checked: page.service.metricsEnabled; onToggled: page.service.metricsEnabled = checked }
             Caption { text: page.service.metricsAvailable ? qsTr("CPU: %1% · RAM: %2%").arg(page.service.cpu < 0 ? "—" : page.service.cpu).arg(page.service.memory < 0 ? "—" : page.service.memory) : qsTr("System metrics are currently available on Linux."); Layout.fillWidth: true }
@@ -72,13 +72,43 @@ AppPage {
         implicitHeight: focusContent.implicitHeight + topPadding + bottomPadding
         ColumnLayout {
             id: focusContent; anchors.fill: parent; spacing: 14
-            Label { text: qsTr("Focus session"); font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
-            Label { text: Math.floor(page.service.focusRemaining / 60).toString().padStart(2,"0") + ":" + (page.service.focusRemaining % 60).toString().padStart(2,"0"); font.pixelSize: 42; color: Theme.accent; Layout.fillWidth: true }
+            Label { text: qsTr("Focus session"); font.pixelSize: 24; font.weight: Font.DemiBold; Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+                implicitHeight: 164
+                AmbientAccent {
+                    objectName: "focusAccent"
+                    anchors.fill: parent
+                    kind: 0
+                    active: page.tab === 1 && (!page.inSwipeView || page.currentSwipePage)
+                    moving: page.service.focusRemaining > 0
+                    strength: moving ? 1.0 : 0.45
+                }
+                Label {
+                    anchors.centerIn: parent
+                    text: Math.floor(page.service.focusRemaining / 60).toString().padStart(2,"0") + ":" + (page.service.focusRemaining % 60).toString().padStart(2,"0")
+                    font.pixelSize: parent.width < 420 ? 52 : 62
+                    font.family: Theme.monoFamily; font.weight: Font.Light
+                    color: Theme.text
+                }
+            }
+            Flow {
+                Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 8
+                Repeater {
+                    model: [15, 25, 45, 60]
+                    delegate: AppButton {
+                        required property int modelData
+                        text: qsTr("%1 min").arg(modelData)
+                        primary: minutes.value === modelData
+                        onClicked: minutes.value = modelData
+                    }
+                }
+            }
             SpinBox { id: minutes; from: 1; to: 1440; value: 25; editable: true; Accessible.name: qsTr("Focus minutes") }
             Flow {
                 Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 10
                 AppButton { iconName: "play"; text: qsTr("Start focus"); primary: true; available: page.service.supported; onClicked: page.service.startFocus(minutes.value) }
-                AppButton { iconName: "close"; text: qsTr("Stop focus"); available: page.service.supported; onClicked: page.service.stopFocus() }
+                AppButton { iconName: "close"; text: qsTr("Stop focus"); available: page.service.supported && page.service.focusRemaining > 0; onClicked: page.service.stopFocus() }
             }
             Caption { text: qsTr("The watch timer keeps running when the computer disconnects."); Layout.fillWidth: true }
         }
@@ -89,24 +119,26 @@ AppPage {
         implicitHeight: noteContent.implicitHeight + topPadding + bottomPadding
         ColumnLayout {
             id: noteContent; anchors.fill: parent; spacing: 14
-            Label { text: qsTr("Quick note"); font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
-            AppTextField { id: note; text: page.service.note; placeholderText: qsTr("Short text for your watch"); maximumLength: 96; Layout.fillWidth: true }
+            Label { text: qsTr("Quick note"); font.pixelSize: 24; font.weight: Font.DemiBold; Layout.fillWidth: true }
+            AppTextField { id: note; objectName: "noteEditor"; property int utf8Length: encodeURIComponent(text).replace(/%[A-F\d]{2}/gi, "x").length; text: page.service.note; placeholderText: qsTr("Short text for your watch"); maximumLength: 96; Layout.fillWidth: true }
             Flow {
                 Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 10
-                AppButton { iconName: "note"; text: qsTr("Send note"); available: page.service.supported; onClicked: page.service.sendNote(note.text) }
+                AppButton { iconName: "note"; text: qsTr("Send note"); primary: true; available: page.service.supported && note.text.trim().length > 0 && note.utf8Length <= 96; onClicked: page.service.sendNote(note.text) }
                 AppButton { iconName: "note"; text: qsTr("Send clipboard text"); available: page.service.supported; onClicked: page.service.sendClipboard() }
             }
+            Caption { text: qsTr("%1 / %2 bytes").arg(note.utf8Length).arg(96); color: note.utf8Length > 96 ? Theme.error : Theme.muted; Layout.fillWidth: true }
             Caption { text: qsTr("Notes are stored on the watch. Maximum size is 96 UTF-8 bytes."); Layout.fillWidth: true }
         }
     }
     AppCard {
-        visible: page.tab === 3
+        visible: page.tab === 4
         Layout.fillWidth: true
         implicitHeight: history.implicitHeight + topPadding + bottomPadding
         ColumnLayout {
             id: history; anchors.fill: parent; spacing: 10
-            Label { text: qsTr("Device timeline"); font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
+            Label { text: qsTr("Device timeline"); font.pixelSize: 24; font.weight: Font.DemiBold; Layout.fillWidth: true }
             AppButton { text: qsTr("Export timeline…"); onClicked: timelineFile.open() }
+            Caption { visible: !page.service.timeline.length; text: qsTr("Your device activity will appear here."); Layout.fillWidth: true }
             Repeater {
                 model: page.service.timeline.slice(-12).reverse()
                 delegate: Caption { required property var modelData; text: modelData.at + " · " + modelData.event; textFormat: Text.PlainText; Layout.fillWidth: true }

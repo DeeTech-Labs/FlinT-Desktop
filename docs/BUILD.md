@@ -1,7 +1,7 @@
 # Build and run — FlinT Desktop
 
 Requirements: C++17, CMake 3.21+, Qt 6.5+ with Qt Quick, Quick Controls,
-Quick Dialogs, Serial Port, Bluetooth and Widgets. Qt Test is required when `BUILD_TESTING=ON` (the default). Python 3 is required
+Quick Dialogs, Serial Port, Bluetooth, Widgets and Shader Tools. Qt Test is required when `BUILD_TESTING=ON` (the default). Python 3 is required
 for protocol and catalog tests. Disable tests for production-only builds with
 `-DBUILD_TESTING=OFF`.
 
@@ -37,7 +37,7 @@ python3 -m unittest discover -s tests -v
 ```
 
 The CTest suite verifies JSON language switching, timezone formatting and all
-three pages at widths 540, 760, 1024 and 1440 in both languages. It fails on QML
+seven pages and their inner tabs at widths 540, 760, 1024 and 1440 in both languages. It fails on QML
 warnings or horizontally overflowing text. Set `FLINT_SCREENSHOT_DIR` to an
 existing directory when running `flint_ui_tests` to save rendered screenshots.
 The Python catalog checks also run on Windows; USB emulator tests require POSIX.
@@ -91,3 +91,23 @@ Replace the address with your device's BLE address. This explicit opt-in check
 reads settings, synchronizes the real clock, verifies that private Companion
 requests are rejected over BLE, and disconnects/reconnects twice. It does not
 flash firmware. Normal test runs skip hardware access.
+
+### Rendering
+
+Qt Shader Tools (`qtshadertools` in the Qt installer) compiles the hero fragment
+shader to portable QSB assets for the application and UI test executable. The
+hero uses one procedural draw without blur passes. Its ambient animation is
+capped at 30 Hz and pauses off-page, minimized, unfocused, or with animations
+disabled. The shader has no pointer input. Software rendering retains a static
+composition. Regular UI checks use the offscreen software renderer and do not
+require a particular GPU.
+
+The Lato regular, semibold and black fonts are bundled under the SIL Open Font
+License in `assets/fonts/OFL.txt`, so text layout is consistent across platforms.
+
+On Linux, the GUI prefers an installed NVIDIA device using PRIME render offload,
+configured before Qt opens its display connection. Explicit PRIME environment
+settings and the software backend take precedence. `--system-gpu` keeps system
+selection; command-line probes also keep system selection. To inspect the actual
+renderer, start with `QSG_INFO=1` and look for the OpenGL renderer in the log.
+This selection affects only this process, not desktop-wide GPU preferences.

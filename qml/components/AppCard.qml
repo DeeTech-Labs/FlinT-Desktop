@@ -5,10 +5,10 @@ import Flint.Desktop
 
 Pane {
     Layout.minimumWidth: 0
-    padding: 22
+    padding: 18
     background: Rectangle {
         color: Theme.surface
         radius: Theme.cardRadius
-        border.color: Theme.divider
+
     }
 }

@@ -126,7 +126,7 @@ bool FaceStudio::exportDesign(const QUrl& destination) {
     m_state = okay ? tr("Design exported") : tr("Could not export design"); emit changed(); return okay;
 }
 void FaceStudio::install() {
-    if (!supported() || m_request || m_session->busy() || !valid(m_design)) return;
+    if (!supported() || m_request || !valid(m_design)) return;
     auto args = QString("%1 %2 %3 %4 %5 %6").arg(m_design.value("background").toString().mid(1),m_design.value("foreground").toString().mid(1))
         .arg(m_design.value("timeY").toInt()).arg(m_design.value("dateY").toInt()).arg(m_design.value("showDate").toBool() ? 1 : 0).arg(m_design.value("pixels").toString());
     if (m_design.contains("layers")) {

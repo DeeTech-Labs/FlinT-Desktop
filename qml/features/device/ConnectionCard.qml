@@ -37,7 +37,7 @@ AppCard {
         Label {
             text: qsTr("Connection")
             font.pixelSize: 18
-            font.bold: true
+            font.weight: Font.DemiBold
         }
         Rectangle {
             visible: !!card.session.error
@@ -46,7 +46,7 @@ AppCard {
             radius: 10; color: Theme.base; border.color: Theme.error
             ColumnLayout {
                 id: errorContent; anchors.fill: parent; anchors.margins: 12; spacing: 8
-                Label { text: qsTr("Connection needs attention"); font.bold: true; color: Theme.error; Layout.fillWidth: true }
+                Label { text: qsTr("Connection needs attention"); font.weight: Font.DemiBold; color: Theme.error; Layout.fillWidth: true }
                 Caption { text: card.session.error; Layout.fillWidth: true }
                 Caption { text: card.wireless ? qsTr("Check Bluetooth, distance and pairing access. On this board, confirm pairing through the serial monitor.") : qsTr("Check the USB cable and close other serial monitors. Refresh the port list and reconnect."); Layout.fillWidth: true }
             }
@@ -56,7 +56,7 @@ AppCard {
             currentIndex: card.wireless ? 1 : 0
             displayText: session.transport === "SIMULATOR" && session.connected ? qsTr("Simulator") : currentText
             model: [qsTr("USB connection"), qsTr("Bluetooth LE")]
-            enabled: !session.connected && !session.busy && !session.connecting
+            enabled: !session.connected && !session.interactionBusy && !session.connecting
             onActivated: card.wireless = currentIndex === 1
         }
         GridLayout {
@@ -70,16 +70,16 @@ AppCard {
                 Layout.columnSpan: parent.columns === 2 ? 2 : 1
                 Layout.minimumWidth: 0
                 Layout.fillWidth: true
-                implicitHeight: 42
+                implicitHeight: Theme.controlHeight
                 visible: session.transport !== "SIMULATOR" || !session.connected
                 model: card.wireless ? session.bleDevices : session.ports
                 textRole: "label"
                 valueRole: "path"
-                enabled: !session.connected && !session.busy && !session.connecting
+                enabled: !session.connected && !session.interactionBusy && !session.connecting
                 displayText: count ? currentText : (card.wireless ? qsTr("Scan for nearby Spark devices") : qsTr("No USB devices found"))
             }
             AppButton {
-                busy: session.busy
+                busy: session.interactionBusy
                 visible: session.transport !== "SIMULATOR" || !session.connected
                 text: session.bleScanning ? qsTr("Scanning…") : qsTr("Refresh")
                 available: !session.connected
@@ -87,11 +87,11 @@ AppCard {
             }
             AppButton {
                 primary: true
-                available: session.connected || session.busy || session.connecting || ports.count > 0
-                text: session.connected || session.busy || session.connecting ? qsTr("Disconnect") : qsTr("Connect")
-                enabled: session.connected || session.busy || session.connecting || ports.count > 0
+                available: session.connected || session.interactionBusy || session.connecting || ports.count > 0
+                text: session.connected || session.interactionBusy || session.connecting ? qsTr("Disconnect") : qsTr("Connect")
+                enabled: session.connected || session.interactionBusy || session.connecting || ports.count > 0
                 onClicked: {
-                    if (session.connected || session.busy || session.connecting)
+                    if (session.connected || session.interactionBusy || session.connecting)
                         session.disconnectDevice();
                     else if (card.wireless)
                         session.connectBle(ports.currentValue);
@@ -113,13 +113,13 @@ AppCard {
         ColumnLayout {
             visible: card.session.connected && card.session.transport === "USB"
             Layout.fillWidth: true
-            Label { text: qsTr("Trusted Bluetooth devices"); font.pixelSize: 18; font.bold: true; Layout.fillWidth: true }
+            Label { text: qsTr("Trusted Bluetooth devices"); font.pixelSize: 18; font.weight: Font.DemiBold; Layout.fillWidth: true }
             Caption { text: qsTr("This board uses serial confirmation instead of a physical button. Disconnect USB in Desktop before connecting through BLE, then use the serial monitor to confirm the matching code."); Layout.fillWidth: true }
             Flow {
                 Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 10
-                AppButton { iconName: "bluetooth"; text: qsTr("Open pairing window"); available: !card.session.busy && !card.pairingRequest; onClicked: card.managePairing("open") }
-                AppButton { iconName: "close"; text: qsTr("Close pairing window"); available: !card.session.busy && !card.pairingRequest; onClicked: card.managePairing("reject") }
-                AppButton { iconName: "sync"; text: qsTr("Refresh trusted devices"); available: !card.session.busy && !card.pairingRequest; onClicked: card.managePairing("status") }
+                AppButton { iconName: "bluetooth"; text: qsTr("Open pairing window"); available: !card.session.interactionBusy && !card.pairingRequest; onClicked: card.managePairing("open") }
+                AppButton { iconName: "close"; text: qsTr("Close pairing window"); available: !card.session.interactionBusy && !card.pairingRequest; onClicked: card.managePairing("reject") }
+                AppButton { iconName: "sync"; text: qsTr("Refresh trusted devices"); available: !card.session.interactionBusy && !card.pairingRequest; onClicked: card.managePairing("status") }
             }
             Caption { text: card.pairingMessage; Layout.fillWidth: true }
             Repeater {
@@ -128,20 +128,7 @@ AppCard {
                     required property string modelData
                     Layout.fillWidth: true
                     Caption { text: modelData; Layout.fillWidth: true }
-                    AppButton { iconName: "shield"; text: qsTr("Revoke access"); available: !card.session.busy && !card.pairingRequest; onClicked: card.managePairing("revoke=" + modelData) }
-                }
-            }
-            Label { text: qsTr("Watch input emulation"); font.pixelSize: 18; font.bold: true; Layout.fillWidth: true }
-            Flow {
-                Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 10
-                Repeater {
-                    model: [{key:"enter", label:qsTr("Enter")}, {key:"settings",label:qsTr("Settings")}, {key:"previous",label:qsTr("Previous")}, {key:"next",label:qsTr("Next")}, {key:"plus",label:"+"}, {key:"minus",label:"−"}, {key:"back",label:qsTr("Back")}]
-                    delegate: AppButton {
-                        required property var modelData
-                        text: modelData.label
-                        available: !card.session.busy
-                        onClicked: { if (card.screenService && card.screenService.supported) card.screenService.sendKey(modelData.key); else card.session.request("KEY",modelData.key) }
-                    }
+                    AppButton { iconName: "shield"; text: qsTr("Revoke access"); available: !card.session.interactionBusy && !card.pairingRequest; onClicked: card.managePairing("revoke=" + modelData) }
                 }
             }
         }

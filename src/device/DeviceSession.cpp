@@ -153,16 +153,27 @@ void DeviceSession::connectPort(const QString& path)
 
 int DeviceSession::request(const QString& operation, const QString& arguments)
 {
-    if (!m_ready || busy() || !m_info.value("capabilities").toArray().contains("control")) return 0;
+    if (!m_ready || m_deferredRequests.size() >= 16 || !m_info.value("capabilities").toArray().contains("control")) return 0;
     if (!QRegularExpression("^[A-Z]{1,23}$").match(operation).hasMatch()
         || arguments.size() > 287 || !QRegularExpression("^[ -?A-~]*$").match(arguments).hasMatch()) return 0;
-    m_requestId = m_nextRequest++;
+    const int id = m_nextRequest++;
     if (m_nextRequest > 999999999) m_nextRequest = 1;
-    const auto frame = "@REQ " + QByteArray::number(m_requestId) + ' ' + operation.toLatin1()
-        + (arguments.isEmpty() ? QByteArray{} : ' ' + arguments.toLatin1()) + '\n';
-    const int id = m_requestId;
+    const DeferredRequest queued{id, operation, arguments};
+    if (busy() || !m_deferredRequests.isEmpty()) {
+        m_deferredRequests.enqueue(queued);
+        return id;
+    }
+    startRequest(queued);
+    return m_pending == Command::Request && m_requestId == id ? id : 0;
+}
+
+void DeviceSession::startRequest(const DeferredRequest& request)
+{
+    m_requestId = request.id;
+    m_requestOperation = request.operation;
+    const auto frame = "@REQ " + QByteArray::number(request.id) + ' ' + request.operation.toLatin1()
+        + (request.arguments.isEmpty() ? QByteArray{} : ' ' + request.arguments.toLatin1()) + '\n';
     send(Command::Request, frame);
-    return m_pending == Command::Request ? id : 0;
 }
 
 void DeviceSession::startSimulator()
@@ -232,6 +243,9 @@ void DeviceSession::closePort()
     m_timeout.stop();
     m_poll.stop();
     m_pending = Command::None;
+    const auto abandoned = m_deferredRequests;
+    m_deferredRequests.clear();
+    m_refreshQueued = false;
     m_ready = false;
     m_simulating = false;
     m_closing = true;
@@ -241,6 +255,8 @@ void DeviceSession::closePort()
     m_rx.clear();
     m_discardLine = false;
     emit stateChanged();
+    for (const auto& request : abandoned)
+        emit requestFinished(request.id, false, {}, tr("Device disconnected."));
 }
 
 void DeviceSession::fail(const QString& message)
@@ -287,11 +303,20 @@ void DeviceSession::finishCommand()
     m_timeout.stop();
     m_pending = Command::None;
     emit stateChanged();
+    // Reply consumers finish correlating the previous response before queued UI work starts.
+    QTimer::singleShot(0, this, [this] {
+        if (!m_ready || busy()) return;
+        if (!m_deferredRequests.isEmpty()) startRequest(m_deferredRequests.dequeue());
+        else if (m_refreshQueued) { m_refreshQueued = false; refreshStatus(); }
+    });
 }
 
 void DeviceSession::refreshStatus()
 {
-    if (m_ready && !busy()) send(Command::Status, "@STATUS\n");
+    if (!m_ready) return;
+    if (busy()) { m_refreshQueued = true; return; }
+    m_refreshQueued = false;
+    send(Command::Status, "@STATUS\n");
 }
 
 void DeviceSession::syncTime()

@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QWindow>
+#include <QDir>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QCommandLineParser>
@@ -18,6 +19,21 @@
 
 int main(int argc, char* argv[])
 {
+#ifdef Q_OS_LINUX
+    bool systemGpu = false;
+    for (int index = 1; index < argc; ++index)
+        if (QByteArray(argv[index]) == "--system-gpu" || QByteArray(argv[index]) == "--probe") systemGpu = true;
+    const bool nvidiaAvailable = !QDir(QStringLiteral("/proc/driver/nvidia/gpus"))
+                                     .entryList(QDir::Dirs | QDir::NoDotAndDotDot).isEmpty();
+    if (!systemGpu && nvidiaAvailable && !qEnvironmentVariableIsSet("__NV_PRIME_RENDER_OFFLOAD")
+        && !qEnvironmentVariableIsSet("__GLX_VENDOR_LIBRARY_NAME")
+        && qEnvironmentVariable("QT_QUICK_BACKEND") != "software") {
+        // Select the render device before Qt creates a display connection or a graphics context.
+        qputenv("__NV_PRIME_RENDER_OFFLOAD", "1");
+        qputenv("__GLX_VENDOR_LIBRARY_NAME", "nvidia");
+        qputenv("__VK_LAYER_NV_optimus", "NVIDIA_only");
+    }
+#endif
     QQuickStyle::setStyle(QStringLiteral("Basic"));
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName(QStringLiteral("DeeTech Labs"));
@@ -29,6 +45,8 @@ int main(int argc, char* argv[])
     parser.setApplicationDescription(QStringLiteral("FlinT OS USB device companion"));
     parser.addHelpOption();
     parser.addVersionOption();
+    parser.addOption(QCommandLineOption(QStringLiteral("system-gpu"),
+        QStringLiteral("Use the system GPU selection instead of preferring NVIDIA on Linux.")));
     const QCommandLineOption probeOption(QStringLiteral("probe"),
         QStringLiteral("Collect device information and status as JSON, then exit."), QStringLiteral("port"));
     const QCommandLineOption syncOption(QStringLiteral("sync-time"),

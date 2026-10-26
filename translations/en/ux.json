@@ -38,13 +38,18 @@
       "Apply to watch": "Apply to watch",
       "Discard": "Discard",
       "Draft kept when switching pages": "Draft kept when switching pages",
-      "Reconnect this watch to apply": "Reconnect this watch to apply"
+      "Reconnect this watch to apply": "Reconnect this watch to apply",
+      "Time, display and saved profiles": "Time, display and saved profiles",
+      "Choose, create and install watch faces": "Choose, create and install watch faces",
+      "Notes, focus and computer metrics": "Notes, focus and computer metrics",
+      "Telemetry, screen inspection and reports": "Telemetry, screen inspection and reports"
     },
     "AppNavigation": {
       "Simulator": "Simulator",
       "Connected via %1": "Connected via %1",
       "Offline · saved data": "Offline · saved data",
-      "No device selected": "No device selected"
+      "No device selected": "No device selected",
+      "Connection": "Connection"
     },
     "DeviceHero": {
       "NO LIVE CONNECTION": "NO LIVE CONNECTION",
@@ -61,7 +66,11 @@
       "Sync time": "Sync time",
       "Open settings": "Open settings",
       "Last reported time": "Last reported time",
-      "Illustration · device data": "Illustration · device data"
+      "Illustration · device data": "Illustration · device data",
+      "Connect your watch": "Connect your watch",
+      "Your time.\nYour own rhythm.": "Your time.\nYour own rhythm.",
+      "A little device. A space of your own.": "A little device. A space of your own.",
+      "Make it yours": "Make it yours"
     },
     "OverviewPage": {
       "My watch": "My watch",
@@ -75,7 +84,8 @@
       "Focus": "Focus",
       "Make time for what matters": "Make time for what matters",
       "Manage USB and Bluetooth": "Manage USB and Bluetooth",
-      "Your watch data stays on this computer.": "Your watch data stays on this computer."
+      "Your watch data stays on this computer.": "Your watch data stays on this computer.",
+      "Make room for your day": "Make room for your day"
     },
     "WatchPreview": {
       "Device data": "Device data",
@@ -124,7 +134,10 @@
       "Light theme": "Light theme",
       "Dark theme": "Dark theme",
       "Color theme": "Color theme",
-      "Interface language": "Interface language"
+      "Interface language": "Interface language",
+      "Appearance": "Appearance",
+      "Connection and background": "Connection and background",
+      "Developer tools": "Developer tools"
     },
     "DevicePresentation": {
       "Disconnected": "Disconnected",
@@ -151,7 +164,11 @@
       "Notes": "Notes",
       "Focus": "Focus",
       "System": "System",
-      "Integrations": "Integrations"
+      "Integrations": "Integrations",
+      "Timeline": "Timeline",
+      "%1 min": "%1 min",
+      "%1 / %2 bytes": "%1 / %2 bytes",
+      "Your device activity will appear here.": "Your device activity will appear here."
     },
     "CompanionTools": {
       "Input events lost; skipped for safety": "Input events lost; skipped for safety",
@@ -208,7 +225,10 @@
       "Favorites only": "Favorites only",
       "Edit design": "Edit design",
       "Favorite": "Favorite",
-      "Open Face Studio": "Open Face Studio"
+      "Open Face Studio": "Open Face Studio",
+      "No faces match your search.": "No faces match your search.",
+      "Create your first design in Face Studio.": "Create your first design in Face Studio.",
+      "Draft preview · sample time": "Draft preview · sample time"
     },
     "FaceStudio": {
       "This firmware does not support layers and animation.": "This firmware does not support layers and animation."
@@ -236,6 +256,19 @@
       "Pixel comparison passed. Screenshot saved.": "Pixel comparison passed. Screenshot saved.",
       "Pixels match, but the screenshot could not be saved.": "Pixels match, but the screenshot could not be saved.",
       "Pixel mismatch: preview has been disabled.": "Pixel mismatch: preview has been disabled."
+    },
+    "DiagnosticsPage": {
+      "Telemetry": "Telemetry",
+      "Watch screen": "Watch screen",
+      "Connection log": "Connection log",
+      "No connection errors": "No connection errors",
+      "Watch controls": "Watch controls",
+      "Previous": "Previous",
+      "Enter": "Enter",
+      "Next": "Next",
+      "Back": "Back",
+      "Settings": "Settings",
+      "USB input replaces physical buttons on this board.": "USB input replaces physical buttons on this board."
     }
   }
 }

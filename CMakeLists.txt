@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 SerialPort Bluetooth Widgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick QuickControls2 SerialPort Bluetooth Widgets ShaderTools)
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(Qt6 6.5 REQUIRED COMPONENTS DBus)
 endif()
@@ -33,6 +33,14 @@ qt_add_executable(flint_desktop
     src/device/DeviceSession.h
 )
 
+qt_add_shaders(flint_desktop atmosphere
+    PREFIX "/shaders" BASE "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+    FILES shaders/atmosphere.frag shaders/accent.frag
+)
+
+set(FLINT_FONT_FILES assets/fonts/Lato-Regular.ttf assets/fonts/Lato-Semibold.ttf assets/fonts/Lato-Black.ttf)
+qt_add_resources(flint_desktop fonts PREFIX "/fonts" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts" FILES ${FLINT_FONT_FILES})
+
 file(GLOB FLINT_ICON_FILES CONFIGURE_DEPENDS "assets/icons/*.svg")
 qt_add_resources(flint_desktop icons
     PREFIX "/icons" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons"
@@ -54,6 +62,8 @@ set(FLINT_QML_FILES
         qml/components/AppIcon.qml
         qml/components/QuickAction.qml
         qml/components/AppButton.qml
+        qml/components/HeroAtmosphere.qml
+        qml/components/AmbientAccent.qml
         qml/components/AppCard.qml
         qml/components/AppPage.qml
         qml/components/Caption.qml
@@ -65,7 +75,6 @@ set(FLINT_QML_FILES
         qml/features/device/WatchPreview.qml
         qml/features/device/DeviceHero.qml
         qml/features/device/DeviceInfoCard.qml
-        qml/features/device/DevicePage.qml
         qml/features/device/OverviewPage.qml
         qml/features/device/StatusCard.qml
         qml/features/diagnostics/DiagnosticsPage.qml
@@ -144,12 +153,17 @@ if(BUILD_TESTING)
         PREFIX "/qt/qml/Flint/Desktop"
         FILES ${FLINT_QML_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Flint/Desktop/qmldir
     )
+    qt_add_resources(flint_ui_tests test_fonts PREFIX "/fonts" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts" FILES ${FLINT_FONT_FILES})
     qt_add_resources(flint_ui_tests test_icons
         PREFIX "/icons" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons"
         FILES ${FLINT_ICON_FILES}
     )
     qt_add_resources(flint_ui_tests test_translations
         PREFIX "/" FILES ${FLINT_TRANSLATION_FILES}
+    )
+    qt_add_shaders(flint_ui_tests test_atmosphere
+        PREFIX "/shaders" BASE "${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+        FILES shaders/atmosphere.frag shaders/accent.frag
     )
     add_test(NAME ui_smoke COMMAND flint_ui_tests -o -,txt -o ui-smoke.txt,txt)
     set_tests_properties(ui_smoke PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")

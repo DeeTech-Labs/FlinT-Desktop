@@ -13,7 +13,7 @@ AppCard {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: 20
+        spacing: 14
         RowLayout {
             AppIcon { name: "info"; tint: "#83acff"; Layout.preferredWidth: 22; Layout.preferredHeight: 22 }
             Label { text: qsTr("About the device"); font.pixelSize: 20; font.weight: Font.DemiBold; Layout.fillWidth: true }
