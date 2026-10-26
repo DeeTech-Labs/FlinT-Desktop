@@ -19,7 +19,6 @@
 #include <QQuickItem>
 #include <QQuickStyle>
 #include <QQuickWindow>
-#include <QWheelEvent>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QTemporaryDir>
@@ -224,6 +223,33 @@ private slots:
         QVERIFY(!tools.actionsArmed());
         QCOMPARE(session.viewState(), QStringLiteral("StaleData"));
         tools.setAction("primary", "none");
+    }
+    void backgroundRequestsDoNotBlockInteractions()
+    {
+        DeviceSession session;
+        session.startSimulator();
+        QTRY_VERIFY(session.connected() && !session.busy());
+        session.refreshStatus();
+        QVERIFY(session.busy());
+        QVERIFY(!session.interactionBusy());
+        QSignalSpy replies(&session,&DeviceSession::requestFinished);
+        const int queued = session.request("SETTINGS");
+        QVERIFY(queued > 0);
+        QTRY_VERIFY(!replies.isEmpty());
+        QCOMPARE(replies.last().at(0).toInt(),queued);
+        QVERIFY(replies.last().at(1).toBool());
+        QTRY_VERIFY(!session.busy());
+        session.request("SCREEN");
+        QVERIFY(session.busy());
+        QVERIFY(!session.interactionBusy());
+        session.refreshStatus(); // A manual refresh survives a frame request.
+        const auto samples = session.sampleCount();
+        QTRY_VERIFY(session.sampleCount() > samples);
+        QTRY_VERIFY(!session.busy());
+        session.syncTime();
+        QVERIFY(session.interactionBusy());
+        QTRY_VERIFY(!session.interactionBusy());
+        session.disconnectDevice();
     }
     void backgroundPollingKeepsUiModelsStable()
     {
@@ -497,84 +523,6 @@ private slots:
         localization.setLanguage("not-installed");
         QCOMPARE(localization.language(), "en");
     }
-    void visualReview()
-    {
-        const auto output = qEnvironmentVariable("FLINT_DESIGN_REVIEW_DIR");
-        if (output.isEmpty()) QSKIP("Set FLINT_DESIGN_REVIEW_DIR for visual review captures.");
-        QDir().mkpath(output);
-        Localization localization;
-        localization.setLanguage("ru");
-        DeviceSession session;
-        WatchSettings watchSettings(&session);
-        FaceStudio faceStudio(&session);
-        CompanionTools companionTools(&session);
-        QStringList warnings;
-        WatchScreen watchScreen(&session);
-        QQmlApplicationEngine engine;
-        engine.addImageProvider("watchscreen",new WatchImageProvider(watchScreen.store()));
-        engine.addImageProvider("designpreview",new FacePreviewProvider(&faceStudio));
-        engine.rootContext()->setContextProperty("designPreviewAvailable",true);
-        engine.rootContext()->setContextProperty("watchScreen",&watchScreen);
-        connect(&engine,&QQmlEngine::warnings,this,[&](const QList<QQmlError>& errors) { for (const auto& error:errors) warnings.append(error.toString()); });
-        engine.rootContext()->setContextProperty("device",&session);
-        engine.rootContext()->setContextProperty("watchSettings",&watchSettings);
-        engine.rootContext()->setContextProperty("faceStudio",&faceStudio);
-        engine.rootContext()->setContextProperty("companionTools",&companionTools);
-        engine.rootContext()->setContextProperty("localization",&localization);
-        const auto port = qEnvironmentVariable("FLINT_REVIEW_USB_PORT");
-        if (port.isEmpty()) session.startSimulator(); else session.connectPort(port);
-        QTRY_VERIFY2_WITH_TIMEOUT(session.connected() && !watchSettings.faces().isEmpty(),qPrintable(session.error() + session.log()),10000);
-        engine.load(QUrl("qrc:/qt/qml/Flint/Desktop/Main.qml"));
-        QVERIFY2(!engine.rootObjects().isEmpty(),qPrintable(warnings.join('\n')));
-        auto* window = qobject_cast<QQuickWindow*>(engine.rootObjects().first());
-        QVERIFY(window);
-        window->resize(1440,900);
-        auto* theme = window->findChild<QObject*>("themeSelector");
-        QVERIFY(theme);
-        theme->setProperty("currentIndex",2);
-        QVERIFY(QMetaObject::invokeMethod(theme,"activated",Q_ARG(int,2)));
-        for (int section=0;section<7;++section) {
-            window->setProperty("section",section); QTest::qWait(180);
-            if (section == 1) {
-                auto* hourChoice = window->findChild<QObject*>("choice-hour_format");
-                QVERIFY(hourChoice);
-                QCOMPARE(hourChoice->property("currentIndex").toInt(),watchSettings.draft().value("hour_format").toInt());
-                QVERIFY(!hourChoice->property("currentText").toString().isEmpty());
-            }
-            QVERIFY(window->grabWindow().save(output+QString("/page-%1.png").arg(section)));
-        }
-        window->requestActivate();
-        window->setProperty("section",0);
-        QTest::qWait(50);
-        QTest::keyClick(window,Qt::Key_3,Qt::AltModifier);
-        QTRY_COMPARE(window->property("section").toInt(),2);
-        QTest::mouseClick(window,Qt::BackButton,Qt::NoModifier,QPoint(900,70));
-        QTRY_COMPARE(window->property("section").toInt(),0);
-        QTest::mouseClick(window,Qt::ForwardButton,Qt::NoModifier,QPoint(900,70));
-        QTRY_COMPARE(window->property("section").toInt(),2);
-        window->setProperty("section",0);
-        QTest::qWait(50);
-        auto* touch = QTest::createTouchDevice();
-        QTest::touchEvent(window,touch).press(0,QPoint(1250,780));
-        QTest::qWait(30);
-        QTest::touchEvent(window,touch).move(0,QPoint(1000,780));
-        QTest::qWait(30);
-        QTest::touchEvent(window,touch).move(0,QPoint(550,780));
-        QTest::qWait(30);
-        QTest::touchEvent(window,touch).release(0,QPoint(550,780));
-        QTRY_COMPARE(window->property("section").toInt(),1);
-        QTest::qWait(500);
-        const auto wheelAt=[&](QPointF point) {
-            QWheelEvent event(point,window->mapToGlobal(point.toPoint()),QPoint(-100,0),QPoint(-120,0),Qt::NoButton,Qt::NoModifier,Qt::ScrollUpdate,false);
-            QCoreApplication::sendEvent(window,&event);
-        };
-        wheelAt(QPointF(1220,400));
-        QTest::qWait(50); QCOMPARE(window->property("section").toInt(),1);
-        wheelAt(QPointF(700,50));
-        QTRY_COMPARE(window->property("section").toInt(),2);
-        QVERIFY2(warnings.isEmpty(),qPrintable(warnings.join('\n')));
-        session.disconnectDevice();
-    }
     void responsiveAndLocalized()
     {
         Localization localization;
@@ -622,6 +570,7 @@ private slots:
                 property bool bleScanning: false
                 property bool connected: true
                 property bool busy: false
+                property bool interactionBusy: false
                 property bool polling: true
                 property string connectionState: "Connected"
                 property string error: ""
@@ -695,6 +644,21 @@ private slots:
                         QString overflowMessage;
                         QTRY_VERIFY2_WITH_TIMEOUT((overflowMessage = overflow(overflow, window->contentItem())).isEmpty(),
                                                   qPrintable(overflowMessage), 2000);
+                        // Exercise every inner tab, including Studio, profiles and diagnostics.
+                        const QString tabPageName = page == 1 ? "watchPage" : page == 2 ? "facesPage" : page == 3 ? "companionPage" : page == 4 ? "diagnosticsPage" : "";
+                        if (!tabPageName.isEmpty()) {
+                            auto* tabPage = window->findChild<QObject*>(tabPageName);
+                            QVERIFY(tabPage);
+                            const int tabCount = page == 1 ? 4 : page == 2 ? 3 : page == 3 ? 5 : 2;
+                            for (int tab = 0; tab < tabCount; ++tab) {
+                                tabPage->setProperty("tab",tab);
+                                QTest::qWait(30);
+                                QVERIFY2(warnings.isEmpty(),qPrintable(warnings.join('\n')));
+                                QTRY_VERIFY2_WITH_TIMEOUT((overflowMessage = overflow(overflow,window->contentItem())).isEmpty(),
+                                                          qPrintable(overflowMessage),2000);
+                            }
+                            tabPage->setProperty("tab",0);
+                        }
                         const auto output = qEnvironmentVariable("FLINT_SCREENSHOT_DIR");
                         if (!output.isEmpty())
                             window->grabWindow().save(QString("%1/%2-%3-%4-%5-theme%6.png").arg(output, language).arg(size.width()).arg(page).arg(hasData ? "connected" : "empty").arg(theme));

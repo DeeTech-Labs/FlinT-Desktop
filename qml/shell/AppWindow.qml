@@ -6,8 +6,8 @@ import Flint.Desktop
 
 ApplicationWindow {
     id: app
-    width: 1240
-    height: 860
+    width: 1320
+    height: 880
     minimumWidth: 540
     minimumHeight: 480
     visible: true
@@ -16,7 +16,7 @@ ApplicationWindow {
     font.family: Theme.fontFamily
     font.pixelSize: 14
     property var screenService: typeof watchScreen === "undefined" ? null : watchScreen
-    readonly property bool wantsScreen: visible && visibility !== Window.Minimized && (section === 0 || section === 1)
+    readonly property bool wantsScreen: visible && visibility !== Window.Minimized && (section === 0 || (section === 4 && diagnosticsPage.tab === 1))
     onWantsScreenChanged: if (screenService) screenService.active = wantsScreen
     onScreenServiceChanged: if (screenService) screenService.active = wantsScreen
     Component.onCompleted: if (screenService) screenService.active = wantsScreen
@@ -31,6 +31,7 @@ ApplicationWindow {
     property int historyPosition: 0
     property bool restoringHistory: false
     onSectionChanged: {
+        pageReveal.restart();
         if (!restoringHistory && navigationHistory[historyPosition] !== section) {
             const next = navigationHistory.slice(0, historyPosition + 1);
             next.push(section); navigationHistory = next; historyPosition = next.length - 1;
@@ -124,6 +125,7 @@ ApplicationWindow {
     }
     GridLayout {
         anchors.fill: parent
+        anchors.margins: 8
         columns: app.compact ? 1 : 2
         columnSpacing: 0
         rowSpacing: 0
@@ -134,30 +136,36 @@ ApplicationWindow {
             onSelected: index => app.section = index
             Layout.fillWidth: app.compact
             Layout.fillHeight: !app.compact
-            Layout.preferredWidth: app.compact ? -1 : 224
+            Layout.preferredWidth: app.compact ? -1 : 60
         }
-        ColumnLayout {
+        Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: app.compact ? 16 : Theme.pageMargin
+            color: Theme.base
+            radius: 18
+            ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: app.compact ? 14 : Theme.pageMargin
             spacing: Theme.spacing
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 10
-                AppButton { iconName: "left"; text: ""; available: app.historyPosition > 0; implicitWidth: 40; ToolTip.visible: hovered; ToolTip.text: qsTr("Back"); onClicked: app.goBack() }
+                AppButton { iconName: "left"; text: ""; available: app.historyPosition > 0; implicitWidth: 36; ToolTip.visible: hovered; ToolTip.text: qsTr("Back"); onClicked: app.goBack() }
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 6
                     Label {
                         text: [qsTr("Overview"),qsTr("My watch"),qsTr("Watch faces"),"Companion",qsTr("Diagnostics"),qsTr("Desktop settings"),qsTr("Connect your watch")][app.section]
-                        font.pixelSize: app.compact ? 24 : 29
-                        font.weight: Font.Bold
+                        font.pixelSize: app.compact ? 24 : 28
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: -0.6
                         color: Theme.text
                         Layout.fillWidth: true
                         wrapMode: Text.WordWrap
                     }
                     Caption {
-                        text: [qsTr("Your watch, at a glance"),qsTr("Make it yours"),qsTr("A new look for every day"),qsTr("A little closer to your computer"),qsTr("Connection details and troubleshooting"),qsTr("Personalize your desktop experience"),qsTr("One connection. Everything in sync.")][app.section]
+                        visible: app.section !== 0
+                        text: [qsTr("Your watch, at a glance"),qsTr("Time, display and saved profiles"),qsTr("Choose, create and install watch faces"),qsTr("Notes, focus and computer metrics"),qsTr("Telemetry, screen inspection and reports"),qsTr("Personalize your desktop experience"),qsTr("One connection. Everything in sync.")][app.section]
                         Layout.fillWidth: true
                     }
                 }
@@ -170,6 +178,7 @@ ApplicationWindow {
             }
             SwipeView {
                 id: pages
+                objectName: "pageStack"
                 Component.onCompleted: contentItem.highlightMoveDuration = 0
                 clip: true
                 onCurrentIndexChanged: if (app.section !== currentIndex) app.section = currentIndex
@@ -183,16 +192,16 @@ ApplicationWindow {
                     onWatchRequested: app.section = 1
                     onFacesRequested: app.section = 2
                     onCompanionRequested: tab => { companionPage.tab = tab; app.section = 3 }
-                    onExportRequested: exportDialog.open()
                 }
-                WatchSettingsPage { service: app.settingsService; session: app.session; presentation: devicePresentation }
-                FaceGalleryPage { service: app.settingsService; studioService: app.studioService }
-                CompanionPage { id: companionPage; service: app.toolsService }
-                AppPage {
-                    StatusCard { session: app.session; presentation: devicePresentation; onExportRequested: exportDialog.open() }
-                    Caption { text: app.session.connectionState + " · " + app.session.transport; Layout.fillWidth: true }
-                    Caption { text: app.session.error || qsTr("No connection errors"); Layout.fillWidth: true }
-                    UsbLogCard { visible: Theme.developerMode; session: app.session }
+                WatchSettingsPage { objectName: "watchPage"; service: app.settingsService; session: app.session; presentation: devicePresentation }
+                FaceGalleryPage { objectName: "facesPage"; service: app.settingsService; studioService: app.studioService }
+                CompanionPage { id: companionPage; objectName: "companionPage"; service: app.toolsService }
+                DiagnosticsPage {
+                    id: diagnosticsPage
+                    objectName: "diagnosticsPage"
+                    session: app.session
+                    presentation: devicePresentation
+                    onExportRequested: exportDialog.open()
                 }
                 DesktopSettingsPage { session: app.session; backgroundService: app.backgroundService }
                 AppPage { ConnectionCard { session: app.session; Layout.fillWidth: true } }
@@ -210,7 +219,7 @@ ApplicationWindow {
                     Caption { text: app.pendingChanges().join(" · "); Layout.fillWidth: true }
                     Flow {
                         Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 8
-                        AppButton { text: qsTr("Apply to watch"); iconName: "check"; primary: true; available: app.settingsService.supported && !app.session.busy; onClicked: app.settingsService.apply() }
+                        AppButton { text: qsTr("Apply to watch"); iconName: "check"; primary: true; available: app.settingsService.supported && !app.session.interactionBusy; onClicked: app.settingsService.apply() }
                         AppButton { text: qsTr("Discard"); iconName: "close"; onClicked: app.settingsService.discard() }
                         Caption { text: app.settingsService.supported ? qsTr("Draft kept when switching pages") : qsTr("Reconnect this watch to apply"); width: 220 }
                     }
@@ -220,9 +229,19 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 AppIcon { name: "shield"; width: 12; height: 12; tint: Theme.muted }
                 Caption { text: qsTr("Data stays on this computer and your watch."); font.pixelSize: 10; Layout.fillWidth: true }
-                Caption { text: "FlinT Desktop"; font.pixelSize: 10 }
+                Caption { text: "FlinT / Desktop"; font.pixelSize: 10; font.letterSpacing: 1 }
             }
         }
+    }
+    }
+
+    NumberAnimation {
+        id: pageReveal
+        target: pages
+        property: "opacity"
+        from: 0.72; to: 1
+        duration: Theme.animationDuration
+        easing.type: Easing.OutCubic
     }
 
     Popup {

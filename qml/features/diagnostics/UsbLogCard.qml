@@ -10,7 +10,7 @@ AppCard {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: 16
+        spacing: 12
         RowLayout {
             Label {
                 text: qsTr("Connection log")
@@ -38,7 +38,7 @@ AppCard {
         AppButton {
             id: send
             text: qsTr("Send protocol request")
-            available: session.connected && !session.busy && (session.info.capabilities || []).indexOf("control") >= 0 && command.text.trim().length > 0
+            available: session.connected && !session.interactionBusy && (session.info.capabilities || []).indexOf("control") >= 0 && command.text.trim().length > 0
             onClicked: {
                 const text = command.text.trim()
                 const space = text.indexOf(" ")

@@ -90,10 +90,11 @@ session reconnect. Explicit disconnect disables automatic retries. `transport`
 reports the selected channel, while STATUS `usb_connected` remains a device field.
 
 `Theme` stores the system/light/dark preference in application settings. The overview
-contains the clock preview, connection controls and quick actions. Technical metrics
+contains a confirmed clock preview, time synchronization and navigation shortcuts.
+Connection controls live on the dedicated Connection page. Technical metrics
 remain on Clock data. Notifications use an overlay popup, outside page layout.
-The preview is a local digital representation extrapolated between status samples,
-not a framebuffer mirror or a renderer for arbitrary watch faces.
+The preview renders confirmed device scenes with the shared firmware rasterizer
+and reports their age; it does not extrapolate time from status samples.
 
 ## Device services
 
@@ -118,11 +119,14 @@ system-tray lifetime management; it does not install system autostart.
 StaleData and Error. Retained telemetry is labelled offline; time on illustrations
 is the last reported device value and never advances in a local timer.
 
-The blue theme uses shared surface roles, standalone SVG assets (`assets/icons`), segmented tabs and
+The midnight blue / cyan theme uses shared surface roles, standalone SVG assets (`assets/icons`), segmented tabs and
 responsive navigation. Overview quick actions route to the actual task/tab.
 SwipeView supports touch navigation; horizontal wheel gestures, mouse Back/Forward
 and keyboard history shortcuts are handled in the shell. Vertical scrolling stays
-with the page. Page changes have no forced crossfade.
+with the page. Page navigation uses a brief opacity reveal without sliding through intermediate pages.
+Hover and focus feedback animate colors without changing control geometry.
+The shell uses a compact icon rail with named tooltips, a separate workspace surface
+and a bundled Lato type family for consistent cross-platform typography.
 
 Profiles, face lists, Studio library, mappings and timeline have dedicated change
 signals. Background status/event polling must not reset UI models. The regression
@@ -147,3 +151,46 @@ shared Studio builder for its explicitly labeled sample-value draft.
 Settings rebase local edits against fresh device values, keeping edits made while
 an apply request is in flight. Drafts belong to the device ID and are not applied
 to another device. The global pending strip remains visible across page changes.
+
+### Page ownership and rendering
+
+- Overview: connection summary, confirmed frame, time sync and task shortcuts.
+- My watch: time, display, device identity, backup/restore and profiles. Settings
+  use the single global pending strip; loading a profile prepares that draft.
+- Watch faces: firmware-reported face selection, local designs and Face Studio.
+- Companion: notes, focus presets, system metrics, Actions and a separate timeline.
+  The note field shows UTF-8 bytes and prevents sending beyond the protocol limit.
+- Diagnostics: telemetry, manual refresh and report export; a separate screen tab
+  owns zoom, pixel capture and USB button emulation. Developer mode adds logs.
+- Desktop settings: appearance, language, background behavior and developer tools.
+- Connection: USB/BLE discovery, connection lifecycle and trust management.
+
+Only Overview and the visible Diagnostics screen tab request watch frames. Studio
+preview timers also stop off-page and respect the animation preference. The hero
+shader is precompiled by Qt Shader Tools and renders an original folded-light
+flow in a single pass. Its 30 Hz clock runs only on the active overview in a
+focused, visible window, and stops when interface animations are disabled.
+Cursor movement does not affect the shader. Its loader is disabled for the software scene graph. No page
+uses a full-surface blur or scales control hit targets during hover.
+
+Background STATUS, SCREEN/SCENE and service reads keep `busy` for transport
+serialization, but do not set `interactionBusy`. UI controls use the latter to
+avoid flashing disabled styles on each poll. Requests made while the transport
+is occupied enter a bounded FIFO (16 entries) with correlated response IDs;
+disconnection cancels queued requests. Manual status refresh is coalesced and
+retained until the transport is free.
+
+Two local accents supplement the overview scene. Focus uses a low-contrast
+breathing light contour only while its timer runs, on the visible Focus tab.
+The confirmed active face has a thin prismatic edge with a single 1.1-second
+selection sweep; its idle state has no animation clock. Both effects use one
+procedural shader pass, have no pointer input, respect the animation preference
+and stop motion off-page or when the window loses focus. Software rendering
+uses static outlines. Routine polling does not restart selection highlights.
+
+The compact layout keeps all seven navigation actions together at the top;
+there is no expanding spacer between page groups. Shared density tokens are
+20 px page margins, 18 px card padding, 14 px section spacing and 36 px buttons.
+Page titles, the overview hero, quick actions and Focus viewport follow the
+same denser scale. Navigation names remain available in tooltips and accessibility
+labels, including on small windows.

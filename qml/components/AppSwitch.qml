@@ -8,7 +8,7 @@ Switch {
     spacing: 14
     padding: 0
     hoverEnabled: true
-    contentItem: Text {
+    contentItem: Text { font.family: Theme.fontFamily;
         text: toggle.text
         color: toggle.enabled ? Theme.text : Theme.muted
         font.pixelSize: 13
@@ -22,6 +22,6 @@ Switch {
         y: (toggle.height - height) / 2
         color: toggle.checked ? Theme.accent : Theme.buttonHover
         border.color: toggle.activeFocus ? Theme.accent : toggle.checked ? Theme.accent : Theme.inputBorder
-        Rectangle { width: 14; height: 14; radius: 7; y: 3; x: toggle.checked ? 19 : 3; color: toggle.checked ? "#ffffff" : Theme.muted; Behavior on x { NumberAnimation { duration: Theme.animationDuration } } }
+        Rectangle { width: 14; height: 14; radius: 7; y: 3; x: toggle.checked ? 19 : 3; color: toggle.checked ? Theme.accentText : Theme.muted; Behavior on x { NumberAnimation { duration: Theme.animationDuration } } }
     }
 }

@@ -17,7 +17,7 @@ Rectangle {
         if (!preview.session.connected || preview.session.transport !== "USB") return;
         const commands = {16777234:"previous",16777235:"previous",16777236:"next",16777237:"next",16777220:"enter",16777221:"enter",16777216:"back",83:"settings",78:"next",80:"previous",43:"plus",45:"minus"};
         const command=commands[event.key];
-        if (command) { if (preview.screenService && preview.screenService.supported) preview.screenService.sendKey(command); else if (!preview.session.busy) preview.session.request("KEY",command); event.accepted=true; }
+        if (command) { if (preview.screenService && preview.screenService.supported) preview.screenService.sendKey(command); else if (!preview.session.interactionBusy) preview.session.request("KEY",command); event.accepted=true; }
     }
     property bool frameVisible: true
     property bool compact: false
@@ -25,9 +25,9 @@ Rectangle {
     readonly property bool hasFrame: screenService !== null && screenService.available
     implicitWidth: 300
     implicitHeight: compact ? 300 : 420
-    color: Theme.base
+    color: Theme.surface
     radius: 12
-    border.color: Theme.divider
+    border.color: preview.activeFocus ? Theme.accent : "transparent"
     FileDialog {
         id: screenshotFile
         title: qsTr("Save and verify actual watch pixels")
@@ -50,7 +50,7 @@ Rectangle {
             id: viewport
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumHeight: 160
+            Layout.minimumHeight: preview.compact ? 120 : 160
             clip: true
             boundsBehavior: Flickable.StopAtBounds
             contentWidth: Math.max(width,screenImage.width)

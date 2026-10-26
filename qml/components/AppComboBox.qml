@@ -9,7 +9,7 @@ ComboBox {
     leftPadding: 13
     rightPadding: 34
     font.pixelSize: 13
-    background: Rectangle { radius: 9; color: Theme.input; border.color: control.activeFocus ? Theme.accent : Theme.inputBorder }
+    background: Rectangle { Behavior on border.color { ColorAnimation { duration: Theme.animationDuration } } radius: 11; color: Theme.input; border.color: control.activeFocus ? Theme.accent : Theme.inputBorder }
     indicator: AppIcon { name: "down"; width: 14; height: 14; tint: Theme.muted; x: control.width - width - 12; y: (control.height - height) / 2 }
     contentItem: Text { text: control.displayText; font: control.font; color: control.enabled ? Theme.text : Theme.muted; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight; textFormat: Text.PlainText }
     delegate: ItemDelegate {

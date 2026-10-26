@@ -18,51 +18,54 @@ QtObject {
     property Settings navigation: Settings { category: "navigation"; property int watchTab: 0; property int faceTab: 0; property int companionTab: 0 }
     property Settings preferences: Settings { category: "appearance"; property int mode: 0; property bool developerMode: false; property bool animations: true }
     readonly property bool light: mode === 1 || (mode === 0 && Qt.styleHints.colorScheme === Qt.Light)
-    readonly property color background: light ? "#f3f6fc" : "#0a1019"
-    readonly property color text: light ? "#18243a" : "#edf3ff"
-    readonly property color muted: light ? "#67768e" : "#879ab5"
-    readonly property color accent: light ? "#2868ed" : "#3478ff"
-    readonly property color base: light ? "#ffffff" : "#0c1421"
-    readonly property color button: light ? "#e9eff9" : "#182638"
-    readonly property color accentText: light ? "#ffffff" : "#ffffff"
-    readonly property color primaryText: light ? "#ffffff" : "#ffffff"
-    readonly property color buttonText: light ? "#263a58" : "#dbe7fb"
-    readonly property color primaryPressed: light ? "#2054c5" : "#2054c5"
-    readonly property color primaryHover: light ? "#4389ff" : "#4389ff"
-    readonly property color buttonHover: light ? "#dce7fa" : "#22344d"
-    readonly property color surface: light ? "#ffffff" : "#101b2a"
-    readonly property color metric: light ? "#eef3fb" : "#142134"
-    readonly property color sidebar: light ? "#eaf0fa" : "#0e1826"
-    readonly property color navText: light ? "#526582" : "#9aacC6"
-    readonly property color navSelected: light ? "#dce8ff" : "#1d3e77"
-    readonly property color navHover: light ? "#e0e9f8" : "#17283e"
-    readonly property color divider: light ? "#dde5f2" : "#203047"
-    readonly property color offlineDot: light ? "#8090a7" : "#71829b"
-    readonly property color connectedSurface: light ? "#e0eff8" : "#102e32"
-    readonly property color offlineSurface: light ? "#eaf0f9" : "#162438"
-    readonly property color heroStart: light ? "#f4f8ff" : "#101e31"
-    readonly property color heroEnd: light ? "#e8f0ff" : "#0d1725"
-    readonly property color heroDecoration: light ? "#dbe7ff" : "#173d76"
+    readonly property color background: light ? "#e8edf5" : "#060a11"
+    readonly property color text: light ? "#14243b" : "#f1f6ff"
+    readonly property color muted: light ? "#62738c" : "#8799b4"
+    readonly property color accent: light ? "#067c9e" : "#56def1"
+    readonly property color base: light ? "#f8faff" : "#0b111c"
+    readonly property color button: light ? "#e9eff6" : "#1a2639"
+    readonly property color accentText: light ? "#ffffff" : "#082a3c"
+    readonly property color primaryText: light ? "#ffffff" : "#082a3c"
+    readonly property color buttonText: light ? "#334b68" : "#d7e5f7"
+    readonly property color primaryPressed: light ? "#066c9f" : "#269fc9"
+    readonly property color primaryHover: light ? "#1197d2" : "#70dbf5"
+    readonly property color buttonHover: light ? "#dde8f3" : "#26374d"
+    readonly property color surface: light ? "#ffffff" : "#111a29"
+    readonly property color metric: light ? "#f2f6fb" : "#141f30"
+    readonly property color sidebar: light ? "#e8edf5" : "#060a11"
+    readonly property color navText: light ? "#61728c" : "#7990af"
+    readonly property color navSelected: light ? "#cceef5" : "#d6f9ff"
+    readonly property color navHover: light ? "#dae4f0" : "#16243a"
+    readonly property color divider: light ? "#e5ebf4" : "#1c2a3d"
+    readonly property color offlineDot: light ? "#8192aa" : "#7087a3"
+    readonly property color connectedSurface: light ? "#deeffa" : "#143a4b"
+    readonly property color offlineSurface: light ? "#eaf0f9" : "#182b41"
+    readonly property color heroStart: light ? "#081a31" : "#081a31"
+    readonly property color heroEnd: light ? "#050d1b" : "#050d1b"
+    readonly property color heroDecoration: light ? "#b8e1fa" : "#235b83"
     readonly property color watchBody: light ? "#111b2c" : "#111b2c"
     readonly property color watchBorder: light ? "#65809f" : "#65809f"
     readonly property color watchTime: light ? "#ffffff" : "#ffffff"
     readonly property color watchScreen: light ? "#090f18" : "#090f18"
     readonly property color watchCaption: light ? "#99bae8" : "#99bae8"
-    readonly property color heroCaption: light ? "#526e97" : "#91aed4"
-    readonly property color heroText: light ? "#526582" : "#9bb0cd"
-    readonly property color heroFooter: light ? "#647b9d" : "#7991b1"
-    readonly property color input: light ? "#f3f6fc" : "#152337"
-    readonly property color inputBorder: light ? "#d9e3f1" : "#253750"
+    readonly property color heroCaption: light ? "#3f6a8b" : "#9ed6ee"
+    readonly property color heroText: light ? "#a9bfd9" : "#a9bfd9"
+    readonly property color heroFooter: light ? "#7896b8" : "#7896b8"
+    readonly property color input: light ? "#f3f6fb" : "#0b1321"
+    readonly property color inputBorder: light ? "#dce5f1" : "#263750"
     readonly property color error: light ? "#b83849" : "#ff8194"
-    readonly property color logText: light ? "#385276" : "#b5c9e6"
-    readonly property color logBackground: light ? "#f0f5fc" : "#09121e"
+    readonly property color logText: light ? "#385476" : "#b5cbe8"
+    readonly property color logBackground: light ? "#f0f5fc" : "#091523"
     readonly property color transparent: "transparent"
-    readonly property string fontFamily: Qt.application.font.family
+    property FontLoader bodyFont: FontLoader { source: "qrc:/fonts/Lato-Regular.ttf" }
+    property FontLoader semiboldFont: FontLoader { source: "qrc:/fonts/Lato-Semibold.ttf" }
+    property FontLoader blackFont: FontLoader { source: "qrc:/fonts/Lato-Black.ttf" }
+    readonly property string fontFamily: bodyFont.name || Qt.application.font.family
     readonly property string monoFamily: Qt.platform.os === "windows" ? "Consolas" : Qt.platform.os === "osx" ? "Menlo" : "monospace"
     readonly property int compactWidth: 900
-    readonly property int pageMargin: 24
-    readonly property int spacing: 16
-    readonly property int cardRadius: 16
-    readonly property int controlHeight: 44
-    readonly property int animationDuration: animations ? 100 : 0
+    readonly property int pageMargin: 20
+    readonly property int spacing: 14
+    readonly property int cardRadius: 12
+    readonly property int controlHeight: 36
+    readonly property int animationDuration: animations ? 180 : 0
 }

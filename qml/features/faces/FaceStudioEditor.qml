@@ -10,7 +10,7 @@ AppCard {
     required property var service
     property bool frameVisible: true
     property bool animationFrame: false
-    Timer { interval: 500; repeat: true; running: editor.visible && editor.service.layers.animateIcon; onTriggered: editor.animationFrame = !editor.animationFrame }
+    Timer { interval: 500; repeat: true; running: editor.visible && editor.frameVisible && Theme.animations && editor.service.layers.animateIcon; onTriggered: editor.animationFrame = !editor.animationFrame }
     Layout.fillWidth: true
     implicitHeight: content.implicitHeight + topPadding + bottomPadding
     FileDialog { id: importFile; fileMode: FileDialog.OpenFile; nameFilters: ["FlinT face (*.flintface *.json)"]; onAccepted: editor.service.importDesign(selectedFile) }
@@ -19,7 +19,7 @@ AppCard {
     ColorDialog { id: foregroundPicker; selectedColor: editor.service.design.foreground; onAccepted: editor.service.edit("foreground",selectedColor.toString()) }
     ColumnLayout {
         id: content; anchors.fill: parent; spacing: 14
-        Label { text: "Face Studio / Pixel Lab"; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        Label { text: "Face Studio / Pixel Lab"; font.pixelSize: 24; font.weight: Font.DemiBold; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Caption { text: qsTr("Create a clock layout with a 16 × 16 pixel icon. Left button draws, right button erases. Preview uses sample time."); Layout.fillWidth: true }
         AppComboBox { id: designs; model: editor.service.library.map(entry => (entry.favorite ? "★ " : "") + entry.design.name); Layout.fillWidth: true; onActivated: editor.service.load(currentIndex) }
         AppTextField { text: editor.service.design.name; maximumLength: 64; Layout.fillWidth: true; Accessible.name: qsTr("Design name"); onEditingFinished: editor.service.edit("name",text) }
@@ -69,7 +69,7 @@ AppCard {
             AppButton { text: qsTr("Foreground"); onClicked: foregroundPicker.open() }
             AppButton { text: qsTr("Favorite"); onClicked: editor.service.favorite(designs.currentIndex) }
         }
-        Label { text: qsTr("Layers"); font.pixelSize: 20; font.bold: true; Layout.fillWidth: true }
+        Label { text: qsTr("Layers"); font.pixelSize: 20; font.weight: Font.DemiBold; Layout.fillWidth: true }
         Caption { text: qsTr("Three layers: icon, time and date. Layer order is bottom to top. Animation switches between two icon frames every 500 ms."); Layout.fillWidth: true }
         AppComboBox {
             Layout.fillWidth: true
