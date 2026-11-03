@@ -246,12 +246,12 @@ Desktop's standalone copy and refresh both renderer identities. Desktop's packag
 test rejects divergent sources or a stale identity.
 
 
-## Miniapps v1
+## Ignits v1
 
-`miniapps_v1` enables `.flintapp` installation from Watch faces → Miniapps.
-`MINIS` lists up to three installed packages; `MINIINSTALL` transmits a validated
-bounded descriptor; `MINIREMOVE` removes a package; `MINITHEME` chooses a package
+`ignits_v1` enables `.ignit` installation from Watch faces → Ignits.
+`IGNITS` lists up to three installed packages; `IGNITINSTALL` transmits a validated
+bounded descriptor; `IGNITREMOVE` removes a package; `IGNITTHEME` chooses a package
 palette (empty payload restores defaults). `FACE` selects package faces normally.
 `FACES` entries are now compact `{id,name,version}`. Package specification and
-examples are maintained in the firmware repository at `docs/MINIAPPS.md` and
-`miniapps/examples/`.
+examples are maintained in the firmware repository at `docs/IGNITS.md` and
+`ignits/examples/`.

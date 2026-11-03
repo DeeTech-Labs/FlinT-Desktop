@@ -110,9 +110,9 @@ behavior still need dedicated checks. Android SDK is not installed locally.
   these checks. No mobile application or public release was produced.
 
 
-## Spark Miniapps v1 (4 November 2026)
+## Spark Ignits v1 (4 November 2026)
 
-Desktop provides a local Market catalog for face/theme/bundle `.flintapp` packages,
+Desktop provides a local Market catalog for face/theme/bundle `.ignit` packages,
 validated imports, device-confirmed install/use/remove, a protected Spark Base entry,
 and actual storage/RAM admission data. Package storage is the separate writable
 `storage` partition; cfg contains preferences/selection IDs only. The three catalog

@@ -1,6 +1,6 @@
 #pragma once
 #include "device/DeviceSession.h"
-class Miniapps : public QObject {
+class Ignits : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool supported READ supported NOTIFY changed)
     Q_PROPERTY(bool busy READ busy NOTIFY changed)
@@ -9,7 +9,7 @@ class Miniapps : public QObject {
     Q_PROPERTY(QVariantList catalog READ catalog CONSTANT)
     Q_PROPERTY(QVariantList installed READ installed NOTIFY changed)
 public:
-    explicit Miniapps(DeviceSession* session, QObject* parent = nullptr);
+    explicit Ignits(DeviceSession* session, QObject* parent = nullptr);
     bool supported() const;
     bool busy() const { return m_request != 0; }
     QString state() const { return m_state; }

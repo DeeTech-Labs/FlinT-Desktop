@@ -11,8 +11,8 @@ AppPage {
     required property var studioService
     readonly property var filteredFaces: service.faces.filter(face => (face.name + " " + face.id).toLowerCase().includes(search.text.toLowerCase()))
     readonly property var filteredDesigns: studioService.library.map((item,index) => ({item:item,index:index})).filter(entry => (!favorites.checked || entry.item.favorite) && entry.item.design.name.toLowerCase().includes(search.text.toLowerCase()))
-    property var packages: typeof miniappStore !== "undefined" ? miniappStore : null
-    FileDialog { id: packageFile; fileMode: FileDialog.OpenFile; nameFilters: ["Flint Miniapp (*.flintapp)"]; onAccepted: if (page.packages) page.packages.install(selectedFile) }
+    property var packages: typeof ignitStore !== "undefined" ? ignitStore : null
+    FileDialog { id: packageFile; fileMode: FileDialog.OpenFile; nameFilters: ["Flint Ignit (*.ignit)"]; onAccepted: if (page.packages) page.packages.install(selectedFile) }
     property int tab: Theme.faceTab
     onTabChanged: Theme.faceTab = tab
     SectionTabs {
@@ -132,14 +132,14 @@ AppPage {
             Caption { text: qsTr("Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog."); Layout.fillWidth: true; wrapMode: Text.WordWrap }
             RowLayout {
                 Layout.fillWidth: true
-                AppButton { text: qsTr("Import package…"); primary: true; available: page.packages && page.packages.supported && !page.packages.busy; onClicked: packageFile.open() }
+                AppButton { text: qsTr("Import Ignit…"); primary: true; available: page.packages && page.packages.supported && !page.packages.busy; onClicked: packageFile.open() }
                 AppButton { text: qsTr("Refresh"); available: page.packages && page.packages.supported && !page.packages.busy; onClicked: page.packages.refresh() }
             }
             AppButton { text: qsTr("Restore default theme"); available: page.packages && page.packages.supported && !page.packages.busy; onClicked: page.packages.useTheme("") }
-            Caption { text: page.packages && page.packages.supported ? page.packages.state : qsTr("Connect a watch with Miniapps v1 firmware."); Layout.fillWidth: true; wrapMode: Text.WordWrap }
+            Caption { text: page.packages && page.packages.supported ? page.packages.state : qsTr("Connect a watch with Ignits v1 firmware."); Layout.fillWidth: true; wrapMode: Text.WordWrap }
             Caption {
                 text: page.packages && page.packages.storage.partition ?
-                    qsTr("Package storage: %1 · %2 KB free / %3 KB total · %4 slots available")
+                    qsTr("Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available")
                       .arg(page.packages.storage.partition).arg(Math.floor(page.packages.storage.free / 1024))
                       .arg(Math.floor(page.packages.storage.total / 1024)).arg(page.packages.storage.capacity - page.packages.storage.installed) :
                     qsTr("Refresh to check storage before installing.")
@@ -172,7 +172,7 @@ AppPage {
                     Flow {
                         Layout.fillWidth: true
                         spacing: 10
-                        AppButton { text: qsTr("Use package"); available: !page.packages.busy; onClicked: page.packages.usePackage(modelData.id) }
+                        AppButton { text: qsTr("Use Ignit"); available: !page.packages.busy; onClicked: page.packages.usePackage(modelData.id) }
                         AppButton { text: modelData["protected"] ? qsTr("Protected") : qsTr("Remove"); available: !modelData["protected"] && !page.packages.busy; onClicked: page.packages.remove(modelData.id) }
                     }
                 }

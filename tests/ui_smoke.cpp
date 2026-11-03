@@ -1,7 +1,7 @@
 #include "device/DeviceSession.h"
 #include "services/WatchSettings.h"
 #include "services/FaceStudio.h"
-#include "services/Miniapps.h"
+#include "services/Ignits.h"
 #include "services/CompanionTools.h"
 #include "localization/Localization.h"
 
@@ -35,28 +35,28 @@
 class UiSmoke : public QObject {
     Q_OBJECT
 private slots:
-    void miniappPackageValidation()
+    void ignitPackageValidation()
     {
         QJsonObject theme{{"background","#080c10"},{"surface","#111c24"},
             {"accent","#77ddbb"},{"muted","#99aabb"},{"text","#f4f4ee"},{"selection","#20323e"}};
-        QJsonObject package{{"schema","flint.miniapp/1"},{"id","pkg.mint"},{"name","Mint"},
+        QJsonObject package{{"schema","flint.ignit/1"},{"id","pkg.mint"},{"name","Mint"},
             {"version",1},{"target","flint_spark"},{"api",1},{"kind","bundle"},
             {"layout","blocks"},{"theme",theme}};
         QString wire,error;
-        QVERIFY(Miniapps::encodePackage(QJsonDocument(package).toJson(),wire,error));
+        QVERIFY(Ignits::encodePackage(QJsonDocument(package).toJson(),wire,error));
         QVERIFY(wire.startsWith("1 pkg.mint 4d696e74 1 2 1 "));
         QVERIFY(wire.size()<256);
         for(const auto& change : QList<QPair<QString,QJsonValue>>{
-            {"api",2},{"target","another_watch"},{"schema","flint.miniapp/2"},
+            {"api",2},{"target","another_watch"},{"schema","flint.ignit/2"},
             {"version",1.5},{"kind","native"},{"layout","unknown"},{"name",QString(25,'a')},
             {"id","../bad"},{"name",QString("bad\nname")}}) {
             auto invalid=package;invalid[change.first]=change.second;
-            QVERIFY(!Miniapps::encodePackage(QJsonDocument(invalid).toJson(),wire,error));
+            QVERIFY(!Ignits::encodePackage(QJsonDocument(invalid).toJson(),wire,error));
             QVERIFY(wire.isEmpty());
         }
         auto unknown=package;unknown["script"]="code";
-        QVERIFY(!Miniapps::encodePackage(QJsonDocument(unknown).toJson(),wire,error));
-        QVERIFY(!Miniapps::encodePackage(QByteArray(4097,' '),wire,error));
+        QVERIFY(!Ignits::encodePackage(QJsonDocument(unknown).toJson(),wire,error));
+        QVERIFY(!Ignits::encodePackage(QByteArray(4097,' '),wire,error));
     }
 
     void screenSceneRoundTrip()
@@ -96,12 +96,12 @@ private slots:
         QTRY_VERIFY_WITH_TIMEOUT(screen.supported() && !screen.stale(),5000);
         session.disconnectDevice();
     }
-    void hardwareMiniappsRoundTrip()
+    void hardwareIgnitsRoundTrip()
     {
-        const auto port=qEnvironmentVariable("FLINT_MINIAPPS_USB_PORT");
-        if(port.isEmpty())QSKIP("Set FLINT_MINIAPPS_USB_PORT for actual package installation.");
+        const auto port=qEnvironmentVariable("FLINT_IGNITS_USB_PORT");
+        if(port.isEmpty())QSKIP("Set FLINT_IGNITS_USB_PORT for actual package installation.");
         DeviceSession session;session.setAutoSyncTime(false);
-        Miniapps packages(&session);session.connectPort(port);
+        Ignits packages(&session);session.connectPort(port);
         QTRY_VERIFY2_WITH_TIMEOUT(packages.supported(),qPrintable(session.log()),10000);
         QTRY_VERIFY2_WITH_TIMEOUT(!packages.busy()&&!packages.storage().isEmpty(),qPrintable(packages.state()+session.log()),10000);
         QCOMPARE(packages.storage().value("partition").toString(),QString("storage"));
@@ -117,7 +117,7 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(session.status().value("active_face").toString(),QString("pkg.mint-bundle"),10000);
         QTRY_VERIFY(!session.busy());
         QSignalSpy reply(&session,&DeviceSession::requestFinished);
-        QVERIFY(session.request("MINIREMOVE","digital"));
+        QVERIFY(session.request("IGNITREMOVE","digital"));
         QTRY_VERIFY_WITH_TIMEOUT(!reply.isEmpty(),5000);
         QCOMPARE(reply.last().at(3).toString(),QString("protected_package"));
         // The shell uses the same manager as real buttons on a future revision.
@@ -139,7 +139,7 @@ private slots:
         WatchScreen screen(&session); session.connectPort(port);
         QTRY_VERIFY_WITH_TIMEOUT(screen.supported(),10000);
         QDir().mkpath("/tmp/flint-real-render");
-        const QList<QPair<QString,QString>> screens{{"FACE","digital"},{"KEY","settings"},{"KEY","next"},{"KEY","back"},{"FACE","companion"},{"FACE","studio"}};
+        const QList<QPair<QString,QString>> screens{{"FACE","digital"},{"KEY","settings"},{"KEY","next"},{"KEY","back"},{"KEY","enter"},{"KEY","back"}};
         int index=0;
         for (const auto& command:screens) {
             screen.setActive(false); QTRY_VERIFY(!session.busy());

@@ -1,13 +1,13 @@
-#include "Miniapps.h"
+#include "Ignits.h"
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QRegularExpression>
 #include <QSet>
 #include <cmath>
-Miniapps::Miniapps(DeviceSession* session, QObject* parent) : QObject(parent), m_session(session) {
+Ignits::Ignits(DeviceSession* session, QObject* parent) : QObject(parent), m_session(session) {
     for(const auto& name:{"mint-bundle","quiet-face","amber-theme"}) {
-        QFile file(QString(":/miniapps/%1.flintapp").arg(name));
+        QFile file(QString(":/ignits/%1.ignit").arg(name));
         if(file.open(QIODevice::ReadOnly))m_catalog.append(QJsonDocument::fromJson(file.readAll()).object().toVariantMap());
     }
     connect(session,&DeviceSession::stateChanged,this,[this] {
@@ -19,17 +19,17 @@ Miniapps::Miniapps(DeviceSession* session, QObject* parent) : QObject(parent), m
         if(id!=m_request)return;
         m_request=0;
         if(!okay) m_state=tr("Device error: %1").arg(error);
-        else if(m_operation=="MINISTORAGE") {m_storage=value.toMap();send("MINIS");}
-        else if(m_operation=="MINIS") {m_installed=value.toList();m_state=tr("Installed packages");}
+        else if(m_operation=="IGNITSTORAGE") {m_storage=value.toMap();send("IGNITS");}
+        else if(m_operation=="IGNITS") {m_installed=value.toList();m_state=tr("Installed Ignits");}
         else {m_state=tr("Confirmed by watch");emit packagesChanged();refresh();}
         emit changed();
     });
 }
-bool Miniapps::supported() const {
-    return m_session->connected() && m_session->info().value("capabilities").toList().contains("miniapps_v1");
+bool Ignits::supported() const {
+    return m_session->connected() && m_session->info().value("capabilities").toList().contains("ignits_v1");
 }
-bool Miniapps::encodePackage(const QByteArray& bytes,QString& wire,QString& error) {
-    wire.clear();error=tr("Invalid or unsupported Flint Miniapp package");
+bool Ignits::encodePackage(const QByteArray& bytes,QString& wire,QString& error) {
+    wire.clear();error=tr("Invalid or unsupported Flint Ignit");
     if(bytes.isEmpty()||bytes.size()>4096)return false;
     QJsonParseError parse;
     const auto document=QJsonDocument::fromJson(bytes,&parse);
@@ -38,7 +38,7 @@ bool Miniapps::encodePackage(const QByteArray& bytes,QString& wire,QString& erro
     const QSet<QString> keys{"schema","id","name","version","target","api","kind","layout","theme"};
     if(p.size()!=keys.size())return false;
     for(auto i=p.begin();i!=p.end();++i)if(!keys.contains(i.key()))return false;
-    if(p.value("schema")!="flint.miniapp/1"||p.value("target")!="flint_spark"||p.value("api")!=1)return false;
+    if(p.value("schema")!="flint.ignit/1"||p.value("target")!="flint_spark"||p.value("api")!=1)return false;
     if(!p.value("id").isString()||!QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(p.value("id").toString()).hasMatch())return false;
     if(!p.value("name").isString())return false;
     const auto name=p.value("name").toString().trimmed();
@@ -61,38 +61,38 @@ bool Miniapps::encodePackage(const QByteArray& bytes,QString& wire,QString& erro
     }
     wire=values.join(' ');error.clear();return true;
 }
-void Miniapps::send(const QString& operation,const QString& arguments) {
+void Ignits::send(const QString& operation,const QString& arguments) {
     if(!supported()||busy())return;
     m_request=m_session->request(operation,arguments);m_operation=operation;
     m_state=m_request?tr("Waiting for watch confirmation…"):tr("Cannot send to watch");emit changed();
 }
-void Miniapps::install(const QUrl& url) {
+void Ignits::install(const QUrl& url) {
     if(!supported()||busy())return;
     QFile file(url.toLocalFile());QString wire,error;
-    if(!url.isLocalFile()||!file.open(QIODevice::ReadOnly)||file.size()>4096) {m_state=tr("Cannot read package (limit 4 KB)");emit changed();return;}
+    if(!url.isLocalFile()||!file.open(QIODevice::ReadOnly)||file.size()>4096) {m_state=tr("Cannot read Ignit (limit 4 KB)");emit changed();return;}
     if(!encodePackage(file.readAll(),wire,error)){m_state=error;emit changed();return;}
-    send("MINIINSTALL",wire);
+    send("IGNITINSTALL",wire);
 }
-void Miniapps::refresh(){send("MINISTORAGE");}
-void Miniapps::remove(const QString& id){if(QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("MINIREMOVE",id);}
-void Miniapps::useTheme(const QString& id){if(id.isEmpty()||QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("MINITHEME",id);}
-void Miniapps::useFace(const QString& id){if(QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("FACE",id);}
+void Ignits::refresh(){send("IGNITSTORAGE");}
+void Ignits::remove(const QString& id){if(QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("IGNITREMOVE",id);}
+void Ignits::useTheme(const QString& id){if(id.isEmpty()||QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("IGNITTHEME",id);}
+void Ignits::useFace(const QString& id){if(QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("FACE",id);}
 
-bool Miniapps::canInstall(const QString& id) const {
+bool Ignits::canInstall(const QString& id) const {
     if(!supported()||busy()||m_storage.isEmpty()||m_storage.value("free_ram").toUInt()<m_storage.value("ram_reserve").toUInt())return false;
     bool update=false;
     for(const auto& p:m_installed)update|=p.toMap().value("id").toString()==id;
     return (update||m_storage.value("installed").toInt()<m_storage.value("capacity").toInt()) &&
         m_storage.value("free").toULongLong()>=m_storage.value("reserved").toULongLong()+m_storage.value("write_budget").toULongLong()+256;
 }
-void Miniapps::installFromCatalog(const QString& id) {
+void Ignits::installFromCatalog(const QString& id) {
     if(!canInstall(id))return;
     for(const auto& item:m_catalog)if(item.toMap().value("id").toString()==id) {
-        QFile file(":/miniapps/"+id.mid(4)+".flintapp");QString wire,error;
-        if(file.open(QIODevice::ReadOnly)&&encodePackage(file.readAll(),wire,error))send("MINIINSTALL",wire);
+        QFile file(":/ignits/"+id.mid(4)+".ignit");QString wire,error;
+        if(file.open(QIODevice::ReadOnly)&&encodePackage(file.readAll(),wire,error))send("IGNITINSTALL",wire);
         return;
     }
 }
-void Miniapps::usePackage(const QString& id) {
-    if(id=="digital"||QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("MINIUSE",id);
+void Ignits::usePackage(const QString& id) {
+    if(id=="digital"||QRegularExpression("^pkg\\.[a-z0-9.-]{1,20}$").match(id).hasMatch())send("IGNITUSE",id);
 }

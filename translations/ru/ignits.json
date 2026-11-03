@@ -4,30 +4,30 @@
       "Market": "Маркет",
       "Watch market": "Маркет часов",
       "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.": "Spark Base встроен и защищён. Устанавливайте дополнительные циферблаты, темы и комплекты из этого локального каталога.",
-      "Import package…": "Импорт пакета…",
+      "Import Ignit…": "Импорт игнита…",
       "Refresh": "Обновить",
       "Restore default theme": "Вернуть базовую тему",
-      "Connect a watch with Miniapps v1 firmware.": "Подключите часы с прошивкой Miniapps v1.",
-      "Package storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Хранилище пакетов: %1 · свободно %2 КБ из %3 КБ · доступно слотов: %4",
+      "Connect a watch with Ignits v1 firmware.": "Подключите часы с прошивкой Ignits v1.",
+      "Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Хранилище игнитов: %1 · свободно %2 КБ из %3 КБ · доступно слотов: %4",
       "Refresh to check storage before installing.": "Обновите сведения о памяти перед установкой.",
       "Catalog": "Каталог",
       "Install / update": "Установить / обновить",
       "Watch face": "Циферблат",
       "Interface theme": "Тема интерфейса",
       "Face and theme": "Циферблат и тема",
-      "Use package": "Применить пакет",
+      "Use Ignit": "Применить игнит",
       "Protected": "Защищён",
       "Remove": "Удалить"
     },
-    "Miniapps": {
+    "Ignits": {
       "Disconnected": "Отключено",
       "Device error: %1": "Ошибка устройства: %1",
-      "Installed packages": "Установленные пакеты",
+      "Installed Ignits": "Установленные игниты",
       "Confirmed by watch": "Подтверждено часами",
-      "Invalid or unsupported Flint Miniapp package": "Пакет Flint Miniapp повреждён или не поддерживается",
+      "Invalid or unsupported Flint Ignit": "Игнит повреждён или не поддерживается",
       "Waiting for watch confirmation…": "Ожидание подтверждения часов…",
       "Cannot send to watch": "Не удалось отправить на часы",
-      "Cannot read package (limit 4 KB)": "Не удалось прочитать пакет (не более 4 КБ)"
+      "Cannot read Ignit (limit 4 KB)": "Не удалось прочитать игнит (не более 4 КБ)"
     }
   }
 }
