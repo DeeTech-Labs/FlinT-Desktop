@@ -1,6 +1,7 @@
 #include "device/DeviceSession.h"
 #include "services/WatchSettings.h"
 #include "services/FaceStudio.h"
+#include "services/Miniapps.h"
 #include "services/CompanionTools.h"
 #include "localization/Localization.h"
 
@@ -34,6 +35,30 @@
 class UiSmoke : public QObject {
     Q_OBJECT
 private slots:
+    void miniappPackageValidation()
+    {
+        QJsonObject theme{{"background","#080c10"},{"surface","#111c24"},
+            {"accent","#77ddbb"},{"muted","#99aabb"},{"text","#f4f4ee"},{"selection","#20323e"}};
+        QJsonObject package{{"schema","flint.miniapp/1"},{"id","pkg.mint"},{"name","Mint"},
+            {"version",1},{"target","flint_spark"},{"api",1},{"kind","bundle"},
+            {"layout","blocks"},{"theme",theme}};
+        QString wire,error;
+        QVERIFY(Miniapps::encodePackage(QJsonDocument(package).toJson(),wire,error));
+        QVERIFY(wire.startsWith("1 pkg.mint 4d696e74 1 2 1 "));
+        QVERIFY(wire.size()<256);
+        for(const auto& change : QList<QPair<QString,QJsonValue>>{
+            {"api",2},{"target","another_watch"},{"schema","flint.miniapp/2"},
+            {"version",1.5},{"kind","native"},{"layout","unknown"},{"name",QString(25,'a')},
+            {"id","../bad"},{"name",QString("bad\nname")}}) {
+            auto invalid=package;invalid[change.first]=change.second;
+            QVERIFY(!Miniapps::encodePackage(QJsonDocument(invalid).toJson(),wire,error));
+            QVERIFY(wire.isEmpty());
+        }
+        auto unknown=package;unknown["script"]="code";
+        QVERIFY(!Miniapps::encodePackage(QJsonDocument(unknown).toJson(),wire,error));
+        QVERIFY(!Miniapps::encodePackage(QByteArray(4097,' '),wire,error));
+    }
+
     void screenSceneRoundTrip()
     {
         DeviceSession session;
@@ -69,6 +94,41 @@ private slots:
         session.disconnectDevice(); QVERIFY(screen.stale());
         session.startSimulator(); screen.setActive(true);
         QTRY_VERIFY_WITH_TIMEOUT(screen.supported() && !screen.stale(),5000);
+        session.disconnectDevice();
+    }
+    void hardwareMiniappsRoundTrip()
+    {
+        const auto port=qEnvironmentVariable("FLINT_MINIAPPS_USB_PORT");
+        if(port.isEmpty())QSKIP("Set FLINT_MINIAPPS_USB_PORT for actual package installation.");
+        DeviceSession session;session.setAutoSyncTime(false);
+        Miniapps packages(&session);session.connectPort(port);
+        QTRY_VERIFY2_WITH_TIMEOUT(packages.supported(),qPrintable(session.log()),10000);
+        QTRY_VERIFY2_WITH_TIMEOUT(!packages.busy()&&!packages.storage().isEmpty(),qPrintable(packages.state()+session.log()),10000);
+        QCOMPARE(packages.storage().value("partition").toString(),QString("storage"));
+        QCOMPARE(packages.storage().value("total").toInt(),0x130000);
+        QCOMPARE(packages.catalog().size(),3);
+        auto present=[&]{for(const auto& p:packages.installed())if(p.toMap().value("id")=="pkg.mint-bundle")return true;return false;};
+        if(present()){packages.remove("pkg.mint-bundle");QTRY_VERIFY2_WITH_TIMEOUT(!packages.busy()&&!present(),qPrintable(packages.state()+session.log()),10000);}
+        QVERIFY(packages.canInstall("pkg.mint-bundle"));
+        packages.installFromCatalog("pkg.mint-bundle");
+        QTRY_VERIFY_WITH_TIMEOUT(!packages.busy()&&present(),10000);
+        packages.usePackage("pkg.mint-bundle");QTRY_VERIFY_WITH_TIMEOUT(!packages.busy(),10000);
+        session.refreshStatus();
+        QTRY_COMPARE_WITH_TIMEOUT(session.status().value("active_face").toString(),QString("pkg.mint-bundle"),10000);
+        QTRY_VERIFY(!session.busy());
+        QSignalSpy reply(&session,&DeviceSession::requestFinished);
+        QVERIFY(session.request("MINIREMOVE","digital"));
+        QTRY_VERIFY_WITH_TIMEOUT(!reply.isEmpty(),5000);
+        QCOMPARE(reply.last().at(3).toString(),QString("protected_package"));
+        // The shell uses the same manager as real buttons on a future revision.
+        for(const auto& key:{"enter","delete","enter","back"}){
+            QTRY_VERIFY(!session.busy());reply.clear();QVERIFY(session.request("KEY",key));
+            QTRY_VERIFY_WITH_TIMEOUT(!reply.isEmpty(),5000);
+            QVERIFY(reply.last().at(1).toBool());QTest::qWait(100);
+        }
+        packages.refresh();QTRY_VERIFY2_WITH_TIMEOUT(!packages.busy()&&!present(),qPrintable(packages.state()+session.log()),10000);
+        session.refreshStatus();
+        QTRY_COMPARE_WITH_TIMEOUT(session.status().value("active_face").toString(),QString("digital"),10000);
         session.disconnectDevice();
     }
     void hardwareScreenRoundTrip()
