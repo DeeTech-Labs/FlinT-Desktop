@@ -1,0 +1,2 @@
+# The renderer identity hashes these exact source/font bytes on every host.
+src/watch_render/shared/** text eol=lf

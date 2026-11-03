@@ -1,0 +1,33 @@
+{
+  "contexts": {
+    "FaceGalleryPage": {
+      "Market": "Market",
+      "Watch market": "Watch market",
+      "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.": "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.",
+      "Import package…": "Import package…",
+      "Refresh": "Refresh",
+      "Restore default theme": "Restore default theme",
+      "Connect a watch with Miniapps v1 firmware.": "Connect a watch with Miniapps v1 firmware.",
+      "Package storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Package storage: %1 · %2 KB free / %3 KB total · %4 slots available",
+      "Refresh to check storage before installing.": "Refresh to check storage before installing.",
+      "Catalog": "Catalog",
+      "Install / update": "Install / update",
+      "Watch face": "Watch face",
+      "Interface theme": "Interface theme",
+      "Face and theme": "Face and theme",
+      "Use package": "Use package",
+      "Protected": "Protected",
+      "Remove": "Remove"
+    },
+    "Miniapps": {
+      "Disconnected": "Disconnected",
+      "Device error: %1": "Device error: %1",
+      "Installed packages": "Installed packages",
+      "Confirmed by watch": "Confirmed by watch",
+      "Invalid or unsupported Flint Miniapp package": "Invalid or unsupported Flint Miniapp package",
+      "Waiting for watch confirmation…": "Waiting for watch confirmation…",
+      "Cannot send to watch": "Cannot send to watch",
+      "Cannot read package (limit 4 KB)": "Cannot read package (limit 4 KB)"
+    }
+  }
+}
