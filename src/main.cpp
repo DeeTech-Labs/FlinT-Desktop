@@ -11,6 +11,7 @@
 #include "device/DeviceSession.h"
 #include "services/WatchSettings.h"
 #include "services/FaceStudio.h"
+#include "services/Miniapps.h"
 #include "services/CompanionTools.h"
 #include "services/BackgroundAgent.h"
 #include "watch_render/WatchScreen.h"
@@ -107,6 +108,8 @@ int main(int argc, char* argv[])
 
     WatchSettings watchSettings(&device);
     FaceStudio faceStudio(&device);
+    Miniapps miniapps(&device);
+    QObject::connect(&miniapps,&Miniapps::packagesChanged,&watchSettings,&WatchSettings::refresh);
     CompanionTools companionTools(&device);
     BackgroundAgent backgroundAgent;
     WatchScreen watchScreen(&device);
@@ -122,6 +125,7 @@ int main(int argc, char* argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("device"), &device);
     engine.rootContext()->setContextProperty(QStringLiteral("watchSettings"), &watchSettings);
     engine.rootContext()->setContextProperty(QStringLiteral("faceStudio"), &faceStudio);
+    engine.rootContext()->setContextProperty("miniappStore", &miniapps);
     engine.rootContext()->setContextProperty(QStringLiteral("companionTools"), &companionTools);
     engine.rootContext()->setContextProperty(QStringLiteral("backgroundAgent"), &backgroundAgent);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,

@@ -22,6 +22,7 @@ qt_add_executable(flint_desktop
     src/device/BleTransport.h
     src/services/CompanionTools.cpp src/services/CompanionTools.h
     src/services/FaceStudio.cpp src/services/FaceStudio.h
+    src/services/Miniapps.cpp src/services/Miniapps.h
     src/services/WatchSettings.cpp src/services/WatchSettings.h
     src/services/BackgroundAgent.cpp src/services/BackgroundAgent.h
     src/watch_render/WatchScreen.cpp src/watch_render/WatchScreen.h
@@ -138,6 +139,7 @@ if(BUILD_TESTING)
         src/device/BleTransport.cpp src/device/BleTransport.h
         src/services/CompanionTools.cpp src/services/CompanionTools.h
         src/services/FaceStudio.cpp src/services/FaceStudio.h
+        src/services/Miniapps.cpp src/services/Miniapps.h
         src/services/WatchSettings.cpp src/services/WatchSettings.h
         src/watch_render/WatchScreen.cpp src/watch_render/WatchScreen.h
         src/watch_render/shared/fonts.cpp
@@ -176,4 +178,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         target_compile_definitions(flint_ui_tests PRIVATE FLINT_BLUEZ_DBUS)
         target_link_libraries(flint_ui_tests PRIVATE Qt6::DBus)
     endif()
+endif()
+
+set(FLINT_MINIAPP_FILES assets/miniapps/mint-bundle.flintapp assets/miniapps/quiet-face.flintapp assets/miniapps/amber-theme.flintapp)
+qt_add_resources(flint_desktop miniapp_catalog PREFIX "/miniapps" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/miniapps" FILES ${FLINT_MINIAPP_FILES})
+if(TARGET flint_ui_tests)
+    qt_add_resources(flint_ui_tests test_miniapp_catalog PREFIX "/miniapps" BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets/miniapps" FILES ${FLINT_MINIAPP_FILES})
 endif()

@@ -87,7 +87,7 @@ bool WatchSettings::validDraft(const QVariantMap& values) const {
         if (it.key() == "timezone") {
             if (!m_timezones.contains(it.value().toString())) return false;
         } else if (it.key() == "active_face") {
-            if (!QRegularExpression("^[a-zA-Z0-9_-]{1,31}$").match(it.value().toString()).hasMatch()) return false;
+            if (!QRegularExpression("^[a-zA-Z0-9_.-]{1,31}$").match(it.value().toString()).hasMatch()) return false;
         } else {
             bool okay; const double raw = it.value().toDouble(&okay);
             if (!okay || !QJsonValue::fromVariant(it.value()).isDouble() || !std::isfinite(raw) || std::floor(raw) != raw || raw < 0 || raw > 255) return false;
@@ -152,6 +152,6 @@ bool WatchSettings::restore(const QUrl& source) {
     m_draft = values; m_state = tr("Backup loaded. Review and apply changes."); emit changed(); return true;
 }
 void WatchSettings::selectFace(const QString& id) {
-    if (m_request || !QRegularExpression("^[a-zA-Z0-9_-]{1,31}$").match(id).hasMatch()) return;
+    if (m_request || !QRegularExpression("^[a-zA-Z0-9_.-]{1,31}$").match(id).hasMatch()) return;
     enqueue("FACE",id);
 }

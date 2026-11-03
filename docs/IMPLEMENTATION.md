@@ -108,3 +108,19 @@ behavior still need dedicated checks. Android SDK is not installed locally.
 - Physical display appearance, long-duration power tests, Windows/macOS hardware,
   additional boards and arbitrary third-party integrations are not certified by
   these checks. No mobile application or public release was produced.
+
+
+## Spark Miniapps v1 (4 November 2026)
+
+Desktop provides a local Market catalog for face/theme/bundle `.flintapp` packages,
+validated imports, device-confirmed install/use/remove, a protected Spark Base entry,
+and actual storage/RAM admission data. Package storage is the separate writable
+`storage` partition; cfg contains preferences/selection IDs only. The three catalog
+examples are bundled locally; a hosted market is not implemented. The current
+firmware advertises only Spark Base as built in; prior native Studio/Companion
+screens are no longer offered by this hardware profile.
+
+Firmware/display changes keep the portable rasterizer and fonts synchronized.
+The protocol-backed device test covers catalog install, bundle selection, base
+protection and deletion from the watch manager through emulated keys. Physical
+navigation buttons remain absent on C3 Dev.
