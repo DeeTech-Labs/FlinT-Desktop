@@ -33,6 +33,7 @@ public:
     bool connected() const {
         return connected_;
     }
+    uint64_t capabilities() const { return capabilities_; }
     bool simulated() const {
         return bool(core_);
     }
@@ -84,12 +85,14 @@ private:
     std::unique_ptr<BleTransport> ble_;
     QTimer timeout_;
     QTimer pairingPoll_;
+    QTimer simulationTick_;
     QString watchPairingCode_;
     flint::FrameParser parser_;
     std::deque<Pending> queue_;
     std::unique_ptr<Pending> pending_;
     uint32_t nextId_{};
     uint64_t generation_{};
+    uint64_t capabilities_{};
     std::unique_ptr<flint::Core> core_;
     std::unique_ptr<QTemporaryDir> simulation_;
     flint::Session session_{true, false, 1};

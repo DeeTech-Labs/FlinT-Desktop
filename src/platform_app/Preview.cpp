@@ -8,6 +8,7 @@ Preview::Preview(PlatformClient *client)
     connect(&timer_, &QTimer::timeout, this, &Preview::refresh);
     connect(client, &PlatformClient::ready, this, [this] {
         if (pollingActive_) {
+            timer_.setInterval(client_->simulated() ? 33 : 1000);
             timer_.start();
             refresh();
         }
@@ -85,7 +86,7 @@ void Preview::download() {
         flint::Installed p;
         p.path = path.toStdString();
         auto error2 = runtime_.launch(
-            p, active_.section('/', 1, 1).toStdString(), {48 * 1024, 4 * 1024 * 1024, 4096}, 63);
+            p, active_.section('/', 1, 1).toStdString(), {48 * 1024, 4 * 1024 * 1024, 4096}, client_->capabilities());
         download_.clear();
         if (error2 != flint::Error::ok) {
             busy_ = false;
@@ -154,6 +155,7 @@ void Preview::setActive(bool active) {
     }
     pollingActive_ = active;
     if (active && client_->connected()) {
+        timer_.setInterval(client_->simulated() ? 33 : 1000);
         timer_.start();
         refresh();
     } else {

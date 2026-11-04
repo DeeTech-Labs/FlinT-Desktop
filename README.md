@@ -57,7 +57,7 @@ capabilities drive the connection, so the client can support future models.
 
 Ignite Hub installs binary packages with resumable transfer, launches components, selects clock/theme/language providers, and manages application permissions. Studio compiles local projects; Preview and the disposable simulator use the same portable runtime as FlinT OS.
 
-The existing QML shell, theme, icons, fonts, effects, localization and tray integration are retained. Firmware updates, executable Wasm/background services and additional host integrations remain subject to validation; see the [shared implementation specification](platform/README.md). Linux builds are verified locally; Windows/macOS remain CI targets rather than locally validated packages.
+The existing QML shell, theme, icons, fonts, effects, localization and tray integration are retained. Bounded Lua runs in the simulator and validated Spark firmware. Firmware updates, background services and additional host integrations remain future work; see the [shared implementation specification](platform/README.md). Linux builds are verified locally; Windows/macOS remain CI targets rather than locally validated packages.
 
 ---
 
@@ -108,7 +108,7 @@ flint_flare/
 ├── src/                 # C++ entry point and application services
 │   ├── platform_app/    # device manager, Hub, Studio, Preview and Companion
 │   └── device/          # reusable Bluetooth / BlueZ hardware lifecycle
-├── platform/            # synchronized portable runtime, compiler and tests
+├── platform/            # Flint IgniteSDK Git submodule (pinned commit)
 ├── qml/                 # retained Qt Quick design system and adapted screens
 ├── assets/              # icons and fonts
 ├── shaders/             # visual effects
@@ -162,3 +162,7 @@ Thanks to everyone who has contributed to Flint Flare:
 <p align="center">
   <sub>Flint Flare · DeeTech Labs · Apache 2.0 · Qt6</sub>
 </p>
+
+Initialize the shared SDK before building: `git submodule update --init --recursive`.
+Both OS and Flare consume [Flint IgniteSDK](https://github.com/DeeTech-Labs/Flint-IgniteSDK)
+as a pinned Git submodule at `platform/`; shared changes belong in that repository.

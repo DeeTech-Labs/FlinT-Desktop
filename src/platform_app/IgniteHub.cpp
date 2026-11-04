@@ -156,8 +156,7 @@ void IgniteHub::install(const QUrl &url) {
     auto error = package.open(input.source());
     if (error == flint::Error::ok)
         error = flint::validateApplication(package, manifest, {48 * 1024, 0, 4096},
-            flint::CapDeclarative | flint::CapResources | flint::CapPackages | flint::CapMetrics |
-                flint::CapUsb | flint::CapBle);
+            client_->capabilities());
     if (error != flint::Error::ok) {
         message_ = platformError(error);
         emit changed();

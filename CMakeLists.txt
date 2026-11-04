@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
+if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/platform/include/flint/contracts.h")
+    message(FATAL_ERROR "Initialize IgniteSDK: git submodule update --init --recursive")
+endif()
 project(FlintFlare VERSION 0.3.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

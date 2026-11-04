@@ -23,6 +23,11 @@ QString platformError(flint::Error e) {
     return QString::fromUtf8(i < std::size(names) ? names[i] : "Ошибка протокола");
 }
 PlatformClient::PlatformClient(QObject *parent) : QObject(parent) {
+    simulationTick_.setInterval(33);
+    connect(&simulationTick_, &QTimer::timeout, this, [this] {
+        if (core_) core_->tick();
+    });
+    simulationTick_.start();
     pairingPoll_.setInterval(1000);
     connect(&pairingPoll_, &QTimer::timeout, this, [this] {
         if (serial_.isOpen())
@@ -69,6 +74,7 @@ void PlatformClient::disconnectDevice() {
     watchPairingCode_.clear();
     timeout_.stop();
     connected_ = false;
+    capabilities_ = 0;
     if (core_)
         core_->disconnect(session_);
     queue_.clear();
@@ -202,6 +208,7 @@ void PlatformClient::handshake() {
             fail("Несовместимый контракт платформы");
             return;
         }
+        capabilities_ = caps;
         connected_ = true;
         status_ = core_ ? "Локальный симулятор" : "Подключено";
         emit changed();
