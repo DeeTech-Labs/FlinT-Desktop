@@ -1,3 +1,5 @@
+[Русский оригинал](../ru/LOCALIZATION.md)
+
 # JSON localization
 
 The catalog format follows PixelStudio's `contexts` dictionaries and Rebit's

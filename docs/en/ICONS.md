@@ -1,3 +1,5 @@
+[Русский оригинал](../ru/ICONS.md)
+
 # FlinT interface icons
 
 Original 24×24 SVG line icons for this project. Each icon is a standalone asset.

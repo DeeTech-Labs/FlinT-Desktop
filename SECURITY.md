@@ -1,24 +1,15 @@
-# Security Policy
+[English translation](docs/en/SECURITY.md)
 
-## Supported versions
+# Безопасность Flint Flare
 
-Flint Flare is in **alpha**. Security fixes target the latest `main` branch.
+Проект находится в альфа-стадии. Исправления безопасности направляются в актуальную ветку `main`.
 
-## Reporting a vulnerability
+## Сообщить об уязвимости
 
-Do not open a public issue for security-sensitive reports.
+Не публикуйте чувствительные сведения в открытом issue. Используйте **Security → Report a vulnerability** в репозитории. Если приватная отправка недоступна, свяжитесь с сопровождающими через [DeeTech Labs](https://github.com/DeeTech-Labs).
 
-1. Use **Security → Report a vulnerability** in this repository.
-2. If unavailable, contact maintainers through the
-   [DeeTech Labs](https://github.com/DeeTech-Labs) organization on GitHub.
+Укажите версию или коммит Flint Flare, версии ОС/Qt или ESP-IDF, профиль платы и версию прошивки, влияние, шаги воспроизведения и при необходимости минимальный пример. Перед передачей удалите секреты, персональные данные и идентификаторы из логов и захватов.
 
-Include application commit/version, OS and Qt versions, device/firmware versions,
-impact and reproduction steps. A minimal malformed protocol reply or capture
-file is useful for input-handling bugs; remove private data before sharing it.
+## Область проверки
 
-## Scope
-
-The application treats USB replies as untrusted data and exports files only
-when requested. Report parsing, device-connection, export or dependency bugs
-with a reproducible software impact. Device firmware has its own
-[security policy](https://github.com/DeeTech-Labs/FlinT-OS/blob/main/SECURITY.md).
+Ответы USB считаются недоверенными. Сообщайте об ошибках разбора, подключения, экспорта и зависимостей с воспроизводимым программным последствием. Экспорт выполняется только по запросу. У прошивки есть [собственная политика безопасности](https://github.com/DeeTech-Labs/FlinT-OS/blob/main/SECURITY.md).

@@ -1,66 +1,41 @@
-# Contributing to Flint Flare
+[English translation](docs/en/CONTRIBUTING.md)
 
-Thanks for helping improve **Flint Flare**, the companion for **FlinT** devices
-running **FlinT OS**, by **DeeTech Labs**.
+# Вклад в Flint Flare
 
-## Before you start
+## Подготовка
 
-- Read [README](README.md), [architecture](docs/ARCHITECTURE.md) and the
-  [Companion protocol](docs/COMPANION-PROTOCOL.md).
-- Check [CHANGELOG.md](CHANGELOG.md) for development notes.
-- Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).
-- Bugs and concrete features → [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues).
-- Support routing → [SUPPORT.md](SUPPORT.md).
+Начните с [README](README.md), [архитектуры](docs/ru/ARCHITECTURE.md), [протокола Companion](docs/ru/COMPANION-PROTOCOL.md) и [истории изменений](CHANGELOG.md). Вопросы обсуждаются в [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions), воспроизводимые ошибки и функции — в [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues). [Маршруты поддержки](SUPPORT.md).
 
-## Development setup
+Требуются Qt 6.5+ с Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth, Widgets и Shader Tools, CMake 3.21+, C++20, Python 3 и Pillow. Сборка и тесты описаны в [руководстве](docs/ru/BUILD.md). CI использует Qt 6.10.2 на Linux, macOS и Windows.
 
-Install Qt 6.5+ (Quick, Quick Controls, Quick Dialogs, Serial Port), CMake 3.21+,
-a C++20 compiler and Python 3/Pillow for compiler and integration tests. See [BUILD.md](docs/BUILD.md).
+## Общий SDK и организация кода
 
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
+Перед сборкой выполните `git submodule update --init --recursive`. `platform/` — закреплённый подмодуль IgniteSDK. Общие изменения вносятся в SDK, проверяются там, затем подключаются обновлением коммита подмодуля в OS и Flare. Экспорта или копирования исходников нет.
+
+В SDK заводские приложения находятся в `system/`. Генерация из корня SDK: `python3 tools/generate_registry.py` и `python3 tools/build_system.py`. Не запускайте удалённые инструменты экспорта.
+
+QML отвечает за представление, службы Flare — за поведение, OS — за аппаратные адаптеры. Сохраняйте библиотеку визуальных компонентов. Ввод-вывод должен быть асинхронным; проверяйте полные ответы, фрагментацию и границы. Возможности берутся из INFO, а не жёстко заданного имени модели. Не добавляйте текстовые обходы бинарного протокола. Изменения контрактов документируются и проверяются в обоих потребителях.
+
+## Проверка
+
+Команды из корня потребителя:
+
+```sh
+cmake -S platform -B /tmp/flint-platform -DCMAKE_BUILD_TYPE=Debug
+cmake --build /tmp/flint-platform
+ctest --test-dir /tmp/flint-platform --output-on-failure
 ```
 
-Tests use the shared Core and a disposable offline simulator; they do not need physical hardware.
-The GitHub workflow builds with Qt 6.10.2 on Linux, macOS and Windows for PRs and pushes to `main`.
-Run hardware checks separately when changing USB or Bluetooth behavior.
+Для OS дополнительно `python3 -m unittest discover -s tools/tests -v`; для Flare — CTest основной сборки и тесты каталогов локализации. Обычные тесты автономны; проверки физического USB/BLE запускаются отдельно и явно. Не добавляйте реальные учётные данные, каталоги сборки, аппаратные захваты и личные настройки Qt Creator.
 
-## Code organization
+## Изменения и оформление
 
-- QML owns presentation; retain its design system, icons and visual resources.
-- `src/platform_app/` owns application services; `src/device/` owns the reusable Bluetooth lifecycle.
-- `platform/` is exported from the canonical OS implementation.
-- Keep serial I/O asynchronous and the UI thread responsive.
-- Match complete protocol replies, handle fragmented input and preserve input bounds.
-- Use capabilities from INFO; do not gate features on a hard-coded model name.
-- Use the shared binary v1 handshake and development contract revision; do not add textual compatibility shims.
-- Use four-space indentation without tabs.
-- Document protocol changes in both repositories and test failure behavior.
-- Keep generated builds, device captures and local Qt Creator settings out of commits.
+Создавайте небольшие PR из актуальной `main`, используя ветки `feature/…`, `fix/…`, `chore/…`, `docs/…`; напрямую в `main` не отправляйте. Объясните поведение, совместимость и проверку. Отступы — четыре пробела без табуляции; стиль в `.editorconfig` и `.clang-format`. Сообщения коммитов — английские Conventional Commits в повелительной форме, например `fix(session): Reject incomplete status snapshots`.
 
-## Branching and PRs
+Русский — канонический язык файловой документации. Обновляйте оригиналы и английские переводы с сохранением имён документов и рабочих ссылок. Исторические журналы и сторонние лицензии сохраняют исходный язык.
 
-- Do not push directly to `main`.
-- Branch from current `main`: `feature/…`, `fix/…`, `chore/…`, `docs/…`.
-- Open a small, reviewable PR. Explain behavior, compatibility and verification.
-- Changes to firmware belong in [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS).
+## Приложения и лицензии
 
-## Commit messages
+Независимые Ignite создаются отдельными проектами общим компилятором, без нативной регистрации циферблатов в Core. Разрешения объявляются с точной областью; неподдерживаемые API не рекламируются. Автор сохраняет права на собственный вклад. Вклад предоставляется по лицензии соответствующего компонента; если прав недостаточно, сообщите до включения. Передача авторских прав и общее согласие на коммерческое перелицензирование не предполагаются.
 
-Use English imperative [Conventional Commits](https://www.conventionalcommits.org/):
-
-```text
-feat(usb): Add device capability discovery
-fix(session): Reject incomplete status snapshots
-docs: Clarify Qt Creator setup
-```
-
-## Naming and license
-
-**Flint Flare** (application), **FlinT OS** (firmware), **FlinT Spark** (first
-device), **FlinT** (product line), **DeeTech Labs** (organization).
-
-Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
-Participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
+[Карта лицензий](docs/ru/LICENSING.md), [LICENSE](LICENSE), [NOTICE](NOTICE). Участие регулируется [правилами сообщества](CODE_OF_CONDUCT.md).

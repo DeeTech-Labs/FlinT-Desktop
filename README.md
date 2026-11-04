@@ -1,168 +1,91 @@
 <p align="center">
-  <img src="brand/FlinT_logo.png" alt="FlinT" width="220"/>
-</p>
-
-<h1 align="center">Flint Flare</h1>
-
-<p align="center">
-  <b>Flare companion</b> for <b>FlinT</b> devices · Spark and future models · Qt6 / QML<br/>
-  by <a href="https://github.com/DeeTech-Labs">DeeTech Labs</a>
+  <img src=".github/assets/readme-hero.svg" alt="Flint Flare — Ваш FlinT. Всё под рукой." width="1280"/>
 </p>
 
 <p align="center">
-  <a href="https://github.com/DeeTech-Labs/Flint-Flare/stargazers"><img src="https://img.shields.io/github/stars/DeeTech-Labs/Flint-Flare?style=flat-square&logo=github&color=ff6a00&labelColor=111111" alt="Stars"/></a>
-  <img src="https://img.shields.io/badge/status-alpha-ff6a00?style=flat-square&labelColor=111111" alt="Alpha"/>
-  <img src="https://img.shields.io/badge/Qt-6.5%2B-a8a59c?style=flat-square&labelColor=111111" alt="Qt 6.5+"/>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-e8e4dc?style=flat-square&labelColor=111111" alt="License"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm_NC-ff873e?style=flat-square&amp;labelColor=20242a" alt="PolyForm NC"/></a>
+  <img src="https://img.shields.io/badge/status-alpha-c4b7aa?style=flat-square&amp;labelColor=20242a" alt="alpha"/>
+  <img src="https://img.shields.io/badge/stack-Qt_6.5%2B-c4b7aa?style=flat-square&amp;labelColor=20242a" alt="COMPANION / QT QUICK"/>
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#docs">Docs</a> ·
-  <a href="https://github.com/DeeTech-Labs/FlinT-OS">FlinT OS</a> ·
-  <a href="https://github.com/DeeTech-Labs/Flint-Flare/discussions">Discussions</a>
+  <a href="#быстрый-старт">Быстрый старт</a> &nbsp; · &nbsp; <a href="#документация">Документация</a> &nbsp; · &nbsp; <a href="#лицензия">Лицензия</a> &nbsp; · &nbsp; <a href="#участники">Участники</a>
+</p>
+
+<p align="center">
+  <a href="docs/en/README.md">English version</a> &nbsp; / &nbsp;
+  <a href="https://flint.deetech.ru/">Сайт экосистемы</a> &nbsp; / &nbsp;
+  <a href="https://github.com/DeeTech-Labs">DeeTech Labs</a>
 </p>
 
 ---
 
-## What it is
+Приложение-компаньон устройств **FlinT** с [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS), разработка **DeeTech Labs**. Первое поддерживаемое устройство — **FlinT Spark**.
 
-**Flint Flare** is the companion application for **FlinT** devices running
-[FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS), by **DeeTech Labs**.
-The first supported device is **FlinT Spark**. Device identity and advertised
-capabilities drive the connection, so the client can support future models.
+## Возможности
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>Built-in</h3>
-      <ul>
-        <li>USB and Bluetooth LE device discovery and connection</li>
-        <li>Device identity, component settings and runtime status</li>
-        <li>PC time synchronization</li>
-        <li>Ignite Hub · Studio · shared Runtime preview · per-app consent</li>
-      </ul>
-    </td>
-    <td width="50%" valign="top">
-      <h3>Stack</h3>
-      <ul>
-        <li>C++20 · Qt 6.5+</li>
-        <li>Qt Quick / QML · Quick Controls · Quick Dialogs</li>
-        <li>Qt Serial Port + Qt Bluetooth · asynchronous I/O</li>
-        <li>CMake · Linux / Windows / macOS targets</li>
-      </ul>
-    </td>
-  </tr>
-</table>
+- **Подключение.** Обнаружение устройств по USB и Bluetooth LE, информация об устройстве и синхронизация времени.
+- **Ignite Hub.** Установка пакетов, запуск компонентов, выбор часов, темы и языка; управление разрешениями.
+- **Studio и Preview.** Компиляция локальных проектов и просмотр через общий Runtime.
+- **Автономный симулятор.** Разработка и проверка без физического устройства.
 
-Ignite Hub installs binary packages with resumable transfer, launches components, selects clock/theme/language providers, and manages application permissions. Studio compiles local projects; Preview and the disposable simulator use the same portable runtime as FlinT OS.
+## Быстрый старт
 
-The existing QML shell, theme, icons, fonts, effects, localization and tray integration are retained. Bounded Lua runs in the simulator and validated Spark firmware. Firmware updates, background services and additional host integrations remain future work; see the [shared implementation specification](platform/README.md). Linux builds are verified locally; Windows/macOS remain CI targets rather than locally validated packages.
+Нужны Qt 6.5+ с Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth, Widgets и Shader Tools; CMake 3.21+, компилятор C++20, Python 3 и Pillow для компилятора ресурсов и интеграционных тестов. Команды из корня репозитория:
 
----
-
-## Quick start
-
-**Requirements:** Qt 6.5+ with Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth, Widgets and Shader Tools;
-CMake 3.21+; a C++20 compiler. Python 3 and Pillow support the project compiler and integration tests.
-
-```bash
+```sh
+git submodule update --init --recursive
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --parallel
 ./build/flint_flare
-```
-
-For a non-system Qt installation, pass `-DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64`.
-In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific notes:
-[docs/BUILD.md](docs/BUILD.md).
-
-<details>
-<summary><b>Connect a device</b></summary>
-
-1. Open Connection and select USB or Bluetooth LE. No device connection is started automatically.
-2. For a new BLE bond, connect USB first, open the pairing window, then connect BLE. Compare and confirm the code on both sides through the retained local USB channel.
-3. Flare checks the protocol, development contract revision, build identity and required capabilities before allowing application operations.
-4. Use the time-sync button or Ignite Hub to manage the connected device. A local simulator is available without hardware.
-
-CPU/RAM sharing requires both the active Ignite's scoped permission and Flare's independent local policy. Preferences stay local; no startup service or background network upload is installed.
-
-</details>
-
-<details>
-<summary><b>Offline verification</b></summary>
-
-```bash
 ctest --test-dir build --output-on-failure
-QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ./build/flint_flare --smoke
 ```
 
-The smoke test loads the actual QML application and a disposable local simulator. It does not scan for or connect to USB/BLE devices.
+Для несистемной Qt передайте `-DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64`. Тест запускает настоящее приложение QML с временным автономным симулятором, без поиска или подключения USB/BLE-устройств. Подробности: [сборка](docs/ru/BUILD.md).
 
-</details>
+## Подключение устройства
 
-<details>
-<summary><b>Project layout</b></summary>
+1. В разделе подключения выберите USB или Bluetooth LE; автоматического подключения нет.
+2. Для новой BLE-привязки сначала подключите USB, откройте окно сопряжения и подтвердите совпадающий код через сохранённый USB-канал.
+3. После проверки совместимости используйте синхронизацию времени и Ignite Hub. Без устройства доступен локальный симулятор.
 
-```text
-flint_flare/
-├── src/                 # C++ entry point and application services
-│   ├── platform_app/    # device manager, Hub, Studio, Preview and Companion
-│   └── device/          # reusable Bluetooth / BlueZ hardware lifecycle
-├── platform/            # Flint IgniteSDK Git submodule (pinned commit)
-├── qml/                 # retained Qt Quick design system and adapted screens
-├── assets/              # icons and fonts
-├── shaders/             # visual effects
-├── translations/        # interface language catalogs
-├── docs/                # build, architecture and Companion contract
-├── brand/               # shared FlinT logo
-└── .github/             # CI, issue forms and code owners
-```
+Передача CPU/RAM требует одновременно разрешения активного Ignite с точной областью и локальной политики Flare. Настройки остаются локальными; служба автозапуска и фоновая загрузка данных в сеть не устанавливаются.
 
-</details>
+## Текущий статус
 
----
+Локально проверена сборка Linux; Windows и macOS проверяются в CI. Обновление прошивки, фоновые службы и дополнительные интеграции компьютера пока не реализованы.
 
-## Docs
+## Устройство проекта
 
-- [USB/BLE companion protocol](docs/COMPANION-PROTOCOL.md) — binary v1 framing, compatibility checks and pairing trust.
+`src/platform_app/` — PlatformClient, IgniteHub, Studio, Preview и CompanionService; `src/device/` — жизненный цикл Bluetooth/BlueZ; `qml/` — дизайн-система Qt Quick и экраны; `assets/` — иконки и шрифты; `shaders/` — эффекты; `translations/` — языковые каталоги; `brand/` — общий логотип; `.github/` — CI и шаблоны.
 
-- [Build and run](docs/BUILD.md) — Qt kits, platform paths and checks.
-- [Architecture](docs/ARCHITECTURE.md) — UI, USB session and device capabilities.
-- [Shared platform](platform/README.md) — package format, runtime, permissions and explicit limits.
-- [Changelog](CHANGELOG.md) — development history.
-- [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS) — device firmware.
+`platform/` — [Flint IgniteSDK](https://github.com/DeeTech-Labs/Flint-IgniteSDK) на закреплённом коммите. SDK содержит общие Core, Runtime, компилятор и контракты; копий исходников нет. Изменения в общей реализации вносятся в SDK, затем обновляется ссылка подмодуля.
+
+## Документация
+
+- [Архитектура](docs/ru/ARCHITECTURE.md).
+- [Протокол USB/BLE Companion](docs/ru/COMPANION-PROTOCOL.md).
+- [Локализация интерфейса](docs/ru/LOCALIZATION.md).
+- [Общая платформа](platform/README.md).
+- [История изменений](CHANGELOG.md).
+- [Вклад в проект](CONTRIBUTING.md), [поддержка](SUPPORT.md), [безопасность](SECURITY.md), [правила сообщества](CODE_OF_CONDUCT.md).
+
+[Обсуждения](https://github.com/DeeTech-Labs/Flint-Flare/discussions) · [сайт](https://flint.deetech.ru/).
 
 ---
 
-## Contributing
+## Лицензия
 
-[CONTRIBUTING.md](CONTRIBUTING.md) · [SUPPORT.md](SUPPORT.md) ·
-[SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) ·
-[Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions)
+[PolyForm Noncommercial 1.0.0](LICENSE). Для разработки бесплатных и платных независимых Ignite действует [отдельное разрешение](docs/ru/SDK-DEVELOPMENT-PERMISSION.md), включая необходимые средства Studio и Preview.
 
----
+[Все условия лицензирования](docs/ru/LICENSING.md) · [Уведомления о компонентах](NOTICE).
 
-## License
+## Участники
 
-Copyright 2026 DeeTech Labs · [Apache License 2.0](LICENSE) ·
-keep attribution in [NOTICE](NOTICE).
+Спасибо всем, кто помогает развивать **Flint Flare**: пишет код, проверяет сборки, находит ошибки, улучшает документацию и переводы.
 
----
+<a href="https://github.com/DeeTech-Labs/Flint-Flare/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=DeeTech-Labs/Flint-Flare" alt="Контрибьюторы Flint Flare"/>
+</a>
 
-## Contributors
-
-Thanks to everyone who has contributed to Flint Flare:
-
-<p align="center">
-  <a href="https://github.com/DeeTech-Labs/Flint-Flare/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=DeeTech-Labs/Flint-Flare" alt="Contributors"/>
-  </a>
-</p>
-
-<p align="center">
-  <sub>Flint Flare · DeeTech Labs · Apache 2.0 · Qt6</sub>
-</p>
-
-Initialize the shared SDK before building: `git submodule update --init --recursive`.
-Both OS and Flare consume [Flint IgniteSDK](https://github.com/DeeTech-Labs/Flint-IgniteSDK)
-as a pinned Git submodule at `platform/`; shared changes belong in that repository.
+<p><sub>Flint Flare · Часть экосистемы FlinT · Разработка DeeTech Labs</sub></p>

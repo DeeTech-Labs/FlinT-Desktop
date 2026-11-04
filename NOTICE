@@ -7,3 +7,10 @@ https://github.com/DeeTech-Labs
 UI fonts and portable rasterizer subsets derive from Lato by Łukasz Dziedzic,
 licensed under SIL Open Font License 1.1. See assets/fonts/OFL.txt and
 platform/include/flint/graphics/fonts/Lato-LICENSE.txt.
+
+Required Notice: Copyright 2026 DeeTech Labs (https://github.com/DeeTech-Labs)
+Licensing scope and additional permissions: docs/ru/LICENSING.md
+
+Lua 5.4.9: MIT, Copyright 1994-2026 Lua.org, PUC-Rio.
+See platform/third_party/lua/lua.h and platform/third_party/lua/README.flint.
+The pinned platform has its own mixed-license scope; see platform/LICENSE.

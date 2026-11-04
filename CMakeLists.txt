@@ -61,3 +61,8 @@ include(GNUInstallDirs)
 install(TARGETS flint_flare BUNDLE DESTINATION . RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 qt_generate_deploy_qml_app_script(TARGET flint_flare OUTPUT_SCRIPT deploy_script NO_UNSUPPORTED_PLATFORM_ERROR)
 install(SCRIPT ${deploy_script})
+
+install(FILES LICENSE NOTICE DESTINATION ${CMAKE_INSTALL_DATADIR}/FlintFlare)
+install(DIRECTORY docs DESTINATION ${CMAKE_INSTALL_DATADIR}/FlintFlare
+    FILES_MATCHING PATTERN "*.md" PATTERN "*.txt")
+install(FILES assets/fonts/OFL.txt DESTINATION ${CMAKE_INSTALL_DATADIR}/FlintFlare/third_party/Lato)

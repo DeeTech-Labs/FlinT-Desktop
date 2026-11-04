@@ -1,3 +1,5 @@
+[Русский оригинал](../ru/ARCHITECTURE.md)
+
 # Flare architecture
 
 The QML shell and reusable visual components remain under `qml/`. Existing icons, fonts, shaders, localization and tray integration are independent of the device protocol.
@@ -6,4 +8,4 @@ The QML shell and reusable visual components remain under `qml/`. Existing icons
 
 `src/device/` contains only the reusable Qt Bluetooth/BlueZ hardware lifecycle. `platform/` is the pinned Flint IgniteSDK submodule containing the portable Core, package manager, Runtime, ResourceManager, event queue, renderer, compiler and contracts. The simulator executes that same Core in an isolated temporary directory.
 
-The complete [shared specification](../platform/README.md) defines installed formats, consent, transactions, trust and explicit unsupported features.
+The complete [shared specification](../../platform/README.md) defines installed formats, consent, transactions, trust and explicit unsupported features.
