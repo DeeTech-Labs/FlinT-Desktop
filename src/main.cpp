@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
     QQuickStyle::setStyle("Basic");
     QApplication app(argc, argv);
     app.setOrganizationName("DeeTech Labs");
-    app.setApplicationName("FlinT Desktop");
-    app.setApplicationVersion(FLINT_DESKTOP_VERSION);
+    app.setApplicationName("Flint Flare");
+    app.setApplicationVersion(FLINT_FLARE_VERSION);
     QCommandLineParser args;
     args.addHelpOption();
     args.addVersionOption();
@@ -34,6 +34,18 @@ int main(int argc, char **argv) {
         testPreferences = std::make_unique<QTemporaryDir>();
         QSettings::setDefaultFormat(QSettings::IniFormat);
         QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, testPreferences->path());
+    }
+    if (!args.isSet("smoke")) {
+        QSettings previous("DeeTech Labs", "FlinT Desktop");
+        QSettings current;
+        if (!current.value("migration/desktopSettings", false).toBool()) {
+            for (const auto &key : previous.allKeys()) {
+                if (!current.contains(key))
+                    current.setValue(key, previous.value(key));
+            }
+            current.setValue("migration/desktopSettings", true);
+            current.sync();
+        }
     }
     Localization localization;
     BackgroundAgent backgroundAgent;
@@ -56,7 +68,7 @@ int main(int argc, char **argv) {
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
         [] { QCoreApplication::exit(1); }, Qt::QueuedConnection);
-    engine.loadFromModule("Flint.Desktop", "Main");
+    engine.loadFromModule("Flint.Flare", "Main");
     QObject::connect(&backgroundAgent, &BackgroundAgent::showWindow, &engine, [&engine] {
         if (auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().value(0))) {
             window->show();

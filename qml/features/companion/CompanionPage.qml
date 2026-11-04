@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 AppPage {
     AppCard {
@@ -25,7 +25,7 @@ AppPage {
                 }
             }
             Caption {
-                text: qsTr("Computer data is shared only when both Desktop and the active Ignite permit it.")
+                text: qsTr("Computer data is shared only when both Flare and the active Ignite permit it.")
                 Layout.fillWidth: true
             }
             AppSwitch {

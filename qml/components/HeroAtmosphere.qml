@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Window
-import Flint.Desktop
+import Flint.Flare
 
 Item {
     id: atmosphere

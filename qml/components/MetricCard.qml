@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 Rectangle {
     property string label

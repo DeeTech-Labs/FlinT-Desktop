@@ -115,7 +115,7 @@
             "Loading a profile prepares changes. Apply them to write to the watch.": "Loading a profile prepares changes. Apply them to write to the watch."
         },
         "DesktopSettingsPage": {
-            "Desktop settings": "Desktop settings",
+            "Flare settings": "Flare settings",
             "Keep running in the system tray": "Keep running in the system tray",
             "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.": "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.",
             "Synchronize time automatically on connection": "Synchronize time automatically on connection",
@@ -174,7 +174,7 @@
             "Backup loaded. Review and apply changes.": "Backup loaded. Review and apply changes."
         },
         "BackgroundAgent": {
-            "Open FlinT Desktop": "Open FlinT Desktop",
+            "Open Flint Flare": "Open Flint Flare",
             "Quit": "Quit"
         }
     }

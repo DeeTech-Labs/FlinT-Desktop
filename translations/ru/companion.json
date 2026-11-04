@@ -115,7 +115,7 @@
             "Loading a profile prepares changes. Apply them to write to the watch.": "После загрузки профиля нажмите «Применить изменения», чтобы записать его на часы."
         },
         "DesktopSettingsPage": {
-            "Desktop settings": "Настройки приложения",
+            "Flare settings": "Настройки приложения",
             "Keep running in the system tray": "Продолжать работу в системном трее",
             "With tray mode enabled, closing the window keeps connections and companion tools running. Quit from the tray to stop.": "В режиме трея закрытие окна сохраняет подключение и работу Companion. Для завершения выберите «Выйти» в трее.",
             "Synchronize time automatically on connection": "Синхронизировать время при подключении",
@@ -174,7 +174,7 @@
             "Backup loaded. Review and apply changes.": "Резервная копия загружена. Проверьте и примените изменения."
         },
         "BackgroundAgent": {
-            "Open FlinT Desktop": "Открыть FlinT Desktop",
+            "Open Flint Flare": "Открыть Flint Flare",
             "Quit": "Выйти"
         }
     }

@@ -37,7 +37,7 @@
             "Save preview": "Сохранить превью"
         },
         "CompanionPage": {
-            "Computer data is shared only when both Desktop and the active Ignite permit it.": "Данные компьютера передаются только при согласии в Desktop и у активного Ignite.",
+            "Computer data is shared only when both Flare and the active Ignite permit it.": "Данные компьютера передаются только при согласии в Flare и у активного Ignite.",
             "Allow CPU and RAM metrics": "Разрешить передачу CPU и RAM",
             "Select the application in Ignite Hub and grant companion.pc.metrics for cpu,ram. Revoking access stops the data flow.": "Выберите приложение в Ignite Hub и выдайте companion.pc.metrics для cpu,ram. Отзыв права прекращает передачу."
         },

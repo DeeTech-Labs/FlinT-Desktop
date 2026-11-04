@@ -185,7 +185,7 @@ void PlatformClient::handshake() {
     flint::Writer w;
     w.n(flint::ProtocolVersion, 2);
     w.n(flint::ContractRevision);
-    w.text("flint-desktop-" FLINT_DESKTOP_VERSION);
+    w.text("flint-flare-" FLINT_FLARE_VERSION);
     w.n(flint::CapPackages | flint::CapDeclarative, 8);
     request(flint::Method::hello, w.data, [this](auto error, auto bytes) {
         if (error != flint::Error::ok) {

@@ -2,15 +2,15 @@
   <img src="brand/FlinT_logo.png" alt="FlinT" width="220"/>
 </p>
 
-<h1 align="center">FlinT Desktop</h1>
+<h1 align="center">Flint Flare</h1>
 
 <p align="center">
-  <b>Desktop companion</b> for <b>FlinT</b> devices · Spark and future models · Qt6 / QML<br/>
+  <b>Flare companion</b> for <b>FlinT</b> devices · Spark and future models · Qt6 / QML<br/>
   by <a href="https://github.com/DeeTech-Labs">DeeTech Labs</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/stargazers"><img src="https://img.shields.io/github/stars/DeeTech-Labs/FlinT-Desktop?style=flat-square&logo=github&color=ff6a00&labelColor=111111" alt="Stars"/></a>
+  <a href="https://github.com/DeeTech-Labs/Flint-Flare/stargazers"><img src="https://img.shields.io/github/stars/DeeTech-Labs/Flint-Flare?style=flat-square&logo=github&color=ff6a00&labelColor=111111" alt="Stars"/></a>
   <img src="https://img.shields.io/badge/status-alpha-ff6a00?style=flat-square&labelColor=111111" alt="Alpha"/>
   <img src="https://img.shields.io/badge/Qt-6.5%2B-a8a59c?style=flat-square&labelColor=111111" alt="Qt 6.5+"/>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-e8e4dc?style=flat-square&labelColor=111111" alt="License"/></a>
@@ -20,14 +20,14 @@
   <a href="#quick-start">Quick start</a> ·
   <a href="#docs">Docs</a> ·
   <a href="https://github.com/DeeTech-Labs/FlinT-OS">FlinT OS</a> ·
-  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/discussions">Discussions</a>
+  <a href="https://github.com/DeeTech-Labs/Flint-Flare/discussions">Discussions</a>
 </p>
 
 ---
 
 ## What it is
 
-**FlinT Desktop** is the companion application for **FlinT** devices running
+**Flint Flare** is the companion application for **FlinT** devices running
 [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS), by **DeeTech Labs**.
 The first supported device is **FlinT Spark**. Device identity and advertised
 capabilities drive the connection, so the client can support future models.
@@ -69,7 +69,7 @@ CMake 3.21+; a C++20 compiler. Python 3 and Pillow support the project compiler 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --parallel
-./build/flint_desktop
+./build/flint_flare
 ```
 
 For a non-system Qt installation, pass `-DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64`.
@@ -81,10 +81,10 @@ In Qt Creator, open `CMakeLists.txt` and select a Qt6 kit. Platform-specific not
 
 1. Open Connection and select USB or Bluetooth LE. No device connection is started automatically.
 2. For a new BLE bond, connect USB first, open the pairing window, then connect BLE. Compare and confirm the code on both sides through the retained local USB channel.
-3. Desktop checks the protocol, development contract revision, build identity and required capabilities before allowing application operations.
+3. Flare checks the protocol, development contract revision, build identity and required capabilities before allowing application operations.
 4. Use the time-sync button or Ignite Hub to manage the connected device. A local simulator is available without hardware.
 
-CPU/RAM sharing requires both the active Ignite's scoped permission and Desktop's independent local policy. Preferences stay local; no startup service or background network upload is installed.
+CPU/RAM sharing requires both the active Ignite's scoped permission and Flare's independent local policy. Preferences stay local; no startup service or background network upload is installed.
 
 </details>
 
@@ -93,7 +93,7 @@ CPU/RAM sharing requires both the active Ignite's scoped permission and Desktop'
 
 ```bash
 ctest --test-dir build --output-on-failure
-QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ./build/flint_desktop --smoke
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ./build/flint_flare --smoke
 ```
 
 The smoke test loads the actual QML application and a disposable local simulator. It does not scan for or connect to USB/BLE devices.
@@ -104,7 +104,7 @@ The smoke test loads the actual QML application and a disposable local simulator
 <summary><b>Project layout</b></summary>
 
 ```text
-flint_desktop/
+flint_flare/
 ├── src/                 # C++ entry point and application services
 │   ├── platform_app/    # device manager, Hub, Studio, Preview and Companion
 │   └── device/          # reusable Bluetooth / BlueZ hardware lifecycle
@@ -138,7 +138,7 @@ flint_desktop/
 
 [CONTRIBUTING.md](CONTRIBUTING.md) · [SUPPORT.md](SUPPORT.md) ·
 [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) ·
-[Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions)
+[Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions)
 
 ---
 
@@ -151,14 +151,14 @@ keep attribution in [NOTICE](NOTICE).
 
 ## Contributors
 
-Thanks to everyone who has contributed to FlinT Desktop:
+Thanks to everyone who has contributed to Flint Flare:
 
 <p align="center">
-  <a href="https://github.com/DeeTech-Labs/FlinT-Desktop/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=DeeTech-Labs/FlinT-Desktop" alt="Contributors"/>
+  <a href="https://github.com/DeeTech-Labs/Flint-Flare/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=DeeTech-Labs/Flint-Flare" alt="Contributors"/>
   </a>
 </p>
 
 <p align="center">
-  <sub>FlinT Desktop · DeeTech Labs · Apache 2.0 · Qt6</sub>
+  <sub>Flint Flare · DeeTech Labs · Apache 2.0 · Qt6</sub>
 </p>

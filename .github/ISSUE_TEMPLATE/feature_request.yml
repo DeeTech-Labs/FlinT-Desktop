@@ -1,5 +1,5 @@
 name: Feature request
-description: Propose a new capability or improvement for FlinT Desktop
+description: Propose a new capability or improvement for Flint Flare
 title: "[feat] "
 labels: ["enhancement"]
 body:
@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Describe the problem first, then the idea. For open-ended brainstorming prefer
-        [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
+        [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).
 
   - type: textarea
     id: problem
@@ -21,7 +21,7 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: What should FlinT Desktop do? Keep scope concrete when possible.
+      description: What should Flint Flare do? Keep scope concrete when possible.
     validations:
       required: true
 

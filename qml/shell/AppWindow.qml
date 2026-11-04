@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 ApplicationWindow {
     id: app
@@ -121,7 +121,7 @@ ApplicationWindow {
                         onClicked: app.goBack()
                     }
                     Label {
-                        text: [qsTr("Overview"), qsTr("My watch"), "Ignite Hub", "Companion", qsTr("Diagnostics"), qsTr("Desktop settings"), qsTr("Connect your watch")][app.section]
+                        text: [qsTr("Overview"), qsTr("My watch"), "Ignite Hub", "Companion", qsTr("Diagnostics"), qsTr("Flare settings"), qsTr("Connect your watch")][app.section]
                         font.pixelSize: app.compact ? 24 : 28
                         font.weight: Font.DemiBold
                         Layout.fillWidth: true
@@ -184,7 +184,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                     }
                     Caption {
-                        text: "FlinT / Desktop"
+                        text: "Flint Flare"
                         font.pixelSize: 10
                     }
                 }

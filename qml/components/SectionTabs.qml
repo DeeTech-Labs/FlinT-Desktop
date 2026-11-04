@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import Flint.Desktop
+import Flint.Flare
 
 TabBar {
     id: tabs

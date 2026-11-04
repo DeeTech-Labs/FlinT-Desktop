@@ -1,5 +1,5 @@
 name: Bug report
-description: Something is broken or behaves unexpectedly in FlinT Desktop
+description: Something is broken or behaves unexpectedly in Flint Flare
 title: "[bug] "
 labels: ["bug"]
 body:
@@ -7,11 +7,11 @@ body:
     attributes:
       value: |
         Include reproduction steps and relevant USB logs. Questions belong in
-        [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
+        [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).
   - type: input
     id: app_version
     attributes:
-      label: FlinT Desktop version / commit
+      label: Flint Flare version / commit
     validations:
       required: true
   - type: input

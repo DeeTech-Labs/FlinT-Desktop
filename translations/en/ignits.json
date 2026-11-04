@@ -3,11 +3,11 @@
         "FaceGalleryPage": {
             "Market": "Market",
             "Watch market": "Watch market",
-            "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.": "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.",
+            "Factory packages are included and protected. Install additional faces, themes and bundles from this local catalog.": "Factory packages are included and protected. Install additional faces, themes and bundles from this local catalog.",
             "Import Ignit…": "Import Ignit…",
             "Refresh": "Refresh",
             "Restore default theme": "Restore default theme",
-            "Connect a watch with Ignits v1 firmware.": "Connect a watch with Ignits v1 firmware.",
+            "Connect a watch with Ignite v1 firmware.": "Connect a watch with Ignite v1 firmware.",
             "Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available",
             "Refresh to check storage before installing.": "Refresh to check storage before installing.",
             "Catalog": "Catalog",
@@ -19,12 +19,12 @@
             "Protected": "Protected",
             "Remove": "Remove"
         },
-        "Ignits": {
+        "Ignite": {
             "Disconnected": "Disconnected",
             "Device error: %1": "Device error: %1",
-            "Installed Ignits": "Installed Ignits",
+            "Installed Ignite": "Installed Ignite",
             "Confirmed by watch": "Confirmed by watch",
-            "Invalid or unsupported Flint Ignit": "Invalid or unsupported Flint Ignit",
+            "Invalid or unsupported Ignite": "Invalid or unsupported Ignite",
             "Waiting for watch confirmation…": "Waiting for watch confirmation…",
             "Cannot send to watch": "Cannot send to watch",
             "Cannot read Ignit (limit 4 KB)": "Cannot read Ignit (limit 4 KB)"

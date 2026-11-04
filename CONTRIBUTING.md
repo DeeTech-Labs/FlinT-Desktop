@@ -1,6 +1,6 @@
-# Contributing to FlinT Desktop
+# Contributing to Flint Flare
 
-Thanks for helping improve **FlinT Desktop**, the companion for **FlinT** devices
+Thanks for helping improve **Flint Flare**, the companion for **FlinT** devices
 running **FlinT OS**, by **DeeTech Labs**.
 
 ## Before you start
@@ -8,8 +8,8 @@ running **FlinT OS**, by **DeeTech Labs**.
 - Read [README](README.md), [architecture](docs/ARCHITECTURE.md) and the
   [Companion protocol](docs/COMPANION-PROTOCOL.md).
 - Check [CHANGELOG.md](CHANGELOG.md) for development notes.
-- Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
-- Bugs and concrete features → [Issues](https://github.com/DeeTech-Labs/FlinT-Desktop/issues).
+- Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).
+- Bugs and concrete features → [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues).
 - Support routing → [SUPPORT.md](SUPPORT.md).
 
 ## Development setup
@@ -59,7 +59,7 @@ docs: Clarify Qt Creator setup
 
 ## Naming and license
 
-**FlinT Desktop** (application), **FlinT OS** (firmware), **FlinT Spark** (first
+**Flint Flare** (application), **FlinT OS** (firmware), **FlinT Spark** (first
 device), **FlinT** (product line), **DeeTech Labs** (organization).
 
 Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).

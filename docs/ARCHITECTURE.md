@@ -1,4 +1,4 @@
-# Desktop architecture
+# Flare architecture
 
 The QML shell and reusable visual components remain under `qml/`. Existing icons, fonts, shaders, localization and tray integration are independent of the device protocol.
 

@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
 import QtQuick.Dialogs
-import Flint.Desktop
+import Flint.Flare
 
 AppCard {
     implicitHeight: content.implicitHeight + topPadding + bottomPadding

@@ -19,8 +19,8 @@ BackgroundAgent::BackgroundAgent(QObject *parent) : QObject(parent) {
     painter.fillPath(spark, QColor("#d4fa70"));
     painter.end();
     m_tray.setIcon(QIcon(icon));
-    m_tray.setToolTip("FlinT Desktop");
-    m_menu.addAction(tr("Open FlinT Desktop"), this, &BackgroundAgent::showWindow);
+    m_tray.setToolTip("Flint Flare");
+    m_menu.addAction(tr("Open Flint Flare"), this, &BackgroundAgent::showWindow);
     m_menu.addSeparator();
     m_menu.addAction(tr("Quit"), qApp, &QApplication::quit);
     m_tray.setContextMenu(&m_menu);

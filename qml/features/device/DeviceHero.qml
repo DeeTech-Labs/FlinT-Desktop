@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 Rectangle {
     id: hero
@@ -101,7 +101,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: 20
-        text: "F L I N T   /   " + (hero.session.info.active || "DESKTOP")
+        text: "F L I N T   /   " + (hero.session.info.active || "FLARE")
         font.pixelSize: 10
         color: "#6888ad"
         textFormat: Text.PlainText

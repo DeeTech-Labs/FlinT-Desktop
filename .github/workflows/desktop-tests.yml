@@ -1,4 +1,4 @@
-name: Desktop and portable runtime
+name: Flare and portable runtime
 on:
     pull_request:
     push:
