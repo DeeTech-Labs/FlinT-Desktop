@@ -5,6 +5,9 @@ on:
         branches: [main]
 permissions:
     contents: read
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 jobs:
     desktop:
         strategy:
@@ -16,17 +19,18 @@ jobs:
             - uses: actions/checkout@v5
               with:
                   submodules: recursive
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.12'
-            - run: python -m pip install Pillow
             - uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125
               with:
                   version: '6.10.2'
                   modules: 'qtserialport qtconnectivity qtshadertools'
                   cache: true
+            - uses: actions/setup-python@v5
+              id: python
+              with:
+                  python-version: '3.12'
+            - run: python -m pip install Pillow
             - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
               if: runner.os == 'Windows'
-            - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+            - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DPython3_EXECUTABLE="${{ steps.python.outputs.python-path }}"
             - run: cmake --build build --parallel 2
             - run: ctest --test-dir build --output-on-failure
