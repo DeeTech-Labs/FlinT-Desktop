@@ -9,6 +9,5 @@ Pane {
     background: Rectangle {
         color: Theme.surface
         radius: Theme.cardRadius
-
     }
 }

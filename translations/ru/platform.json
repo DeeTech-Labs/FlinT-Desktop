@@ -1,0 +1,87 @@
+{
+    "contexts": {
+        "AppWindow": {
+            "Confirm the same code over the local USB connection.": "Подтвердите тот же код через локальное USB-подключение.",
+            "Reject": "Отклонить"
+        },
+        "UsbLogCard": {
+            "Connection status": "Состояние подключения"
+        },
+        "StatusCard": {
+            "Active application": "Активное приложение",
+            "Refresh": "Обновить"
+        },
+        "DeviceInfoCard": {
+            "Internal RAM budget": "Бюджет внутренней RAM",
+            "Free storage": "Свободное хранилище",
+            "Build": "Сборка"
+        },
+        "OverviewPage": {
+            "Apps, watch faces, themes and languages": "Приложения, циферблаты, темы и языки",
+            "Permissions": "Разрешения",
+            "Control each application’s access": "Управляйте доступом каждого приложения",
+            "Computer metrics with your permission": "Показатели компьютера с вашего разрешения"
+        },
+        "ConnectionCard": {
+            "Scan Bluetooth": "Поиск Bluetooth",
+            "Trust a new Bluetooth device": "Подключение нового Bluetooth-устройства",
+            "Open pairing over USB, compare the code, and confirm on both sides.": "Откройте сопряжение через USB, сравните код и подтвердите его с обеих сторон.",
+            "Open pairing for 60 seconds": "Открыть сопряжение на 60 секунд",
+            "Six-digit code": "Код из шести цифр",
+            "Confirm on watch": "Подтвердить на часах",
+            "Reject": "Отклонить"
+        },
+        "WatchPreview": {
+            "Connect a watch or start the local simulator": "Подключите часы или запустите локальный симулятор",
+            "Refresh": "Обновить",
+            "Save preview": "Сохранить превью"
+        },
+        "CompanionPage": {
+            "Computer data is shared only when both Desktop and the active Ignite permit it.": "Данные компьютера передаются только при согласии в Desktop и у активного Ignite.",
+            "Allow CPU and RAM metrics": "Разрешить передачу CPU и RAM",
+            "Select the application in Ignite Hub and grant companion.pc.metrics for cpu,ram. Revoking access stops the data flow.": "Выберите приложение в Ignite Hub и выдайте companion.pc.metrics для cpu,ram. Отзыв права прекращает передачу."
+        },
+        "FaceStudioEditor": {
+            "Select Ignite project": "Выберите проект Ignite",
+            "Save Ignite": "Сохранить Ignite",
+            "Compile a JSON project with its own screens, images, font subsets and data into a binary Ignite.": "Соберите JSON-проект со своими экранами, изображениями, шрифтами и данными в бинарный Ignite.",
+            "Font and image compilation requires Python and Pillow.": "Для обработки шрифтов и изображений нужны Python и Pillow.",
+            "Choose project": "Выбрать проект",
+            "Build Ignite": "Собрать Ignite",
+            "Install build": "Установить сборку"
+        },
+        "FaceGalleryPage": {
+            "Install Ignite": "Установить Ignite",
+            "Application permission": "Разрешение приложения",
+            "Own data": "Собственные данные",
+            "Allow this access? You can revoke it here.": "Разрешить доступ? Его можно отозвать здесь.",
+            "Revoke this access?": "Отозвать доступ?",
+            "Remove package?": "Удалить пакет?",
+            "Refresh": "Обновить",
+            "Factory": "Заводской",
+            "Installed": "Установленный",
+            "Apply theme": "Применить тему",
+            "Use language": "Выбрать язык",
+            "Open %1": "Открыть %1",
+            "Use as clock": "Сделать часами",
+            "Permissions": "Разрешения",
+            "Roll back": "Откатить",
+            "Remove": "Удалить",
+            "Automatic": "Автоматически",
+            "Persistent": "Постоянно",
+            "Session": "На сеанс",
+            "Selected resource": "Выбранный ресурс",
+            "Explicit action": "Одно действие",
+            "Restricted": "Системное",
+            "Unsupported": "Не поддерживается",
+            "Revoke": "Отозвать",
+            "Allow": "Разрешить"
+        },
+        "WatchSettingsPage": {
+            "Time and display": "Время и экран",
+            "Set the UTC offset in minutes. Clock, theme and language are provided by Ignite packages.": "Укажите смещение UTC в минутах. Часы, тему и язык предоставляют пакеты Ignite.",
+            "UTC offset, minutes": "Смещение UTC, минуты",
+            "Restore factory components": "Вернуть заводские компоненты"
+        }
+    }
+}

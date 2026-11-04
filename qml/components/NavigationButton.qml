@@ -20,10 +20,12 @@ Button {
         AppIcon {
             name: control.iconName
             tint: control.selected ? (Theme.light ? Theme.accent : "#09293b") : control.hovered ? Theme.text : Theme.navText
-            Layout.preferredWidth: 20; Layout.preferredHeight: 20
+            Layout.preferredWidth: 20
+            Layout.preferredHeight: 20
             Layout.alignment: Qt.AlignHCenter
         }
-        Text { font.family: Theme.fontFamily;
+        Text {
+            font.family: Theme.fontFamily
             visible: !control.compact
             text: control.text
             font.pixelSize: 10
@@ -38,6 +40,10 @@ Button {
         radius: 10
         color: control.selected ? Theme.navSelected : control.hovered ? Theme.navHover : "transparent"
         border.color: control.visualFocus ? Theme.accent : "transparent"
-        Behavior on color { ColorAnimation { duration: Theme.animationDuration } }
+        Behavior on color {
+            ColorAnimation {
+                duration: Theme.animationDuration
+            }
+        }
     }
 }

@@ -5,24 +5,21 @@ import Flint.Desktop
 
 ColumnLayout {
     id: control
-    required property var service
-    required property string setting
     required property string label
     required property var choices
+    property alias currentIndex: selector.currentIndex
+    signal selected(var value)
     Layout.fillWidth: true
-    Layout.preferredWidth: 1
-    Layout.minimumWidth: 0
-    spacing: 6
-    Caption { text: control.label; Layout.fillWidth: true }
-    AppComboBox {
+    Caption {
+        text: control.label
         Layout.fillWidth: true
-        objectName: "choice-" + control.setting
-        Accessible.name: control.label
+    }
+    AppComboBox {
+        id: selector
+        Layout.fillWidth: true
         model: control.choices
         textRole: "label"
         valueRole: "value"
-        enabled: control.service.supported
-        currentIndex: count > 0 ? control.choices.findIndex(choice => Number(choice.value) === Number(control.service.draft[control.setting])) : -1
-        onActivated: control.service.edit(control.setting, currentValue)
+        onActivated: control.selected(currentValue)
     }
 }

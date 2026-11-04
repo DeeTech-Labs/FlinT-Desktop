@@ -140,7 +140,7 @@ void BleTransport::subscribe() {
     m_service->writeDescriptor(descriptor, QByteArray::fromHex("0200"));
 }
 bool BleTransport::write(const QByteArray& frame) {
-    if (!m_ready || !m_service || frame.size() > 352 || !m_outgoing.isEmpty()) return false;
+    if (!m_ready || !m_service || frame.size() > 4116 || !m_outgoing.isEmpty()) return false;
     m_outgoing = frame;
     writeNext();
     return true;

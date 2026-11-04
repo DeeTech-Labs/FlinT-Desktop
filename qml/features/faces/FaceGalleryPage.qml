@@ -1,183 +1,203 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import QtQuick.Dialogs
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import Flint.Desktop
 
 AppPage {
     id: page
-    positionKey: "faces-" + tab
-    required property var service
-    required property var studioService
-    readonly property var filteredFaces: service.faces.filter(face => (face.name + " " + face.id).toLowerCase().includes(search.text.toLowerCase()))
-    readonly property var filteredDesigns: studioService.library.map((item,index) => ({item:item,index:index})).filter(entry => (!favorites.checked || entry.item.favorite) && entry.item.design.name.toLowerCase().includes(search.text.toLowerCase()))
-    property var packages: typeof ignitStore !== "undefined" ? ignitStore : null
-    FileDialog { id: packageFile; fileMode: FileDialog.OpenFile; nameFilters: ["Flint Ignit (*.ignit)"]; onAccepted: if (page.packages) page.packages.install(selectedFile) }
-    property int tab: Theme.faceTab
-    onTabChanged: Theme.faceTab = tab
-    SectionTabs {
-        id: faceTabs
-        currentIndex: page.tab
-        Layout.fillWidth: true
-        labels: [qsTr("On watch"), qsTr("My designs"), "Face Studio", qsTr("Market")]
-        onCurrentIndexChanged: page.tab = currentIndex
+    FileDialog {
+        id: install
+        title: qsTr("Install Ignite")
+        nameFilters: ["Ignite (*.ignit)"]
+        onAccepted: hub.install(selectedFile)
+    }
+    Dialog {
+        id: consent
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(500, parent.width - 32)
+        modal: true
+        title: qsTr("Application permission")
+        property string permissionName
+        property string scopeName
+        property bool enable
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        contentItem: Label {
+            text: hub.selected + "\n" + consent.permissionName + "\n" + (consent.scopeName || qsTr("Own data")) + "\n\n" + (consent.enable ? qsTr("Allow this access? You can revoke it here.") : qsTr("Revoke this access?"))
+            wrapMode: Text.WordWrap
+            textFormat: Text.PlainText
+        }
+        onAccepted: hub.grant(permissionName, scopeName, enable)
+    }
+    Dialog {
+        id: removal
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        width: Math.min(420, parent.width - 32)
+        modal: true
+        title: qsTr("Remove package?")
+        property string packageId
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        contentItem: Label {
+            text: removal.packageId
+            textFormat: Text.PlainText
+            wrapMode: Text.WordWrap
+        }
+        onAccepted: hub.remove(packageId)
     }
     RowLayout {
-        visible: page.tab < 2
         Layout.fillWidth: true
-        spacing: 12
-        AppTextField {
-            id: search
-            Layout.fillWidth: true; Layout.minimumWidth: 0
-            placeholderText: qsTr("Search watch faces…")
-            Accessible.name: placeholderText
+        Caption {
+            text: hub.message
+            Layout.fillWidth: true
         }
-        AppButton { visible: page.tab === 0; iconName: "sync"; text: qsTr("Refresh faces"); available: page.service.supported; onClicked: page.service.refresh() }
+        ProgressBar {
+            visible: hub.busy
+            value: hub.progress
+            Layout.preferredWidth: 120
+        }
+        AppButton {
+            iconName: "sync"
+            text: qsTr("Refresh")
+            available: client.connected && !hub.busy
+            onClicked: hub.refresh()
+        }
+        AppButton {
+            iconName: "save"
+            text: qsTr("Install Ignite")
+            primary: true
+            available: client.connected && !hub.busy
+            onClicked: install.open()
+        }
     }
-    Caption { visible: page.tab === 0; text: qsTr("Faces reported by your firmware. Selecting a face requires device confirmation."); Layout.fillWidth: true }
-    Caption { visible: page.tab === 0 && !page.service.faces.length; text: qsTr("Connect a watch to load its available faces."); Layout.fillWidth: true }
-    Caption { visible: page.tab === 0 && page.service.faces.length > 0 && !page.filteredFaces.length; text: qsTr("No faces match your search."); Layout.fillWidth: true }
-    GridLayout {
-        visible: page.tab === 0
-        Layout.fillWidth: true
-        columns: width >= 960 ? 3 : width >= 570 ? 2 : 1
-        columnSpacing: 16; rowSpacing: 16
-        Repeater {
-            model: page.filteredFaces
-            delegate: AppCard {
-                required property var modelData
-                required property int index
-                Layout.fillWidth: true; Layout.minimumWidth: 0
-                implicitHeight: faceContent.implicitHeight + topPadding + bottomPadding
-                background: Rectangle {
-                    color: Theme.surface; radius: Theme.cardRadius
-                    AmbientAccent {
-                        objectName: "selectedFaceAccent-" + modelData.id
-                        anchors.fill: parent
-                        kind: 1
-                        active: page.tab === 0 && (!page.inSwipeView || page.currentSwipePage)
-                            && page.service.values.active_face === modelData.id
-                        strength: 0.85
+    Repeater {
+        model: hub.packages
+        delegate: AppCard {
+            id: packageCard
+            required property var modelData
+            Layout.fillWidth: true
+            implicitHeight: content.implicitHeight + topPadding + bottomPadding
+            ColumnLayout {
+                id: content
+                anchors.fill: parent
+                spacing: 12
+                RowLayout {
+                    AppIcon {
+                        name: "grid"
+                        width: 22
+                        height: 22
+                        tint: Theme.accent
                     }
-                }
-                ColumnLayout {
-                    id: faceContent; anchors.fill: parent; spacing: 14
-                    RowLayout {
+                    Label {
+                        text: packageCard.modelData.name
+                        textFormat: Text.PlainText
+                        font.pixelSize: 20
+                        font.weight: Font.DemiBold
                         Layout.fillWidth: true
-                        Label { text: (index + 1).toString().padStart(2, "0"); color: Theme.muted; font.pixelSize: 13; font.family: Theme.monoFamily; Layout.fillWidth: true }
-                        AppIcon { name: modelData.id === "studio" ? "edit" : modelData.id === "companion" ? "companion" : "clock"; tint: Theme.accent; Layout.preferredWidth: 32; Layout.preferredHeight: 32 }
                     }
-                    Label { text: modelData.name; textFormat: Text.PlainText; font.pixelSize: 24; font.weight: Font.Medium; font.letterSpacing: -0.8; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-                    Caption { text: modelData.author || "FlinT"; textFormat: Text.PlainText; Layout.fillWidth: true }
-                    Rectangle { Layout.fillWidth: true; height: 1; color: Theme.divider }
-                    Caption { text: qsTr("Screen preview unavailable"); Layout.fillWidth: true }
-                    AppButton {
-                        text: page.service.values.active_face === modelData.id ? qsTr("Selected") : qsTr("Use on watch")
-                        iconName: page.service.values.active_face === modelData.id ? "check" : "right"
-                        primary: page.service.values.active_face !== modelData.id
-                        available: page.service.supported && page.service.values.active_face !== modelData.id
-                        onClicked: page.service.selectFace(modelData.id)
+                    Caption {
+                        text: packageCard.modelData.factory ? qsTr("Factory") : qsTr("Installed")
                     }
                 }
-            }
-        }
-    }
-    AppSwitch { id: favorites; visible: page.tab === 1; text: qsTr("Favorites only") }
-    GridLayout {
-        visible: page.tab === 1
-        Layout.fillWidth: true
-        columns: width >= 960 ? 3 : width >= 570 ? 2 : 1
-        columnSpacing: 16; rowSpacing: 16
-        Repeater {
-            model: page.tab === 1 ? page.filteredDesigns : []
-            delegate: AppCard {
-                required property var modelData
-                Layout.fillWidth: true; Layout.minimumWidth: 0
-                implicitHeight: designContent.implicitHeight + topPadding + bottomPadding
-                ColumnLayout {
-                    id: designContent; anchors.fill: parent; spacing: 12
-                    Rectangle {
-                        Layout.fillWidth: true; implicitHeight: 144
-                        color: "#090f18"; radius: 16
-                        Image {
-                            anchors.fill: parent; anchors.margins: 10
-                            source: typeof designPreviewAvailable === "undefined" ? "" : "image://designpreview/" + encodeURIComponent(JSON.stringify(modelData.item.design)) + "/0"
-                            fillMode: Image.PreserveAspectFit
-                            smooth: false; cache: true
+                Caption {
+                    text: packageCard.modelData.id + " · " + packageCard.modelData.publisher + " · v" + packageCard.modelData.version
+                    Layout.fillWidth: true
+                }
+                Flow {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: childrenRect.height
+                    spacing: 8
+                    Repeater {
+                        model: packageCard.modelData.components
+                        delegate: Row {
+                            required property var modelData
+                            spacing: 8
+                            AppButton {
+                                text: modelData.type === 3 ? qsTr("Apply theme") : modelData.type === 4 ? qsTr("Use language") : qsTr("Open %1").arg(modelData.id)
+                                iconName: "play"
+                                onClicked: {
+                                    if (modelData.type === 3)
+                                        hub.setRole(4, packageCard.modelData.id, modelData.id);
+                                    else if (modelData.type === 4)
+                                        hub.setRole(5, packageCard.modelData.id, modelData.id);
+                                    else
+                                        hub.launch(packageCard.modelData.id, modelData.id);
+                                }
+                            }
+                            AppButton {
+                                visible: modelData.type === 2
+                                text: qsTr("Use as clock")
+                                iconName: "watch"
+                                onClicked: hub.setRole(1, packageCard.modelData.id, modelData.id)
+                            }
                         }
                     }
-                    Caption { text: qsTr("Draft preview · sample time"); Layout.fillWidth: true }
-                    Label { text: (modelData.item.favorite ? "★ " : "") + modelData.item.design.name; textFormat: Text.PlainText; font.pixelSize: 24; font.weight: Font.Medium; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-                    Flow {
-                        Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 8
-                        AppButton { iconName: "edit"; text: qsTr("Edit design"); onClicked: { page.studioService.load(modelData.index); faceTabs.currentIndex = 2 } }
-                        AppButton { text: qsTr("Favorite"); onClicked: page.studioService.favorite(modelData.index) }
+                    AppButton {
+                        iconName: "shield"
+                        text: qsTr("Permissions")
+                        onClicked: hub.select(packageCard.modelData.id)
+                    }
+                    AppButton {
+                        visible: !packageCard.modelData.factory
+                        iconName: "left"
+                        text: qsTr("Roll back")
+                        onClicked: hub.rollback(packageCard.modelData.id)
+                    }
+                    AppButton {
+                        visible: !packageCard.modelData.factory
+                        iconName: "close"
+                        text: qsTr("Remove")
+                        onClicked: {
+                            removal.packageId = packageCard.modelData.id;
+                            removal.open();
+                        }
                     }
                 }
             }
         }
     }
-    Caption { visible: page.tab === 1 && !page.studioService.library.length; text: qsTr("Create your first design in Face Studio."); Layout.fillWidth: true }
-    Caption { visible: page.tab === 1 && page.studioService.library.length > 0 && !page.filteredDesigns.length; text: qsTr("No faces match your search."); Layout.fillWidth: true }
-    AppButton { visible: page.tab === 1; text: qsTr("Open Face Studio"); iconName: "edit"; primary: true; onClicked: faceTabs.currentIndex = 2 }
     AppCard {
-        visible: page.tab === 3
+        visible: hub.selected.length > 0
         Layout.fillWidth: true
-        implicitHeight: packageContent.implicitHeight + topPadding + bottomPadding
+        implicitHeight: permissions.implicitHeight + topPadding + bottomPadding
         ColumnLayout {
-            id: packageContent
+            id: permissions
             anchors.fill: parent
-            spacing: 16
-            Label { text: qsTr("Watch market"); color: Theme.text; font.pixelSize: 24; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-            Caption { text: qsTr("Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog."); Layout.fillWidth: true; wrapMode: Text.WordWrap }
-            RowLayout {
+            spacing: 12
+            Label {
+                text: qsTr("Permissions") + " · " + hub.selected
+                font.pixelSize: 20
+                textFormat: Text.PlainText
                 Layout.fillWidth: true
-                AppButton { text: qsTr("Import Ignit…"); primary: true; available: page.packages && page.packages.supported && !page.packages.busy; onClicked: packageFile.open() }
-                AppButton { text: qsTr("Refresh"); available: page.packages && page.packages.supported && !page.packages.busy; onClicked: page.packages.refresh() }
             }
-            AppButton { text: qsTr("Restore default theme"); available: page.packages && page.packages.supported && !page.packages.busy; onClicked: page.packages.useTheme("") }
-            Caption { text: page.packages && page.packages.supported ? page.packages.state : qsTr("Connect a watch with Ignits v1 firmware."); Layout.fillWidth: true; wrapMode: Text.WordWrap }
-            Caption {
-                text: page.packages && page.packages.storage.partition ?
-                    qsTr("Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available")
-                      .arg(page.packages.storage.partition).arg(Math.floor(page.packages.storage.free / 1024))
-                      .arg(Math.floor(page.packages.storage.total / 1024)).arg(page.packages.storage.capacity - page.packages.storage.installed) :
-                    qsTr("Refresh to check storage before installing.")
-                Layout.fillWidth: true; wrapMode: Text.WordWrap
-            }
-            Label { text: qsTr("Catalog"); color: Theme.text; font.pixelSize: 20 }
             Repeater {
-                model: page.packages ? page.packages.catalog : []
+                model: hub.permissions
                 delegate: RowLayout {
                     required property var modelData
                     Layout.fillWidth: true
-                    Label { text: modelData.name; textFormat: Text.PlainText; color: Theme.text; Layout.fillWidth: true }
-                    AppButton {
-                        text: qsTr("Install / update")
-                        available: page.packages && page.packages.canInstall(modelData.id)
-                        onClicked: page.packages.installFromCatalog(modelData.id)
-                    }
-                }
-            }
-            Label { text: qsTr("On watch"); color: Theme.text; font.pixelSize: 20 }
-            Repeater {
-                model: page.packages ? page.packages.installed : []
-                delegate: ColumnLayout {
-                    required property var modelData
-                    Layout.fillWidth: true
-                    spacing: 10
-                    Rectangle { Layout.fillWidth: true; height: 1; color: Theme.divider }
-                    Label { text: modelData.name + " · v" + modelData.version; textFormat: Text.PlainText; color: Theme.text; font.pixelSize: 20; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-                    Caption { text: [qsTr("Watch face"), qsTr("Interface theme"), qsTr("Face and theme")][modelData.kind]; Layout.fillWidth: true }
-                    Flow {
+                    Caption {
+                        text: modelData.name + (modelData.scope ? " · " + modelData.scope : "")
                         Layout.fillWidth: true
-                        spacing: 10
-                        AppButton { text: qsTr("Use Ignit"); available: !page.packages.busy; onClicked: page.packages.usePackage(modelData.id) }
-                        AppButton { text: modelData["protected"] ? qsTr("Protected") : qsTr("Remove"); available: !modelData["protected"] && !page.packages.busy; onClicked: page.packages.remove(modelData.id) }
+                    }
+                    Caption {
+                        text: [qsTr("Automatic"), qsTr("Persistent"), qsTr("Session"), qsTr("Selected resource"), qsTr("Explicit action"), qsTr("Restricted")][modelData.access] || qsTr("Unsupported")
+                    }
+                    AppButton {
+                        text: modelData.enabled ? qsTr("Revoke") : qsTr("Allow")
+                        available: modelData.access > 0 && modelData.access < 4
+                        onClicked: {
+                            consent.permissionName = modelData.name;
+                            consent.scopeName = modelData.scope;
+                            consent.enable = !modelData.enabled;
+                            consent.open();
+                        }
                     }
                 }
             }
         }
     }
-    FaceStudioEditor { frameVisible: page.tab === 2 && (!page.inSwipeView || page.currentSwipePage); visible: page.tab === 2; service: page.studioService }
+    FaceStudioEditor {
+        Layout.fillWidth: true
+    }
 }

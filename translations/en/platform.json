@@ -1,0 +1,87 @@
+{
+    "contexts": {
+        "AppWindow": {
+            "Confirm the same code over the local USB connection.": "Confirm the same code over the local USB connection.",
+            "Reject": "Reject"
+        },
+        "UsbLogCard": {
+            "Connection status": "Connection status"
+        },
+        "StatusCard": {
+            "Active application": "Active application",
+            "Refresh": "Refresh"
+        },
+        "DeviceInfoCard": {
+            "Internal RAM budget": "Internal RAM budget",
+            "Free storage": "Free storage",
+            "Build": "Build"
+        },
+        "OverviewPage": {
+            "Apps, watch faces, themes and languages": "Apps, watch faces, themes and languages",
+            "Permissions": "Permissions",
+            "Control each application’s access": "Control each application’s access",
+            "Computer metrics with your permission": "Computer metrics with your permission"
+        },
+        "ConnectionCard": {
+            "Scan Bluetooth": "Scan Bluetooth",
+            "Trust a new Bluetooth device": "Trust a new Bluetooth device",
+            "Open pairing over USB, compare the code, and confirm on both sides.": "Open pairing over USB, compare the code, and confirm on both sides.",
+            "Open pairing for 60 seconds": "Open pairing for 60 seconds",
+            "Six-digit code": "Six-digit code",
+            "Confirm on watch": "Confirm on watch",
+            "Reject": "Reject"
+        },
+        "WatchPreview": {
+            "Connect a watch or start the local simulator": "Connect a watch or start the local simulator",
+            "Refresh": "Refresh",
+            "Save preview": "Save preview"
+        },
+        "CompanionPage": {
+            "Computer data is shared only when both Desktop and the active Ignite permit it.": "Computer data is shared only when both Desktop and the active Ignite permit it.",
+            "Allow CPU and RAM metrics": "Allow CPU and RAM metrics",
+            "Select the application in Ignite Hub and grant companion.pc.metrics for cpu,ram. Revoking access stops the data flow.": "Select the application in Ignite Hub and grant companion.pc.metrics for cpu,ram. Revoking access stops the data flow."
+        },
+        "FaceStudioEditor": {
+            "Select Ignite project": "Select Ignite project",
+            "Save Ignite": "Save Ignite",
+            "Compile a JSON project with its own screens, images, font subsets and data into a binary Ignite.": "Compile a JSON project with its own screens, images, font subsets and data into a binary Ignite.",
+            "Font and image compilation requires Python and Pillow.": "Font and image compilation requires Python and Pillow.",
+            "Choose project": "Choose project",
+            "Build Ignite": "Build Ignite",
+            "Install build": "Install build"
+        },
+        "FaceGalleryPage": {
+            "Install Ignite": "Install Ignite",
+            "Application permission": "Application permission",
+            "Own data": "Own data",
+            "Allow this access? You can revoke it here.": "Allow this access? You can revoke it here.",
+            "Revoke this access?": "Revoke this access?",
+            "Remove package?": "Remove package?",
+            "Refresh": "Refresh",
+            "Factory": "Factory",
+            "Installed": "Installed",
+            "Apply theme": "Apply theme",
+            "Use language": "Use language",
+            "Open %1": "Open %1",
+            "Use as clock": "Use as clock",
+            "Permissions": "Permissions",
+            "Roll back": "Roll back",
+            "Remove": "Remove",
+            "Automatic": "Automatic",
+            "Persistent": "Persistent",
+            "Session": "Session",
+            "Selected resource": "Selected resource",
+            "Explicit action": "Explicit action",
+            "Restricted": "Restricted",
+            "Unsupported": "Unsupported",
+            "Revoke": "Revoke",
+            "Allow": "Allow"
+        },
+        "WatchSettingsPage": {
+            "Time and display": "Time and display",
+            "Set the UTC offset in minutes. Clock, theme and language are provided by Ignite packages.": "Set the UTC offset in minutes. Clock, theme and language are provided by Ignite packages.",
+            "UTC offset, minutes": "UTC offset, minutes",
+            "Restore factory components": "Restore factory components"
+        }
+    }
+}

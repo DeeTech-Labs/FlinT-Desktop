@@ -3,3 +3,7 @@ Copyright 2026 DeeTech Labs
 
 Developed by DeeTech Labs for devices running FlinT OS.
 https://github.com/DeeTech-Labs
+
+UI fonts and portable rasterizer subsets derive from Lato by Łukasz Dziedzic,
+licensed under SIL Open Font License 1.1. See assets/fonts/OFL.txt and
+platform/include/flint/graphics/fonts/Lato-LICENSE.txt.

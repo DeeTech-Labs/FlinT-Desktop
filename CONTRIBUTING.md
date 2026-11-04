@@ -6,7 +6,7 @@ running **FlinT OS**, by **DeeTech Labs**.
 ## Before you start
 
 - Read [README](README.md), [architecture](docs/ARCHITECTURE.md) and the
-  [USB protocol](docs/USB-DATA.md).
+  [Companion protocol](docs/COMPANION-PROTOCOL.md).
 - Check [CHANGELOG.md](CHANGELOG.md) for development notes.
 - Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
 - Bugs and concrete features → [Issues](https://github.com/DeeTech-Labs/FlinT-Desktop/issues).
@@ -15,26 +15,28 @@ running **FlinT OS**, by **DeeTech Labs**.
 ## Development setup
 
 Install Qt 6.5+ (Quick, Quick Controls, Quick Dialogs, Serial Port), CMake 3.21+,
-a C++17 compiler and Python 3 for tests. See [BUILD.md](docs/BUILD.md).
+a C++20 compiler and Python 3/Pillow for compiler and integration tests. See [BUILD.md](docs/BUILD.md).
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --parallel
-python3 -m unittest discover -s tests -v
+ctest --test-dir build --output-on-failure
 ```
 
-Tests use virtual serial ports on POSIX and do not need physical hardware.
-The GitHub workflow builds with Qt 6.10.2 on Linux, macOS and Windows. It runs
-UI and catalog checks on all three platforms, and serial-emulator tests on
-Linux/macOS, for PRs and pushes to `main`. Run hardware checks separately when changing USB behavior.
+Tests use the shared Core and a disposable offline simulator; they do not need physical hardware.
+The GitHub workflow builds with Qt 6.10.2 on Linux, macOS and Windows for PRs and pushes to `main`.
+Run hardware checks separately when changing USB or Bluetooth behavior.
 
 ## Code organization
 
-- QML owns presentation; `src/device/` owns transport, protocol and session data.
+- QML owns presentation; retain its design system, icons and visual resources.
+- `src/platform_app/` owns application services; `src/device/` owns the reusable Bluetooth lifecycle.
+- `platform/` is exported from the canonical OS implementation.
 - Keep serial I/O asynchronous and the UI thread responsive.
 - Match complete protocol replies, handle fragmented input and preserve input bounds.
 - Use capabilities from INFO; do not gate features on a hard-coded model name.
-- Keep HELLO/TIME compatibility with FlinT OS's Python helper.
+- Use the shared binary v1 handshake and development contract revision; do not add textual compatibility shims.
+- Use four-space indentation without tabs.
 - Document protocol changes in both repositories and test failure behavior.
 - Keep generated builds, device captures and local Qt Creator settings out of commits.
 
