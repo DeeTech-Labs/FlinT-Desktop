@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **FlinT Desktop** are documented here.
+All notable changes to **Flint Flare** are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Application versions in `CMakeLists.txt` aim to follow
@@ -10,7 +10,7 @@ Application versions in `CMakeLists.txt` aim to follow
 
 ### Added
 - Protocol v1 request IDs, atomic device settings, local profiles and settings backup/restore.
-- Protocol simulator and Face Studio with pixel icon editing, library, favorites and device installation.
+- Protocol simulator and Ignite Studio with pixel icon editing, library, favorites and device installation.
 - BLE discovery, GATT connection, shared INFO/STATUS/TIME commands and session reconnect.
 - System/light/dark themes, larger clock preview and overlay notifications.
 - Companion protocol documentation and Bluetooth build dependencies.

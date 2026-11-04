@@ -15,8 +15,18 @@ QtObject {
     onFaceTabChanged: navigation.faceTab = faceTab
     property int companionTab: navigation.companionTab
     onCompanionTabChanged: navigation.companionTab = companionTab
-    property Settings navigation: Settings { category: "navigation"; property int watchTab: 0; property int faceTab: 0; property int companionTab: 0 }
-    property Settings preferences: Settings { category: "appearance"; property int mode: 0; property bool developerMode: false; property bool animations: true }
+    property Settings navigation: Settings {
+        category: "navigation"
+        property int watchTab: 0
+        property int faceTab: 0
+        property int companionTab: 0
+    }
+    property Settings preferences: Settings {
+        category: "appearance"
+        property int mode: 0
+        property bool developerMode: false
+        property bool animations: true
+    }
     readonly property bool light: mode === 1 || (mode === 0 && Qt.styleHints.colorScheme === Qt.Light)
     readonly property color background: light ? "#e8edf5" : "#060a11"
     readonly property color text: light ? "#14243b" : "#f1f6ff"
@@ -57,9 +67,15 @@ QtObject {
     readonly property color logText: light ? "#385476" : "#b5cbe8"
     readonly property color logBackground: light ? "#f0f5fc" : "#091523"
     readonly property color transparent: "transparent"
-    property FontLoader bodyFont: FontLoader { source: "qrc:/fonts/Lato-Regular.ttf" }
-    property FontLoader semiboldFont: FontLoader { source: "qrc:/fonts/Lato-Semibold.ttf" }
-    property FontLoader blackFont: FontLoader { source: "qrc:/fonts/Lato-Black.ttf" }
+    property FontLoader bodyFont: FontLoader {
+        source: "qrc:/fonts/Lato-Regular.ttf"
+    }
+    property FontLoader semiboldFont: FontLoader {
+        source: "qrc:/fonts/Lato-Semibold.ttf"
+    }
+    property FontLoader blackFont: FontLoader {
+        source: "qrc:/fonts/Lato-Black.ttf"
+    }
     readonly property string fontFamily: bodyFont.name || Qt.application.font.family
     readonly property string monoFamily: Qt.platform.os === "windows" ? "Consolas" : Qt.platform.os === "osx" ? "Menlo" : "monospace"
     readonly property int compactWidth: 900

@@ -1,4 +1,4 @@
 import QtQuick
-import Flint.Desktop
+import Flint.Flare
 
 AppWindow {}

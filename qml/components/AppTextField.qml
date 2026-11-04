@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import Flint.Desktop
+import Flint.Flare
 
 TextField {
-    property bool blockPageGestures: true
     id: input
+    property bool blockPageGestures: true
     implicitHeight: Theme.controlHeight
     leftPadding: 13
     rightPadding: 13
@@ -13,5 +13,14 @@ TextField {
     placeholderTextColor: Theme.muted
     selectionColor: Theme.accent
     selectedTextColor: "white"
-    background: Rectangle { Behavior on border.color { ColorAnimation { duration: Theme.animationDuration } } radius: 11; color: Theme.input; border.color: input.activeFocus ? Theme.accent : Theme.inputBorder }
+    background: Rectangle {
+        Behavior on border.color {
+            ColorAnimation {
+                duration: Theme.animationDuration
+            }
+        }
+        radius: 11
+        color: Theme.input
+        border.color: input.activeFocus ? Theme.accent : Theme.inputBorder
+    }
 }

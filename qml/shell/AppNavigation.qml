@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 Item {
     id: navigation
@@ -17,10 +17,13 @@ Item {
         anchors.top: parent.top
         anchors.margins: 5
         columns: navigation.compact ? 8 : 1
-        rowSpacing: 4; columnSpacing: 3
+        rowSpacing: 4
+        columnSpacing: 3
         Label {
             text: "f."
-            font.pixelSize: 28; font.weight: Font.Black; font.letterSpacing: -2
+            font.pixelSize: 28
+            font.weight: Font.Black
+            font.letterSpacing: -2
             color: Theme.accent
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
@@ -28,11 +31,12 @@ Item {
             Layout.bottomMargin: navigation.compact ? 0 : 8
         }
         Repeater {
-            model: [qsTr("Overview"), qsTr("My watch"), qsTr("Watch faces"), "Companion"]
+            model: [qsTr("Overview"), qsTr("My watch"), "Ignite Hub", "Companion"]
             delegate: NavigationButton {
                 required property string modelData
                 required property int index
-                Layout.fillWidth: true; Layout.minimumWidth: 0
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 compact: true
                 text: modelData
                 iconName: ["home", "watch", "grid", "companion"][index]
@@ -43,9 +47,12 @@ Item {
         Rectangle {
             visible: !navigation.compact
             Layout.fillWidth: true
-            Layout.leftMargin: 10; Layout.rightMargin: 10
-            Layout.topMargin: 5; Layout.bottomMargin: 5
-            height: 1; color: Theme.divider
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
+            height: 1
+            color: Theme.divider
         }
         Repeater {
             model: [qsTr("Diagnostics"), qsTr("Settings"), qsTr("Connection")]
@@ -53,7 +60,8 @@ Item {
                 required property string modelData
                 required property int index
                 readonly property int pageIndex: [4, 5, 6][index]
-                Layout.fillWidth: true; Layout.minimumWidth: 0
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 compact: true
                 text: modelData
                 iconName: ["activity", "settings", "connection"][index]

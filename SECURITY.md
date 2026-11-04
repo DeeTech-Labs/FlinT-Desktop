@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-FlinT Desktop is in **alpha**. Security fixes target the latest `main` branch.
+Flint Flare is in **alpha**. Security fixes target the latest `main` branch.
 
 ## Reporting a vulnerability
 

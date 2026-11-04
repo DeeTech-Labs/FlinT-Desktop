@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
 import QtQuick.Layouts
-import Flint.Desktop
+import Flint.Flare
 
 ScrollView {
     id: page
@@ -14,7 +14,7 @@ ScrollView {
         restoringPosition = true;
         Qt.callLater(() => {
             if (page.contentItem && page.contentItem.contentY !== undefined)
-                page.contentItem.contentY = Math.max(0,Math.min(page.scrollPositions[page.positionKey] || 0,page.contentItem.contentHeight - page.availableHeight));
+                page.contentItem.contentY = Math.max(0, Math.min(page.scrollPositions[page.positionKey] || 0, page.contentItem.contentHeight - page.availableHeight));
             page.restoringPosition = false;
         });
     }

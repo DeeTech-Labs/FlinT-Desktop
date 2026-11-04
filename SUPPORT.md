@@ -1,8 +1,8 @@
 # Support
 
-- Bugs → [Issues](https://github.com/DeeTech-Labs/FlinT-Desktop/issues), Bug report.
+- Bugs → [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues), Bug report.
 - Features → Issues, Feature request.
-- Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/FlinT-Desktop/discussions).
+- Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).
 - Security reports → [SECURITY.md](SECURITY.md), privately.
 - Firmware-specific problems → [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS/issues).
 

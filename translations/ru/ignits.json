@@ -1,33 +1,33 @@
 {
-  "contexts": {
-    "FaceGalleryPage": {
-      "Market": "Маркет",
-      "Watch market": "Маркет часов",
-      "Spark Base is included and protected. Install additional faces, themes and bundles from this local catalog.": "Spark Base встроен и защищён. Устанавливайте дополнительные циферблаты, темы и комплекты из этого локального каталога.",
-      "Import Ignit…": "Импорт игнита…",
-      "Refresh": "Обновить",
-      "Restore default theme": "Вернуть базовую тему",
-      "Connect a watch with Ignits v1 firmware.": "Подключите часы с прошивкой Ignits v1.",
-      "Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Хранилище игнитов: %1 · свободно %2 КБ из %3 КБ · доступно слотов: %4",
-      "Refresh to check storage before installing.": "Обновите сведения о памяти перед установкой.",
-      "Catalog": "Каталог",
-      "Install / update": "Установить / обновить",
-      "Watch face": "Циферблат",
-      "Interface theme": "Тема интерфейса",
-      "Face and theme": "Циферблат и тема",
-      "Use Ignit": "Применить игнит",
-      "Protected": "Защищён",
-      "Remove": "Удалить"
-    },
-    "Ignits": {
-      "Disconnected": "Отключено",
-      "Device error: %1": "Ошибка устройства: %1",
-      "Installed Ignits": "Установленные игниты",
-      "Confirmed by watch": "Подтверждено часами",
-      "Invalid or unsupported Flint Ignit": "Игнит повреждён или не поддерживается",
-      "Waiting for watch confirmation…": "Ожидание подтверждения часов…",
-      "Cannot send to watch": "Не удалось отправить на часы",
-      "Cannot read Ignit (limit 4 KB)": "Не удалось прочитать игнит (не более 4 КБ)"
+    "contexts": {
+        "FaceGalleryPage": {
+            "Market": "Маркет",
+            "Watch market": "Маркет часов",
+            "Factory packages are included and protected. Install additional faces, themes and bundles from this local catalog.": "Заводские пакеты встроены и защищены. Устанавливайте дополнительные циферблаты, темы и комплекты из этого локального каталога.",
+            "Import Ignit…": "Импорт игнита…",
+            "Refresh": "Обновить",
+            "Restore default theme": "Вернуть базовую тему",
+            "Connect a watch with Ignite v1 firmware.": "Подключите часы с прошивкой Ignite v1.",
+            "Ignit storage: %1 · %2 KB free / %3 KB total · %4 slots available": "Хранилище игнитов: %1 · свободно %2 КБ из %3 КБ · доступно слотов: %4",
+            "Refresh to check storage before installing.": "Обновите сведения о памяти перед установкой.",
+            "Catalog": "Каталог",
+            "Install / update": "Установить / обновить",
+            "Watch face": "Циферблат",
+            "Interface theme": "Тема интерфейса",
+            "Face and theme": "Циферблат и тема",
+            "Use Ignit": "Применить игнит",
+            "Protected": "Защищён",
+            "Remove": "Удалить"
+        },
+        "Ignite": {
+            "Disconnected": "Отключено",
+            "Device error: %1": "Ошибка устройства: %1",
+            "Installed Ignite": "Установленные игниты",
+            "Confirmed by watch": "Подтверждено часами",
+            "Invalid or unsupported Ignite": "Игнит повреждён или не поддерживается",
+            "Waiting for watch confirmation…": "Ожидание подтверждения часов…",
+            "Cannot send to watch": "Не удалось отправить на часы",
+            "Cannot read Ignit (limit 4 KB)": "Не удалось прочитать игнит (не более 4 КБ)"
+        }
     }
-  }
 }
