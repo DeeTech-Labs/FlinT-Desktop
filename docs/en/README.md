@@ -119,6 +119,8 @@ flint_flare/
 
 ## Documentation
 
+- [Application logo, icons and animation](BRANDING.md).
+
 - [USB/BLE companion protocol](COMPANION-PROTOCOL.md) — binary v1 framing, compatibility checks and pairing trust.
 
 - [Build and run](BUILD.md) — Qt kits, platform paths and checks.

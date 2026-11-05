@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="flare-title flare-description">
+  <title id="flare-title">Flint Flare — core layer</title>
+  <desc id="flare-description">Derived from flare-logo.svg; do not edit separately.</desc>
+  <g id="flare-mark">
+    <g id="flare-core">
+      <path id="core-silhouette" fill="#d3d4d8" d="M645 174 L753 387 L675 624 L568 827 L492 565 C554 454 627 308 645 174 Z" />
+      <path id="core-facet-01" fill="#f5f5f7" d="M645 174 L687 415 L492 565 C554 454 627 308 645 174 Z" />
+      <path id="core-facet-02" fill="#c7c8cd" d="M645 174 L753 387 L687 415 Z" />
+      <path id="core-facet-03" fill="#abadb5" d="M687 415 L753 387 L675 624 Z" />
+      <path id="core-facet-04" fill="#dddfe5" d="M492 565 L687 415 L675 624 Z" />
+      <path id="core-facet-05" fill="#a2a5af" d="M492 565 L675 624 L568 827 Z" />
+    </g>
+  </g>
+</svg>

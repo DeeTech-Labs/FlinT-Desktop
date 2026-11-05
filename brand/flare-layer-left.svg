@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="flare-title flare-description">
+  <title id="flare-title">Flint Flare — left layer</title>
+  <desc id="flare-description">Derived from flare-logo.svg; do not edit separately.</desc>
+  <g id="flare-mark">
+    <g id="flare-left">
+      <path id="left-silhouette" fill="#b2b3b7" d="M480 493 C466 548 450 590 456 616 C473 690 521 769 568 827 L620 1008 L397 827 L331 682 Z" />
+      <path id="left-facet-01" fill="#f2f2f4" d="M480 493 C466 548 450 590 456 616 L331 682 Z" />
+      <path id="left-facet-02" fill="#d6d7db" d="M331 682 L456 616 L452 650 Z" />
+      <path id="left-facet-03" fill="#a7a8ae" d="M331 682 L452 650 L430 774 Z" />
+      <path id="left-facet-04" fill="#85868d" d="M331 682 L430 774 L397 827 Z" />
+      <path id="left-facet-05" fill="#e7e7eb" d="M456 616 C473 690 521 769 568 827 L430 774 L452 650 Z" />
+      <path id="left-facet-06" fill="#bdbfc6" d="M430 774 L568 827 L620 1008 Z" />
+      <path id="left-facet-07" fill="#777a83" d="M397 827 L430 774 L620 1008 Z" />
+    </g>
+  </g>
+</svg>

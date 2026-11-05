@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-labelledby="flare-title flare-description">
+  <title id="flare-title">Flint Flare</title>
+  <desc id="flare-description">Silver low-poly flare composed of three independently addressable shards. Transparent background.</desc>
+  <g id="flare-mark">
+    <g id="flare-left">
+      <path id="left-silhouette" fill="#b2b3b7" d="M480 493 C466 548 450 590 456 616 C473 690 521 769 568 827 L620 1008 L397 827 L331 682 Z" />
+      <path id="left-facet-01" fill="#f2f2f4" d="M480 493 C466 548 450 590 456 616 L331 682 Z" />
+      <path id="left-facet-02" fill="#d6d7db" d="M331 682 L456 616 L452 650 Z" />
+      <path id="left-facet-03" fill="#a7a8ae" d="M331 682 L452 650 L430 774 Z" />
+      <path id="left-facet-04" fill="#85868d" d="M331 682 L430 774 L397 827 Z" />
+      <path id="left-facet-05" fill="#e7e7eb" d="M456 616 C473 690 521 769 568 827 L430 774 L452 650 Z" />
+      <path id="left-facet-06" fill="#bdbfc6" d="M430 774 L568 827 L620 1008 Z" />
+      <path id="left-facet-07" fill="#777a83" d="M397 827 L430 774 L620 1008 Z" />
+    </g>
+    <g id="flare-core">
+      <path id="core-silhouette" fill="#d3d4d8" d="M645 174 L753 387 L675 624 L568 827 L492 565 C554 454 627 308 645 174 Z" />
+      <path id="core-facet-01" fill="#f5f5f7" d="M645 174 L687 415 L492 565 C554 454 627 308 645 174 Z" />
+      <path id="core-facet-02" fill="#c7c8cd" d="M645 174 L753 387 L687 415 Z" />
+      <path id="core-facet-03" fill="#abadb5" d="M687 415 L753 387 L675 624 Z" />
+      <path id="core-facet-04" fill="#dddfe5" d="M492 565 L687 415 L675 624 Z" />
+      <path id="core-facet-05" fill="#a2a5af" d="M492 565 L675 624 L568 827 Z" />
+    </g>
+    <g id="flare-right">
+      <path id="right-silhouette" fill="#b8bac1" d="M769 478 C793 546 861 600 919 681 L853 825 L626 1018 L659 792 C682 723 737 669 763 624 C790 570 788 527 769 478 Z" />
+      <path id="right-facet-01" fill="#f0f0f4" d="M769 478 C793 546 861 600 919 681 L832 676 L763 624 C790 570 788 527 769 478 Z" />
+      <path id="right-facet-02" fill="#d1d3da" d="M763 624 L832 676 L659 792 C682 723 737 669 763 624 Z" />
+      <path id="right-facet-03" fill="#afb2bc" d="M832 676 L919 681 L853 825 Z" />
+      <path id="right-facet-04" fill="#9b9faa" d="M832 676 L853 825 L659 792 Z" />
+      <path id="right-facet-05" fill="#d9dbe2" d="M659 792 L732 812 L626 1018 Z" />
+      <path id="right-facet-06" fill="#8c919e" d="M732 812 L853 825 L626 1018 Z" />
+    </g>
+  </g>
+</svg>

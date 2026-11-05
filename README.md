@@ -63,6 +63,8 @@ ctest --test-dir build --output-on-failure
 
 ## Документация
 
+- [Логотип и иконки приложения](docs/ru/BRANDING.md).
+
 - [Архитектура](docs/ru/ARCHITECTURE.md).
 - [Протокол USB/BLE Companion](docs/ru/COMPANION-PROTOCOL.md).
 - [Локализация интерфейса](docs/ru/LOCALIZATION.md).
