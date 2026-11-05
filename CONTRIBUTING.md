@@ -4,7 +4,7 @@
 
 ## Подготовка
 
-Начните с [README](readme), [архитектуры](docs/ru/ARCHITECTURE.md), [протокола Companion](docs/ru/COMPANION-PROTOCOL.md) и [истории изменений](CHANGELOG.md). Вопросы обсуждаются в [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions), воспроизводимые ошибки и функции — в [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues). [Маршруты поддержки](SUPPORT.md).
+Начните с [README](README.md), [архитектуры](docs/ru/ARCHITECTURE.md), [протокола Companion](docs/ru/COMPANION-PROTOCOL.md) и [истории изменений](CHANGELOG.md). Вопросы обсуждаются в [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions), воспроизводимые ошибки и функции — в [Issues](https://github.com/DeeTech-Labs/Flint-Flare/issues). [Маршруты поддержки](SUPPORT.md).
 
 Требуются Qt 6.5+ с Quick, Quick Controls, Quick Dialogs, Serial Port, Bluetooth, Widgets и Shader Tools, CMake 3.21+, C++20, Python 3 и Pillow. Сборка и тесты описаны в [руководстве](docs/ru/BUILD.md). CI использует Qt 6.10.2 на Linux, macOS и Windows.
 

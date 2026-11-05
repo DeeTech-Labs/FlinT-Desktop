@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="../../readme">Русская версия</a> &nbsp; / &nbsp;
+  <a href="../../README.md">Русская версия</a> &nbsp; / &nbsp;
   <a href="https://flint.deetech.ru/">Website</a> &nbsp; / &nbsp;
   <a href="https://github.com/DeeTech-Labs">DeeTech Labs</a>
 </p>
@@ -52,7 +52,7 @@ capabilities drive the connection, so the client can support future models.
 
 Ignite Hub installs binary packages with resumable transfer, launches components, selects clock/theme/language providers, and manages application permissions. Studio compiles local projects; Preview and the disposable simulator use the same portable runtime as FlinT OS.
 
-The existing QML shell, theme, icons, fonts, effects, localization and tray integration are retained. Bounded Lua runs in the simulator and validated Spark firmware. Firmware updates, background services and additional host integrations remain future work; see the [shared implementation specification](../../platform/readme). Linux builds are verified locally; Windows/macOS remain CI targets rather than locally validated packages.
+The existing QML shell, theme, icons, fonts, effects, localization and tray integration are retained. Bounded Lua runs in the simulator and validated Spark firmware. Firmware updates, background services and additional host integrations remain future work; see the [shared implementation specification](../../platform/README.md). Linux builds are verified locally; Windows/macOS remain CI targets rather than locally validated packages.
 
 ---
 
@@ -123,7 +123,7 @@ flint_flare/
 
 - [Build and run](BUILD.md) — Qt kits, platform paths and checks.
 - [Architecture](ARCHITECTURE.md) — UI, USB session and device capabilities.
-- [Shared platform](../../platform/readme) — package format, runtime, permissions and explicit limits.
+- [Shared platform](../../platform/README.md) — package format, runtime, permissions and explicit limits.
 - [Changelog](../../CHANGELOG.md) — development history.
 - [FlinT OS](https://github.com/DeeTech-Labs/FlinT-OS) — device firmware.
 
