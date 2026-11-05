@@ -7,7 +7,7 @@ running **FlinT OS**, by **DeeTech Labs**.
 
 ## Before you start
 
-- Read [README](../../README.md), [architecture](ARCHITECTURE.md) and the
+- Read [README](../../readme), [architecture](ARCHITECTURE.md) and the
   [Companion protocol](COMPANION-PROTOCOL.md).
 - Check [CHANGELOG.md](../../CHANGELOG.md) for development notes.
 - Questions and ideas → [Discussions](https://github.com/DeeTech-Labs/Flint-Flare/discussions).

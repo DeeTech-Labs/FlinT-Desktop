@@ -2,7 +2,7 @@
 
 # Companion protocol v1
 
-The authoritative framing and service contract is documented in [FlinT Platform](../../platform/README.md) and `platform/spec/services.json`.
+The authoritative framing and service contract is documented in [FlinT Platform](../../platform/readme) and `platform/spec/services.json`.
 
 Flare rejects peers with a different development contract revision, missing build identity or insufficient capabilities even when they report protocol 1. There is no textual command fallback.
 

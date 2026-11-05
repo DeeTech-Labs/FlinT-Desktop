@@ -2,7 +2,7 @@
 
 # Build
 
-See [README](../../README.md) for Qt dependencies and the normal CMake commands. CTest builds and checks the portable runtime as well as the actual QML application using a disposable offline simulator.
+See [README](../../readme) for Qt dependencies and the normal CMake commands. CTest builds and checks the portable runtime as well as the actual QML application using a disposable offline simulator.
 
 The `platform/` directory is a Git submodule of
 [Flint IgniteSDK](https://github.com/DeeTech-Labs/Flint-IgniteSDK), pinned to a commit.

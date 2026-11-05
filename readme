@@ -66,7 +66,7 @@ ctest --test-dir build --output-on-failure
 - [Архитектура](docs/ru/ARCHITECTURE.md).
 - [Протокол USB/BLE Companion](docs/ru/COMPANION-PROTOCOL.md).
 - [Локализация интерфейса](docs/ru/LOCALIZATION.md).
-- [Общая платформа](platform/README.md).
+- [Общая платформа](platform/readme).
 - [История изменений](CHANGELOG.md).
 - [Вклад в проект](CONTRIBUTING.md), [поддержка](SUPPORT.md), [безопасность](SECURITY.md), [правила сообщества](CODE_OF_CONDUCT.md).
 
